@@ -42,7 +42,7 @@ export default function Home() {
           <div className="flex justify-center pt-6 px-4">
             <Button 
               onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto rounded-full px-14 h-16 text-[11px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
+              className="w-full sm:w-auto rounded-full px-10 h-14 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               Iniciar Análise IA
