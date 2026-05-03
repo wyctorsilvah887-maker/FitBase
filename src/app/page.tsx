@@ -22,7 +22,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-28 pb-24 space-y-16">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-16">
         {/* Hero Section */}
         <section className="text-center space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black tracking-[0.3em] text-primary uppercase">
@@ -31,7 +31,7 @@ export default function Home() {
           </div>
           
           <div className="space-y-6 md:space-y-8">
-            <h2 className="text-4xl md:text-7xl font-headline font-bold tracking-tight leading-[1.05]">
+            <h2 className="text-3xl md:text-5xl font-headline font-bold tracking-tight leading-[1.1]">
               Cuidando do seu <span className="text-primary italic">pet</span><br className="hidden md:block" /> com inteligência
             </h2>
             <p className="text-zinc-500 max-w-xl mx-auto text-sm md:text-base leading-relaxed font-medium px-4">
