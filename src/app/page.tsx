@@ -1,28 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, PawPrint, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
-import { TermsModal } from "@/components/TermsModal";
+import Header from "@/components/Header";
+import Link from "next/link";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isTermsOpen, setIsTermsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
       <div className="bg-noise" />
       
-      {/* Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 py-10 flex justify-center">
-        <div className="flex items-center gap-2 group cursor-default">
-          <PawPrint className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-headline font-bold tracking-tighter">
-            Vet <span className="text-primary italic">IA</span>
-          </h1>
-        </div>
-      </header>
+      <Header />
 
       <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-16">
         {/* Hero Section */}
@@ -69,22 +61,24 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-20 flex flex-col items-center gap-6 relative z-10">
         <div className="flex items-center gap-2 opacity-10 grayscale transition-opacity duration-700 hover:opacity-30 cursor-default">
-          <PawPrint className="w-5 h-5 text-primary" />
-          <span className="text-lg font-headline font-bold tracking-tighter text-white">
-            Vet <span className="text-primary italic">IA</span>
-          </span>
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-primary" />
+            <span className="text-lg font-headline font-bold tracking-tighter text-white">
+              Vet <span className="text-primary italic">IA</span>
+            </span>
+          </div>
         </div>
         
         <div className="flex flex-col items-center gap-2">
           <div className="text-[9px] font-black text-zinc-900 uppercase tracking-[0.6em] text-center px-6">
             © {new Date().getFullYear()} Vet IA • Powered by WS Studios
           </div>
-          <button 
-            onClick={() => setIsTermsOpen(true)}
+          <Link 
+            href="/terms"
             className="text-[8px] font-bold text-zinc-800 uppercase tracking-[0.4em] hover:text-primary transition-colors"
           >
             Termos de Uso
-          </button>
+          </Link>
         </div>
       </footer>
 
@@ -93,11 +87,6 @@ export default function Home() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {}}
         type="text"
-      />
-
-      <TermsModal 
-        isOpen={isTermsOpen}
-        onClose={() => setIsTermsOpen(false)}
       />
     </div>
   );
