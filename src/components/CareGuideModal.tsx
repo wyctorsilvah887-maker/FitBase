@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateCareGuide } from "@/ai/flows/generate-care-guide";
-import { Loader2, AlertCircle, Sparkles, ClipboardList } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, ClipboardList, Camera } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface CareGuideModalProps {
@@ -148,7 +148,17 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-zinc-900">
+              <div className="pt-8 border-t border-zinc-900 space-y-6">
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <div className="flex items-center gap-2 text-primary">
+                    <Camera className="w-3 h-3" />
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em]">Dica de Tutor</p>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed max-w-[280px]">
+                    Tire um <span className="text-white font-bold">print</span> para não esquecer! Em breve teremos funções de salvar dentro do app. 🐾
+                  </p>
+                </div>
+                
                 <Button variant="outline" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-zinc-800 hover:bg-zinc-900" onClick={handleClose}>
                   Fechar Guia
                 </Button>
