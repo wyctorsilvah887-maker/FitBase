@@ -4,9 +4,11 @@ import { useState } from "react";
 import { ShieldCheck, PawPrint, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
+import { TermsModal } from "@/components/TermsModal";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
@@ -65,15 +67,24 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-20 flex flex-col items-center gap-8 relative z-10">
+      <footer className="py-20 flex flex-col items-center gap-6 relative z-10">
         <div className="flex items-center gap-2 opacity-10 grayscale transition-opacity duration-700 hover:opacity-30 cursor-default">
           <PawPrint className="w-5 h-5 text-primary" />
           <span className="text-lg font-headline font-bold tracking-tighter text-white">
             Vet <span className="text-primary italic">IA</span>
           </span>
         </div>
-        <div className="text-[9px] font-black text-zinc-900 uppercase tracking-[0.6em] text-center px-6">
-          © {new Date().getFullYear()} Vet IA • Powered by WS Studios
+        
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-[9px] font-black text-zinc-900 uppercase tracking-[0.6em] text-center px-6">
+            © {new Date().getFullYear()} Vet IA • Powered by WS Studios
+          </div>
+          <button 
+            onClick={() => setIsTermsOpen(true)}
+            className="text-[8px] font-bold text-zinc-800 uppercase tracking-[0.4em] hover:text-primary transition-colors"
+          >
+            Termos de Uso
+          </button>
         </div>
       </footer>
 
@@ -82,6 +93,11 @@ export default function Home() {
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {}}
         type="text"
+      />
+
+      <TermsModal 
+        isOpen={isTermsOpen}
+        onClose={() => setIsTermsOpen(false)}
       />
     </div>
   );
