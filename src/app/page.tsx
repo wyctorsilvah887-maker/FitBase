@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Sparkles } from "lucide-react";
+import { ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import Header from "@/components/Header";
@@ -16,7 +16,7 @@ export default function Home() {
       
       <Header />
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-16">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-12">
         {/* Hero Section */}
         <section className="text-center space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-[7px] font-black tracking-[0.3em] text-primary uppercase">
@@ -33,14 +33,24 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex justify-center pt-6 px-4">
-            <Button 
-              onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto rounded-full px-7 h-11 text-[8px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
-            >
-              <Sparkles className="w-3.5 h-3.5 mr-2" />
-              Iniciar Análise IA
-            </Button>
+          <div className="space-y-6">
+            <div className="flex justify-center px-4">
+              <Button 
+                onClick={() => setIsModalOpen(true)}
+                className="w-full sm:w-auto rounded-full px-7 h-11 text-[8px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-2" />
+                Iniciar Análise IA
+              </Button>
+            </div>
+
+            {/* Aviso Importante */}
+            <div className="flex items-center justify-center gap-2 text-zinc-600 animate-pulse">
+              <AlertCircle className="w-3 h-3 text-primary/40" />
+              <p className="text-[7px] font-bold uppercase tracking-[0.25em]">
+                Importante: Leia os <Link href="/terms" className="text-zinc-400 hover:text-primary underline underline-offset-2 transition-colors">termos de uso</Link> no rodapé antes de iniciar.
+              </p>
+            </div>
           </div>
         </section>
 
