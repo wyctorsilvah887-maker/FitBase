@@ -7,9 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AnalysisModal } from "@/components/AnalysisModal";
 
 export default function Home() {
-  const [modalType, setModalType] = useState<'text' | 'image' | null>(null);
+  const [modalType, setModalType] = useState<'text' | null>(null);
 
-  const openModal = (type: 'text' | 'image') => setModalType(type);
+  const openModal = () => setModalType('text');
   const closeModal = () => setModalType(null);
 
   return (
@@ -45,7 +45,7 @@ export default function Home() {
 
           <div className="flex justify-center pt-4 px-4">
             <Button 
-              onClick={() => openModal('text')}
+              onClick={openModal}
               className="w-full sm:w-auto rounded-full px-12 h-14 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-lg shadow-primary/10"
             >
               Iniciar Análise de Texto
