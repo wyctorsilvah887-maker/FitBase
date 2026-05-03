@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ShieldCheck, PawPrint, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { AnalysisModal } from "@/components/AnalysisModal";
 
 export default function Home() {
@@ -23,7 +22,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-28 pb-24 space-y-24 md:space-y-36">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-28 pb-24 space-y-16">
         {/* Hero Section */}
         <section className="text-center space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black tracking-[0.3em] text-primary uppercase">
@@ -51,24 +50,17 @@ export default function Home() {
           </div>
         </section>
 
-        {/* WS Studios Card */}
-        <section className="pt-8">
-          <div className="relative group">
-            <div className="absolute -inset-1 bg-primary/10 rounded-[3rem] blur-3xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-            <Card className="relative bg-zinc-950/20 border-zinc-900 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
-              <CardContent className="p-12 md:p-20 flex flex-col items-center text-center space-y-8 md:space-y-10">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
-                  <ShieldCheck className="w-7 h-7 text-primary" />
-                </div>
-                <div className="space-y-4">
-                  <h3 className="text-2xl md:text-3xl font-headline font-black tracking-tight uppercase">Tecnologia WS Studios</h3>
-                  <p className="text-zinc-500 text-sm md:text-base max-w-md leading-relaxed font-medium">
-                    Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta, mas não substitui a consulta profissional.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Tecnologia WS Studios Card */}
+        <section className="mt-8 rounded-2xl bg-gradient-to-b from-white/[0.02] to-transparent p-5 text-center border border-white/5 max-w-md mx-auto">
+          <div className="mb-3 flex justify-center">
+            <div className="bg-primary/10 p-2 rounded-full ring-1 ring-primary/20">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+            </div>
           </div>
+          <h2 className="font-headline mb-1.5 text-sm font-bold">Tecnologia WS Studios</h2>
+          <p className="mx-auto max-w-[280px] sm:max-w-none text-[9px] text-muted-foreground leading-relaxed italic opacity-70">
+            Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
+          </p>
         </section>
       </main>
 
@@ -77,7 +69,6 @@ export default function Home() {
       </footer>
 
       <AnalysisModal 
-        type="text"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {}}
