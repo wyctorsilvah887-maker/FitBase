@@ -75,7 +75,7 @@ export default function Home() {
           </div>
           <Link 
             href="/terms"
-            className="text-[8px] font-bold text-zinc-800 uppercase tracking-[0.4em] hover:text-primary transition-colors"
+            className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.4em] hover:text-primary transition-all border-b border-zinc-900 hover:border-primary pb-0.5"
           >
             Termos de Uso
           </Link>
