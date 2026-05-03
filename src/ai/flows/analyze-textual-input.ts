@@ -13,7 +13,7 @@ export type AnalyzeTextualInput = z.infer<typeof AnalyzeTextualInputSchema>;
 
 const AnalyzeTextualOutputSchema = z.object({
   analysisSummary: z.string().describe('Resumo curto da análise.'),
-  insights: z.string().describe('Insights detalhados em tópicos curtos.'),
+  insights: z.string().describe('Insights detalhados em tópicos curtos (usando hífens -).'),
   recommendations: z.string().describe('Recomendações e aviso de segurança.'),
 });
 export type AnalyzeTextualOutput = z.infer<typeof AnalyzeTextualOutputSchema>;
@@ -31,7 +31,8 @@ const analyzeTextualInputPrompt = ai.definePrompt({
 DIRETRIZES DE RESPOSTA:
 - Use emojis para facilitar a leitura rápida 🐾.
 - Use negrito apenas para informações vitais.
-- Use tópicos curtos e diretos.
+- Use tópicos curtos e diretos começando com "- ".
+- NÃO USE tags HTML (como <ul>, <li>, <p>). Retorne apenas texto puro formatado com quebras de linha.
 - Seja sempre muito breve.
 - Lembre o usuário sobre o limite diário de mensagens quando apropriado.
 

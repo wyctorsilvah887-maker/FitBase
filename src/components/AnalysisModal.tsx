@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
-import { Loader2, AlertCircle, Sparkles, X } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { saveAnalysis } from "@/app/lib/history-store";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
@@ -47,14 +47,14 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-[2.5rem] overflow-x-hidden outline-none">
+      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar">
         <div className="p-8 md:p-12 space-y-8">
           <DialogHeader className="text-left relative">
             <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
               Nova Análise
             </DialogTitle>
             <DialogDescription className="text-zinc-500 font-medium text-sm md:text-base mt-2">
-              Descreva detalhadamente os sintomas ou a dieta do seu pet.
+              Descreva os sintomas ou a dieta do seu pet.
             </DialogDescription>
           </DialogHeader>
 
@@ -69,7 +69,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
           {!result ? (
             <div className="space-y-8">
               <Textarea 
-                placeholder="Ex: Meu cachorro está com coceira intensa na orelha..." 
+                placeholder="Ex: Meu gato comeu um pedaço de pizza e está quieto..." 
                 className="min-h-[200px] bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary rounded-3xl p-6 md:p-8 text-sm md:text-base placeholder:text-zinc-700 resize-none border-2 transition-all"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -100,7 +100,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                   <Sparkles className="w-4 h-4" />
                   Veredito da IA
                 </h3>
-                <p className="text-sm md:text-base leading-relaxed text-zinc-300 font-medium">
+                <p className="text-sm md:text-base leading-relaxed text-zinc-300 font-medium whitespace-pre-line">
                   {result.analysisSummary}
                 </p>
               </div>
@@ -109,13 +109,13 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] px-2">Insights Detalhados</h3>
                   <div className="text-sm md:text-base text-zinc-400 leading-relaxed whitespace-pre-line bg-zinc-900/30 p-8 rounded-3xl border border-zinc-900">
-                    {result.insights}
+                    {result.insights.replace(/<[^>]*>?/gm, '')}
                   </div>
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] px-2">Recomendações Vet IA</h3>
                   <div className="text-sm md:text-base font-bold leading-relaxed text-white bg-primary/10 p-8 rounded-3xl border border-primary/20 whitespace-pre-line">
-                    {result.recommendations}
+                    {result.recommendations.replace(/<[^>]*>?/gm, '')}
                   </div>
                 </div>
               </div>
