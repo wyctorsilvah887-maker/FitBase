@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
-import { analyzeImageInput } from "@/ai/flows/analyze-image-input";
-import { Loader2, Camera, Upload, AlertCircle, Sparkles } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, X } from "lucide-react";
 import { saveAnalysis } from "@/app/lib/history-store";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface AnalysisModalProps {
-  type: 'text' | 'image' | null;
+  type: 'text' | null;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
@@ -22,7 +21,6 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleTextAnalysis = async () => {
     if (!input.trim()) return;
@@ -40,33 +38,6 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
     }
   };
 
-  const handleImageAnalysis = async (dataUri: string) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const output = await analyzeImageInput({ photoDataUri: dataUri });
-      setResult(output);
-      saveAnalysis({ type: 'image', input: dataUri, output });
-      onSuccess();
-    } catch (err) {
-      setError("Não foi possível analisar a imagem. Certifique-se de que é um formato válido.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const dataUri = event.target?.result as string;
-      handleImageAnalysis(dataUri);
-    };
-    reader.readAsDataURL(file);
-  };
-
   const handleClose = () => {
     setResult(null);
     setInput("");
@@ -76,125 +47,85 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-3xl overflow-x-hidden">
-        <div className="p-6 md:p-8 space-y-6 md:space-y-8">
-          <DialogHeader className="text-left">
-            <DialogTitle className="text-2xl md:text-3xl font-headline font-black tracking-tight">
-              {type === 'text' ? 'Análise de Texto' : 'Análise de Imagem'}
+      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-[2.5rem] overflow-x-hidden outline-none">
+        <div className="p-8 md:p-12 space-y-8">
+          <DialogHeader className="text-left relative">
+            <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
+              Nova Análise
             </DialogTitle>
-            <DialogDescription className="text-zinc-500 font-medium text-xs md:text-sm">
-              {type === 'text' 
-                ? 'Descreva o que seu pet está sentindo para uma análise profunda.' 
-                : 'Envie uma foto do alimento ou do sintoma visível.'}
+            <DialogDescription className="text-zinc-500 font-medium text-sm md:text-base mt-2">
+              Descreva detalhadamente os sintomas ou a dieta do seu pet.
             </DialogDescription>
           </DialogHeader>
 
           {error && (
-            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="font-bold">Ops!</AlertTitle>
-              <AlertDescription className="text-xs">{error}</AlertDescription>
+            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl animate-in fade-in zoom-in">
+              <AlertCircle className="h-5 w-5" />
+              <AlertTitle className="font-bold">Atenção</AlertTitle>
+              <AlertDescription className="text-xs font-medium">{error}</AlertDescription>
             </Alert>
           )}
 
           {!result ? (
-            <div className="space-y-6">
-              {type === 'text' ? (
-                <>
-                  <Textarea 
-                    placeholder="Ex: Meu cachorro está com coceira intensa e vermelhidão na orelha esquerda..." 
-                    className="min-h-[150px] md:min-h-[180px] bg-zinc-900 border-zinc-800 focus-visible:ring-primary rounded-2xl p-5 md:p-6 text-sm md:text-base placeholder:text-zinc-700"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    disabled={isLoading}
-                  />
-                  <Button 
-                    className="w-full h-14 rounded-2xl text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] shadow-xl shadow-primary/10" 
-                    onClick={handleTextAnalysis}
-                    disabled={isLoading || !input.trim()}
-                  >
-                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Sparkles className="w-5 h-5 mr-2" />}
-                    Gerar Análise IA
-                  </Button>
-                </>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="h-32 md:h-40 flex flex-col gap-3 bg-zinc-900/50 border-zinc-800 border-dashed border-2 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isLoading}
-                  >
-                    <div className="p-2 md:p-3 rounded-full bg-primary/10">
-                      <Upload className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                    </div>
-                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Enviar Arquivo</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-32 md:h-40 flex flex-col gap-3 bg-zinc-900/50 border-zinc-800 border-dashed border-2 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isLoading}
-                  >
-                    <div className="p-2 md:p-3 rounded-full bg-primary/10">
-                      <Camera className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                    </div>
-                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest">Usar Câmera</span>
-                  </Button>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    className="hidden" 
-                    ref={fileInputRef} 
-                    onChange={handleFileUpload}
-                  />
-                  {isLoading && (
-                    <div className="col-span-full flex flex-col items-center justify-center py-8 md:py-12 gap-4 animate-in fade-in zoom-in">
-                      <div className="relative">
-                        <Loader2 className="w-10 h-10 md:w-12 md:h-12 animate-spin text-primary" />
-                        <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
-                      </div>
-                      <p className="text-zinc-500 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse text-center">Analisando Bio-dados...</p>
-                    </div>
-                  )}
-                </div>
-              )}
+            <div className="space-y-8">
+              <Textarea 
+                placeholder="Ex: Meu cachorro está com coceira intensa na orelha..." 
+                className="min-h-[200px] bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary rounded-3xl p-6 md:p-8 text-sm md:text-base placeholder:text-zinc-700 resize-none border-2 transition-all"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={isLoading}
+              />
+              <Button 
+                className="w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-primary/10 bg-primary text-black hover:bg-primary/90 disabled:opacity-30" 
+                onClick={handleTextAnalysis}
+                disabled={isLoading || !input.trim()}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin mr-3" />
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-5 h-5 mr-3" />
+                    Gerar Análise
+                  </>
+                )}
+              </Button>
             </div>
           ) : (
-            <div className="space-y-6 md:space-y-8 animate-in fade-in slide-in-from-bottom-4">
-              <div className="bg-primary/5 p-5 md:p-6 rounded-2xl border border-primary/20">
-                <h3 className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
+              <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20">
+                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
                   Veredito da IA
                 </h3>
-                <p className="text-xs md:text-sm leading-relaxed text-zinc-300">
-                  {type === 'text' ? result.analysisSummary : result.analysis}
+                <p className="text-sm md:text-base leading-relaxed text-zinc-300 font-medium">
+                  {result.analysisSummary}
                 </p>
               </div>
               
-              {type === 'text' && (
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <h3 className="text-[9px] md:text-[10px] font-black text-white uppercase tracking-[0.2em]">Insights Detalhados</h3>
-                    <div className="text-xs md:text-sm text-zinc-400 leading-relaxed whitespace-pre-line bg-zinc-900/50 p-5 md:p-6 rounded-2xl border border-zinc-800">
-                      {result.insights}
-                    </div>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-[0.2em]">Próximos Passos</h3>
-                    <div className="text-xs md:text-sm font-bold leading-relaxed text-white bg-primary/10 p-5 md:p-6 rounded-2xl border border-primary/20 whitespace-pre-line">
-                      {result.recommendations}
-                    </div>
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] px-2">Insights Detalhados</h3>
+                  <div className="text-sm md:text-base text-zinc-400 leading-relaxed whitespace-pre-line bg-zinc-900/30 p-8 rounded-3xl border border-zinc-900">
+                    {result.insights}
                   </div>
                 </div>
-              )}
+                <div className="space-y-4">
+                  <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] px-2">Recomendações Vet IA</h3>
+                  <div className="text-sm md:text-base font-bold leading-relaxed text-white bg-primary/10 p-8 rounded-3xl border border-primary/20 whitespace-pre-line">
+                    {result.recommendations}
+                  </div>
+                </div>
+              </div>
 
-              <div className="pt-6 border-t border-zinc-900">
-                <p className="text-[8px] md:text-[9px] text-zinc-600 font-bold uppercase tracking-widest text-center mb-6 px-4">
-                  AVISO: RESULTADOS BASEADOS EM IA. CONSULTE UM VETERINÁRIO.
+              <div className="pt-8 border-t border-zinc-900">
+                <p className="text-[9px] text-zinc-600 font-black uppercase tracking-[0.4em] text-center mb-8 px-4">
+                  A Vet IA da WS Studios é uma ferramenta auxiliar e não substitui diagnósticos clínicos.
                 </p>
-                <Button className="w-full h-12 rounded-xl text-[10px] font-bold uppercase tracking-widest" onClick={handleClose}>
-                  Finalizar
+                <Button variant="outline" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-zinc-800 hover:bg-zinc-900" onClick={handleClose}>
+                  Finalizar Sessão
                 </Button>
               </div>
             </div>

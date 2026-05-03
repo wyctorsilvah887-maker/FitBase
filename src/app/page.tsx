@@ -1,76 +1,70 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, PawPrint, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, PawPrint, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnalysisModal } from "@/components/AnalysisModal";
 
 export default function Home() {
-  const [modalType, setModalType] = useState<'text' | null>(null);
-
-  const openModal = () => setModalType('text');
-  const closeModal = () => setModalType(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
-      <div className="fixed inset-0 bg-noise pointer-events-none" />
+      <div className="bg-noise" />
       
       {/* Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 py-8 flex justify-center">
+      <header className="relative z-10 max-w-7xl mx-auto px-6 py-10 flex justify-center">
         <div className="flex items-center gap-2 group cursor-default">
-          <PawPrint className="w-6 h-6 text-primary" />
-          <h1 className="text-xl font-headline font-bold tracking-tighter">
+          <PawPrint className="w-7 h-7 text-primary" />
+          <h1 className="text-2xl font-headline font-bold tracking-tighter">
             Vet <span className="text-primary italic">IA</span>
           </h1>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-12 md:pt-20 pb-24 space-y-20 md:space-y-32">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-28 pb-24 space-y-24 md:space-y-36">
         {/* Hero Section */}
-        <section className="text-center space-y-8 md:space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-[9px] font-black tracking-[0.3em] text-primary uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+        <section className="text-center space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-primary/20 bg-primary/5 text-[10px] font-black tracking-[0.3em] text-primary uppercase">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             IA Preventiva de Saúde
           </div>
           
-          <div className="space-y-4 md:space-y-6">
-            <h2 className="text-4xl md:text-6xl font-headline font-bold tracking-tight leading-[1.1]">
-              Cuidando do seu <span className="text-primary italic">pet</span> com IA
+          <div className="space-y-6 md:space-y-8">
+            <h2 className="text-4xl md:text-7xl font-headline font-bold tracking-tight leading-[1.05]">
+              Cuidando do seu <span className="text-primary italic">pet</span><br className="hidden md:block" /> com inteligência
             </h2>
-            <p className="text-zinc-500 max-w-xl mx-auto text-xs md:text-sm leading-relaxed font-medium px-4">
-              Acompanhamento inteligente de sintomas e nutrição animal. O bem-estar do seu melhor amigo começa com a prevenção da WS Studios.
+            <p className="text-zinc-500 max-w-xl mx-auto text-sm md:text-base leading-relaxed font-medium px-4">
+              Análise inteligente de sintomas e nutrição animal. O bem-estar do seu amigo começa com a prevenção avançada da WS Studios.
             </p>
           </div>
 
-          <div className="flex justify-center pt-4 px-4">
+          <div className="flex justify-center pt-6 px-4">
             <Button 
-              onClick={openModal}
-              className="w-full sm:w-auto rounded-full px-12 h-14 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-lg shadow-primary/10"
+              onClick={() => setIsModalOpen(true)}
+              className="w-full sm:w-auto rounded-full px-14 h-16 text-[11px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
             >
-              Iniciar Análise de Texto
+              <Sparkles className="w-4 h-4 mr-2" />
+              Iniciar Análise IA
             </Button>
           </div>
         </section>
 
         {/* WS Studios Card */}
-        <section className="pt-4 md:pt-8">
+        <section className="pt-8">
           <div className="relative group">
-            <div className="absolute -inset-0.5 bg-primary/20 rounded-[2rem] md:rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-            <Card className="relative bg-[#050505] border-zinc-900/50 rounded-[2rem] md:rounded-[2.5rem] overflow-hidden">
-              <CardContent className="p-10 md:p-16 flex flex-col items-center text-center space-y-6 md:space-y-8">
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-primary/5 flex items-center justify-center border border-primary/20">
-                  <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+            <div className="absolute -inset-1 bg-primary/10 rounded-[3rem] blur-3xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
+            <Card className="relative bg-zinc-950/50 border-zinc-900 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
+              <CardContent className="p-12 md:p-20 flex flex-col items-center text-center space-y-8 md:space-y-10">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
+                  <ShieldCheck className="w-7 h-7 text-primary" />
                 </div>
-                <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-xl md:text-2xl font-headline font-bold tracking-tight">Tecnologia WS Studios</h3>
-                  <p className="text-zinc-500 text-xs md:text-sm max-w-sm leading-relaxed font-medium">
-                    Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
+                <div className="space-y-4">
+                  <h3 className="text-2xl md:text-3xl font-headline font-black tracking-tight uppercase">Tecnologia WS Studios</h3>
+                  <p className="text-zinc-500 text-sm md:text-base max-w-md leading-relaxed font-medium">
+                    Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta, mas não substitui a consulta profissional.
                   </p>
-                </div>
-                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 pt-4 text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">
-                  <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-primary/50" /> IA Avançada</span>
-                  <span className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-primary/50" /> Suporte 24/7</span>
                 </div>
               </CardContent>
             </Card>
@@ -78,15 +72,14 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="py-16 text-center text-[9px] font-black text-zinc-800 uppercase tracking-[0.5em] relative z-10">
+      <footer className="py-20 text-center text-[10px] font-black text-zinc-800 uppercase tracking-[0.6em] relative z-10">
         © {new Date().getFullYear()} Vet IA • Powered by WS Studios
       </footer>
 
-      {/* Modals */}
       <AnalysisModal 
-        type={modalType}
-        isOpen={!!modalType}
-        onClose={closeModal}
+        type="text"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         onSuccess={() => {}}
       />
     </div>
