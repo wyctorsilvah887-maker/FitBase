@@ -34,7 +34,7 @@ export default function Home() {
             <h2 className="text-3xl md:text-5xl font-headline font-bold tracking-tight leading-[1.1]">
               Cuidando do seu <span className="text-primary italic">pet</span><br className="hidden md:block" /> com inteligência
             </h2>
-            <p className="text-zinc-500 max-w-xl mx-auto text-sm md:text-base leading-relaxed font-medium px-4">
+            <p className="text-zinc-500 max-w-xl mx-auto text-[11px] md:text-[13px] leading-relaxed font-medium px-4 opacity-80">
               Análise inteligente de sintomas e nutrição animal. O bem-estar do seu amigo começa com a prevenção avançada da WS Studios.
             </p>
           </div>
@@ -72,6 +72,7 @@ export default function Home() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSuccess={() => {}}
+        type="text"
       />
     </div>
   );
