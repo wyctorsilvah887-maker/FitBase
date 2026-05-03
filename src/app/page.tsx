@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, PawPrint, Plus, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, PawPrint, CheckCircle2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -73,43 +73,6 @@ export default function Home() {
             >
               Análise de Imagem
             </Button>
-          </div>
-        </section>
-
-        {/* Pets Section */}
-        <section className="space-y-8 max-w-md">
-          <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.3em] text-white uppercase">
-            <span className="w-2 h-2 rounded-full bg-primary" />
-            Meus Pets
-          </div>
-
-          <div className="space-y-3">
-            <Card className="bg-zinc-950 border-zinc-900/50 group cursor-pointer hover:border-primary/50 transition-all rounded-2xl">
-              <CardContent className="p-5 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <Avatar className="w-12 h-12 rounded-xl border border-white/10">
-                      <AvatarImage src="https://picsum.photos/seed/kira/100/100" />
-                      <AvatarFallback>KI</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-base leading-tight">kira</h3>
-                    <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mt-0.5">
-                      Cachorro • Poodle
-                    </p>
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-full bg-white/5 group-hover:bg-primary/10 transition-colors">
-                  <PawPrint className="w-3 h-3 text-zinc-500 group-hover:text-primary transition-colors" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <button className="w-full h-20 rounded-2xl border-2 border-dashed border-zinc-900 flex items-center justify-center gap-3 text-zinc-700 hover:text-primary hover:border-primary/30 hover:bg-primary/5 transition-all group">
-              <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">Adicionar Pet</span>
-            </button>
           </div>
         </section>
 
