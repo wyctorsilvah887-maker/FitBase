@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ShieldCheck, PawPrint, CheckCircle2 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnalysisModal } from "@/components/AnalysisModal";
@@ -20,25 +19,13 @@ export default function Home() {
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
       <div className="fixed inset-0 bg-noise pointer-events-none" />
       
-      {/* Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 py-8 flex items-center">
-        <div className="flex-1 flex justify-center">
-          <div className="flex items-center gap-2 group cursor-pointer">
-            <PawPrint className="w-6 h-6 text-primary" />
-            <h1 className="text-xl font-headline font-bold tracking-tighter">
-              Vet <span className="text-primary italic">IA</span>
-            </h1>
-          </div>
-        </div>
-
-        <div className="absolute right-6 flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white">CEO/WYCTOR</p>
-          </div>
-          <Avatar className="w-10 h-10 border-2 border-white/5">
-            <AvatarImage src="https://picsum.photos/seed/wyctor/100/100" />
-            <AvatarFallback>WY</AvatarFallback>
-          </Avatar>
+      {/* Header - Agora apenas com a logo centralizada */}
+      <header className="relative z-10 max-w-7xl mx-auto px-6 py-8 flex justify-center">
+        <div className="flex items-center gap-2 group cursor-default">
+          <PawPrint className="w-6 h-6 text-primary" />
+          <h1 className="text-xl font-headline font-bold tracking-tighter">
+            Vet <span className="text-primary italic">IA</span>
+          </h1>
         </div>
       </header>
 
@@ -76,7 +63,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Footer Card */}
+        {/* WS Studios Card */}
         <section className="pt-8">
           <div className="relative group">
             <div className="absolute -inset-0.5 bg-primary/20 rounded-[2.5rem] blur-2xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
