@@ -55,7 +55,7 @@ export default function Home() {
         <section className="pt-8">
           <div className="relative group">
             <div className="absolute -inset-1 bg-primary/10 rounded-[3rem] blur-3xl opacity-0 group-hover:opacity-100 transition duration-1000"></div>
-            <Card className="relative bg-zinc-950/50 border-zinc-900 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
+            <Card className="relative bg-zinc-950/20 border-zinc-900 rounded-[2.5rem] overflow-hidden backdrop-blur-sm">
               <CardContent className="p-12 md:p-20 flex flex-col items-center text-center space-y-8 md:space-y-10">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
                   <ShieldCheck className="w-7 h-7 text-primary" />
