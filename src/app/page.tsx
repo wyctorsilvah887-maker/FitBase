@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, PawPrint, CheckCircle2, Sparkles } from "lucide-react";
+import { ShieldCheck, PawPrint, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnalysisModal } from "@/components/AnalysisModal";
-import { AnalysisEntry } from "@/app/lib/history-store";
 
 export default function Home() {
   const [modalType, setModalType] = useState<'text' | 'image' | null>(null);
@@ -44,19 +43,12 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4 px-4 max-w-sm mx-auto sm:max-w-none">
+          <div className="flex justify-center pt-4 px-4">
             <Button 
               onClick={() => openModal('text')}
-              className="w-full sm:w-auto rounded-full px-8 h-14 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-lg shadow-primary/10"
+              className="w-full sm:w-auto rounded-full px-12 h-14 text-[10px] font-black uppercase tracking-[0.2em] hover:scale-105 transition-transform shadow-lg shadow-primary/10"
             >
-              Análise de Texto
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => openModal('image')}
-              className="w-full sm:w-auto rounded-full px-8 h-14 text-[10px] font-black uppercase tracking-[0.2em] border-white/10 hover:bg-primary/10 hover:border-primary transition-all"
-            >
-              Análise de Imagem
+              Iniciar Análise de Texto
             </Button>
           </div>
         </section>
