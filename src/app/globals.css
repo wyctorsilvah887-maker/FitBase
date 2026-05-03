@@ -4,47 +4,26 @@
 
 @layer base {
   :root {
-    --background: 165 12% 95%;
-    --foreground: 165 40% 10%;
-    --card: 0 0% 100%;
-    --card-foreground: 165 40% 10%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 165 40% 10%;
-    --primary: 166 57% 42%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 165 20% 90%;
-    --secondary-foreground: 166 57% 30%;
-    --muted: 165 10% 85%;
-    --muted-foreground: 165 20% 40%;
-    --accent: 110 69% 55%;
-    --accent-foreground: 110 80% 15%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 3%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 142 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 142 100% 50%;
+    --accent-foreground: 0 0% 0%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 165 20% 85%;
-    --input: 165 20% 85%;
-    --ring: 166 57% 42%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 142 100% 50%;
     --radius: 1rem;
-  }
-  .dark {
-    --background: 165 40% 5%;
-    --foreground: 165 10% 95%;
-    --card: 165 40% 8%;
-    --card-foreground: 165 10% 95%;
-    --popover: 165 40% 8%;
-    --popover-foreground: 165 10% 95%;
-    --primary: 166 57% 42%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 165 30% 15%;
-    --secondary-foreground: 165 10% 95%;
-    --muted: 165 30% 15%;
-    --muted-foreground: 165 10% 60%;
-    --accent: 110 69% 55%;
-    --accent-foreground: 165 40% 5%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 165 30% 20%;
-    --input: 165 30% 20%;
-    --ring: 166 57% 42%;
   }
 }
 
@@ -53,9 +32,14 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
   }
+}
+
+.bg-grid-white {
+  background-size: 40px 40px;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 }

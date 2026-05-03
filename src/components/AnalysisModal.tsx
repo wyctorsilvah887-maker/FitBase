@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
 import { analyzeImageInput } from "@/ai/flows/analyze-image-input";
-import { Loader2, Send, Camera, Upload, AlertCircle } from "lucide-react";
+import { Loader2, Send, Camera, Upload, AlertCircle, Sparkles } from "lucide-react";
 import { saveAnalysis } from "@/app/lib/history-store";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
@@ -76,122 +76,130 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-headline">
-            {type === 'text' ? 'Análise de Texto' : 'Análise de Imagem'}
-          </DialogTitle>
-          <DialogDescription>
-            {type === 'text' 
-              ? 'Descreva os sintomas do seu animal ou os ingredientes da ração para análise.' 
-              : 'Tire uma foto do rótulo da ração ou do sintoma visível para análise.'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 overflow-hidden rounded-3xl">
+        <div className="p-8 space-y-8">
+          <DialogHeader>
+            <DialogTitle className="text-3xl font-headline font-black tracking-tight">
+              {type === 'text' ? 'Análise de Texto' : 'Análise de Imagem'}
+            </DialogTitle>
+            <DialogDescription className="text-zinc-500 font-medium">
+              {type === 'text' 
+                ? 'Descreva o que seu pet está sentindo para uma análise profunda.' 
+                : 'Envie uma foto do alimento ou do sintoma visível.'}
+            </DialogDescription>
+          </DialogHeader>
 
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Erro</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+          {error && (
+            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle className="font-bold">Ops!</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-        {!result ? (
-          <div className="space-y-4 py-4">
-            {type === 'text' ? (
-              <>
-                <Textarea 
-                  placeholder="Ex: Meu cachorro está com coceira intensa na orelha e pele vermelha..." 
-                  className="min-h-[150px] text-base"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  disabled={isLoading}
-                />
-                <Button 
-                  className="w-full h-12 text-lg font-medium" 
-                  onClick={handleTextAnalysis}
-                  disabled={isLoading || !input.trim()}
-                >
-                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Send className="w-5 h-5 mr-2" />}
-                  Analisar Agora
-                </Button>
-              </>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button 
-                  variant="outline" 
-                  className="h-32 flex flex-col gap-2 border-dashed border-2 hover:border-primary hover:bg-secondary/20"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isLoading}
-                >
-                  <Upload className="w-8 h-8 text-primary" />
-                  <span>Enviar Foto</span>
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="h-32 flex flex-col gap-2 border-dashed border-2 hover:border-primary hover:bg-secondary/20"
-                  onClick={() => fileInputRef.current?.click()} // Camera button can also trigger file input which often prompts camera on mobile
-                  disabled={isLoading}
-                >
-                  <Camera className="w-8 h-8 text-primary" />
-                  <span>Tirar Foto</span>
-                </Button>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  ref={fileInputRef} 
-                  onChange={handleFileUpload}
-                  capture="environment"
-                />
-                {isLoading && (
-                  <div className="col-span-full flex flex-col items-center justify-center py-8 gap-4">
-                    <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                    <p className="text-muted-foreground animate-pulse">A IA está analisando sua imagem...</p>
-                  </div>
-                )}
+          {!result ? (
+            <div className="space-y-6">
+              {type === 'text' ? (
+                <>
+                  <Textarea 
+                    placeholder="Ex: Meu cachorro está com coceira intensa e vermelhidão na orelha esquerda..." 
+                    className="min-h-[180px] bg-zinc-900 border-zinc-800 focus-visible:ring-primary rounded-2xl p-6 text-base placeholder:text-zinc-700"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <Button 
+                    className="w-full h-14 rounded-2xl text-sm font-bold uppercase tracking-widest shadow-xl shadow-primary/10" 
+                    onClick={handleTextAnalysis}
+                    disabled={isLoading || !input.trim()}
+                  >
+                    {isLoading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Sparkles className="w-5 h-5 mr-2" />}
+                    Gerar Análise IA
+                  </Button>
+                </>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <Button 
+                    variant="outline" 
+                    className="h-40 flex flex-col gap-3 bg-zinc-900/50 border-zinc-800 border-dashed border-2 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isLoading}
+                  >
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Upload className="w-6 h-6 text-primary" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest">Enviar Arquivo</span>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="h-40 flex flex-col gap-3 bg-zinc-900/50 border-zinc-800 border-dashed border-2 hover:border-primary hover:bg-primary/5 rounded-2xl transition-all"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isLoading}
+                  >
+                    <div className="p-3 rounded-full bg-primary/10">
+                      <Camera className="w-6 h-6 text-primary" />
+                    </div>
+                    <span className="text-xs font-bold uppercase tracking-widest">Usar Câmera</span>
+                  </Button>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    ref={fileInputRef} 
+                    onChange={handleFileUpload}
+                  />
+                  {isLoading && (
+                    <div className="col-span-full flex flex-col items-center justify-center py-12 gap-4 animate-in fade-in zoom-in">
+                      <div className="relative">
+                        <Loader2 className="w-12 h-12 animate-spin text-primary" />
+                        <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse"></div>
+                      </div>
+                      <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.2em] animate-pulse">Analisando Bio-dados...</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="bg-primary/5 p-6 rounded-2xl border border-primary/20">
+                <h3 className="text-xs font-black text-primary uppercase tracking-[0.2em] mb-3 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Veredito da IA
+                </h3>
+                <p className="text-sm leading-relaxed text-zinc-300">
+                  {type === 'text' ? result.analysisSummary : result.analysis}
+                </p>
               </div>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-6 py-4">
-            <div className="bg-secondary/30 p-4 rounded-lg border border-teal-100">
-              <h3 className="font-headline font-semibold text-primary mb-2 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
-                Resumo da Análise
-              </h3>
-              <p className="text-sm leading-relaxed">
-                {type === 'text' ? result.analysisSummary : result.analysis}
-              </p>
-            </div>
-            
-            {type === 'text' && (
-              <>
-                <div className="space-y-2">
-                  <h3 className="font-headline font-semibold flex items-center gap-2">Insights</h3>
-                  <div className="text-sm prose prose-slate max-w-none prose-sm leading-relaxed">
-                    {result.insights}
+              
+              {type === 'text' && (
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-black text-white uppercase tracking-[0.2em]">Insights Detalhados</h3>
+                    <div className="text-sm text-zinc-400 leading-relaxed whitespace-pre-line bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800">
+                      {result.insights}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-black text-primary uppercase tracking-[0.2em]">Próximos Passos</h3>
+                    <div className="text-sm font-bold leading-relaxed text-white bg-primary/10 p-6 rounded-2xl border border-primary/20 whitespace-pre-line">
+                      {result.recommendations}
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <h3 className="font-headline font-semibold flex items-center gap-2 text-accent-foreground bg-accent/20 px-3 py-1 rounded-full w-fit">Recomendações</h3>
-                  <div className="text-sm font-medium leading-relaxed bg-accent/5 p-3 rounded-lg border border-accent/20">
-                    {result.recommendations}
-                  </div>
-                </div>
-              </>
-            )}
+              )}
 
-            <div className="pt-4 border-t">
-              <p className="text-[10px] text-muted-foreground italic uppercase tracking-wider mb-4">
-                Aviso: Esta ferramenta utiliza IA e não substitui uma consulta veterinária profissional.
-              </p>
-              <Button className="w-full" onClick={handleClose}>
-                Fechar e Voltar
-              </Button>
+              <div className="pt-6 border-t border-zinc-900">
+                <p className="text-[9px] text-zinc-600 font-bold uppercase tracking-widest text-center mb-6">
+                  AVISO: RESULTADOS BASEADOS EM IA. CONSULTE UM VETERINÁRIO.
+                </p>
+                <Button className="w-full h-12 rounded-xl font-bold uppercase tracking-widest" onClick={handleClose}>
+                  Finalizar
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );
