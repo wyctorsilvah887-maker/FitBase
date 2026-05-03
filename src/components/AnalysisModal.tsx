@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { saveAnalysis } from "@/app/lib/history-store";
+import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 interface AnalysisModalProps {
@@ -21,15 +22,31 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
+
+  useEffect(() => {
+    if (isOpen) {
+      setLimitStatus(checkLimit('analysis'));
+    }
+  }, [isOpen]);
 
   const handleTextAnalysis = async () => {
     if (!input.trim()) return;
+    
+    const { allowed } = checkLimit('analysis');
+    if (!allowed) {
+      setError("Você atingiu o limite de 6 análises hoje. Volte amanhã! 🐾");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     try {
       const output = await analyzeTextualInput({ description: input });
       setResult(output);
       saveAnalysis({ type: 'text', input, output });
+      incrementUsage('analysis');
+      setLimitStatus(checkLimit('analysis'));
       onSuccess();
     } catch (err) {
       setError("Ocorreu um erro ao processar sua solicitação. Tente novamente.");
@@ -50,12 +67,19 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
       <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar">
         <div className="p-8 md:p-12 space-y-8">
           <DialogHeader className="text-left relative">
-            <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
-              Nova Análise
-            </DialogTitle>
-            <DialogDescription className="text-zinc-500 font-medium text-sm md:text-base mt-2">
-              Descreva os sintomas ou a dieta do seu pet.
-            </DialogDescription>
+            <div className="flex justify-between items-start">
+              <div>
+                <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
+                  Nova Análise
+                </DialogTitle>
+                <DialogDescription className="text-zinc-500 font-medium text-sm md:text-base mt-2">
+                  Descreva os sintomas ou a dieta do seu pet.
+                </DialogDescription>
+              </div>
+              <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-zinc-400">
+                {limitStatus.remaining} restantes hoje
+              </div>
+            </div>
           </DialogHeader>
 
           {error && (
@@ -73,12 +97,12 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                 className="min-h-[200px] bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary rounded-3xl p-6 md:p-8 text-sm md:text-base placeholder:text-zinc-700 resize-none border-2 transition-all"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                disabled={isLoading}
+                disabled={isLoading || !limitStatus.allowed}
               />
               <Button 
                 className="w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-primary/10 bg-primary text-black hover:bg-primary/90 disabled:opacity-30" 
                 onClick={handleTextAnalysis}
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || !input.trim() || !limitStatus.allowed}
               >
                 {isLoading ? (
                   <>
@@ -109,13 +133,13 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em] px-2">Insights Detalhados</h3>
                   <div className="text-sm md:text-base text-zinc-400 leading-relaxed whitespace-pre-line bg-zinc-900/30 p-8 rounded-3xl border border-zinc-900">
-                    {result.insights.replace(/<[^>]*>?/gm, '')}
+                    {result.insights}
                   </div>
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] px-2">Recomendações Vet IA</h3>
                   <div className="text-sm md:text-base font-bold leading-relaxed text-white bg-primary/10 p-8 rounded-3xl border border-primary/20 whitespace-pre-line">
-                    {result.recommendations.replace(/<[^>]*>?/gm, '')}
+                    {result.recommendations}
                   </div>
                 </div>
               </div>
