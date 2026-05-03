@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import { ShieldCheck, Sparkles, AlertCircle, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
+import { CareGuideModal } from "@/components/CareGuideModal";
 import Header from "@/components/Header";
 import Link from "next/link";
 
 export default function Home() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
+  const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
@@ -34,13 +36,21 @@ export default function Home() {
           </div>
 
           <div className="space-y-6">
-            <div className="flex justify-center px-4">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
               <Button 
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => setIsAnalysisModalOpen(true)}
                 className="w-full sm:w-auto rounded-full px-8 h-12 text-[10px] font-black uppercase tracking-[0.25em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Iniciar Análise IA
+              </Button>
+              <Button 
+                onClick={() => setIsCareGuideModalOpen(true)}
+                variant="outline"
+                className="w-full sm:w-auto rounded-full px-8 h-12 text-[10px] font-black uppercase tracking-[0.25em] hover:scale-105 transition-all border-zinc-800 hover:bg-zinc-900 text-white"
+              >
+                <ClipboardList className="w-4 h-4 mr-2" />
+                Gerar Guia de Cuidados
               </Button>
             </div>
 
@@ -93,10 +103,15 @@ export default function Home() {
       </footer>
 
       <AnalysisModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isAnalysisModalOpen}
+        onClose={() => setIsAnalysisModalOpen(false)}
         onSuccess={() => {}}
         type="text"
+      />
+
+      <CareGuideModal 
+        isOpen={isCareGuideModalOpen}
+        onClose={() => setIsCareGuideModalOpen(false)}
       />
     </div>
   );
