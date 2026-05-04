@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -68,65 +67,69 @@ export default function Home() {
         </section>
 
         {/* Action Cards Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-          {/* Card Análise IA */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+          {/* Card Análise IA - Graphite & Gradient */}
           <div 
             onClick={handleStartAnalysis}
-            className="group cursor-pointer bg-zinc-900/20 backdrop-blur-xl border border-white/5 hover:border-primary/40 p-8 rounded-[2.5rem] transition-all duration-700 hover:scale-[1.02] shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[240px] md:min-h-[260px]"
+            className="group relative cursor-pointer"
           >
-            {/* Glossy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            {/* Glow Background Effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-zinc-800 rounded-[2.5rem] blur opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
             
-            <div className="absolute -top-12 -right-12 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 group-hover:rotate-12 group-hover:scale-110">
-              <Sparkles className="w-48 h-48 text-primary" />
-            </div>
-            
-            <div className="relative z-10 space-y-6">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/5 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/50 transition-all duration-700 shadow-inner group-hover:shadow-primary/10">
-                <Sparkles className="w-7 h-7 text-primary animate-pulse" />
+            <div className="relative flex flex-col justify-between min-h-[260px] p-8 bg-zinc-950 border border-white/5 rounded-[2.5rem] transition-all duration-700 group-hover:bg-gradient-to-br group-hover:from-zinc-900 group-hover:to-black overflow-hidden shadow-2xl">
+              {/* Graphite Texture / Glossy Overlay */}
+              <div className="absolute inset-0 bg-noise opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
+              
+              <div className="relative z-10 space-y-6">
+                <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/50 transition-all duration-700 shadow-inner group-hover:shadow-primary/20">
+                  <Sparkles className="w-7 h-7 text-primary animate-pulse" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter group-hover:text-primary transition-colors duration-500">Análise de Saúde IA</h3>
+                  <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.1em] leading-relaxed">
+                    Descreva sintomas e receba uma análise preliminar instantânea baseada em dados veterinários globais.
+                  </p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter group-hover:text-primary transition-colors">Análise de Saúde IA</h3>
-                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                  Descreva sintomas e receba uma análise preliminar instantânea baseada em dados veterinários globais.
-                </p>
-              </div>
-            </div>
 
-            <div className="relative z-10 pt-4">
-              <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-4 transition-all duration-500">
-                Iniciar Análise <ChevronRight className="w-4 h-4" />
+              <div className="relative z-10 pt-4">
+                <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-4 transition-all duration-500">
+                  Iniciar Análise <ChevronRight className="w-4 h-4" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Card Guia de Cuidados */}
+          {/* Card Guia de Cuidados - Graphite & Gradient */}
           <div 
             onClick={handleGenerateGuide}
-            className="group cursor-pointer bg-zinc-900/20 backdrop-blur-xl border border-white/5 hover:border-primary/40 p-8 rounded-[2.5rem] transition-all duration-700 hover:scale-[1.02] shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[240px] md:min-h-[260px]"
+            className="group relative cursor-pointer"
           >
-            {/* Glossy Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-            <div className="absolute -top-12 -right-12 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-1000 group-hover:-rotate-12 group-hover:scale-110">
-              <ClipboardList className="w-48 h-48 text-primary" />
-            </div>
+            {/* Glow Background Effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-zinc-800 to-primary/30 rounded-[2.5rem] blur opacity-20 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
             
-            <div className="relative z-10 space-y-6">
-              <div className="w-14 h-14 rounded-2xl bg-zinc-950 border border-white/5 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/50 transition-all duration-700 shadow-inner group-hover:shadow-primary/10">
-                <ClipboardList className="w-7 h-7 text-primary" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter group-hover:text-primary transition-colors">Guia Personalizado</h3>
-                <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                  Gere um manual de cuidados específicos para a raça, idade e necessidades biológicas do seu pet.
-                </p>
-              </div>
-            </div>
+            <div className="relative flex flex-col justify-between min-h-[260px] p-8 bg-zinc-950 border border-white/5 rounded-[2.5rem] transition-all duration-700 group-hover:bg-gradient-to-br group-hover:from-zinc-900 group-hover:to-black overflow-hidden shadow-2xl">
+              {/* Graphite Texture / Glossy Overlay */}
+              <div className="absolute inset-0 bg-noise opacity-[0.03] group-hover:opacity-[0.07] transition-opacity"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
 
-            <div className="relative z-10 pt-4">
-              <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-4 transition-all duration-500">
-                Criar Manual <ChevronRight className="w-4 h-4" />
+              <div className="relative z-10 space-y-6">
+                <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/50 transition-all duration-700 shadow-inner group-hover:shadow-primary/20">
+                  <ClipboardList className="w-7 h-7 text-primary" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter group-hover:text-primary transition-colors duration-500">Guia Personalizado</h3>
+                  <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.1em] leading-relaxed">
+                    Gere um manual de cuidados específicos para a raça, idade e necessidades biológicas do seu pet.
+                  </p>
+                </div>
+              </div>
+
+              <div className="relative z-10 pt-4">
+                <div className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-4 transition-all duration-500">
+                  Criar Manual <ChevronRight className="w-4 h-4" />
+                </div>
               </div>
             </div>
           </div>
