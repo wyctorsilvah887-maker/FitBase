@@ -8,8 +8,7 @@ import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
 import Header from "@/components/Header";
 import Link from "next/link";
-import { useAuth, useUser } from "@/firebase";
-import { signInAnonymously } from "firebase/auth";
+import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
 
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
@@ -17,15 +16,23 @@ export default function Home() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   
   const auth = useAuth();
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
-    // Garante que o usuário esteja logado anonimamente para usar o banco de dados
-    if (!user) {
-      signInAnonymously(auth).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    // Tenta o login anônimo apenas se não houver usuário e não estiver carregando
+    if (!isUserLoading && !user) {
+      try {
+        initiateAnonymousSignIn(auth);
+      } catch (err) {
+        // Silencia erro admin-restricted se o provedor não estiver ativo no console
+        console.warn("Aviso: Login anônimo pode não estar habilitado no Console do Firebase.");
+      }
     }
-  }, [auth, user]);
+  }, [auth, user, isUserLoading]);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
