@@ -19,7 +19,7 @@ interface CareGuideModalProps {
   onSuccess?: () => void;
 }
 
-type GuideType = 'cuidados' | 'saude' | 'adestramento' | 'nutricao';
+type GuideType = 'saude' | 'adestramento' | 'nutricao';
 
 export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalProps) {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
     species: "",
     breed: "",
     age: "",
-    guideType: "cuidados" as GuideType
+    guideType: "nutricao" as GuideType
   });
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -55,7 +55,8 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
     setIsLoading(true);
     setError(null);
     try {
-      const output = await generateCareGuide(formData);
+      // O fluxo Genkit ainda aceita 'cuidados', mas não ofereceremos mais no formulário
+      const output = await generateCareGuide(formData as any);
       setResult(output);
 
       const guidesRef = collection(db, "users", user.uid, "careGuides");
@@ -78,7 +79,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
 
   const handleClose = () => {
     setResult(null);
-    setFormData({ name: "", species: "", breed: "", age: "", guideType: "cuidados" });
+    setFormData({ name: "", species: "", breed: "", age: "", guideType: "nutricao" });
     setError(null);
     onClose();
   };
@@ -164,11 +165,10 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                     <SelectTrigger className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 text-sm">
                       <SelectValue placeholder="Selecione o foco" />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-950 border-zinc-800 text-white rounded-xl">
-                      <SelectItem value="cuidados" className="focus:bg-primary/20">Cuidados Gerais</SelectItem>
+                    <SelectContent className="bg-zinc-950 border-zinc-900 text-white rounded-xl">
+                      <SelectItem value="nutricao" className="focus:bg-primary/20">Nutrição</SelectItem>
                       <SelectItem value="saude" className="focus:bg-primary/20">Saúde & Prevenção</SelectItem>
                       <SelectItem value="adestramento" className="focus:bg-primary/20">Adestramento</SelectItem>
-                      <SelectItem value="nutricao" className="focus:bg-primary/20">Nutrição</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
