@@ -40,88 +40,92 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent 
-        className="w-[92vw] sm:max-w-md bg-black border-zinc-900 text-white rounded-[2rem] p-0 outline-none shadow-2xl overflow-hidden [&>button]:hidden"
+        className="w-[92vw] sm:max-w-md bg-black border-zinc-900 text-white rounded-[2.5rem] p-0 outline-none shadow-2xl overflow-hidden [&>button]:hidden"
       >
-        <div className="p-6 md:p-8 space-y-5">
-          <DialogHeader className="text-center space-y-3">
-            <div className="mx-auto bg-primary/10 p-3 rounded-full ring-2 ring-primary/20 w-fit relative overflow-hidden">
-              {/* Efeito de Flash Pulsante no Escudo */}
-              <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse blur-xl" />
+        <div className="p-6 md:p-10 space-y-8">
+          <DialogHeader className="text-center space-y-4">
+            {/* Ícone de Escudo com Efeito de Sweep */}
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden group shadow-2xl shadow-primary/5">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
               
-              {/* Sweep Animation Effect no Escudo - Gradiente Intenso */}
+              {/* Sweep Animation Effect no Escudo */}
               {isAnimating && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-sweep" />
                 </div>
               )}
               
-              <ShieldCheck className="h-8 w-8 text-primary relative z-10" />
+              <ShieldCheck className="h-10 w-10 text-primary relative z-10" />
             </div>
+
             <div className="space-y-1">
-              <DialogTitle className="text-xl md:text-2xl font-headline font-black uppercase tracking-tighter">
-                <span className="animate-text-flash italic inline-block pr-2">Segurança</span> <span className="text-zinc-500">&</span> Privacidade
+              <DialogTitle className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">
+                <span className="animate-text-flash italic inline-block pr-2">Segurança</span> <span className="text-white">&</span> <span className="text-zinc-500">Privacidade</span>
               </DialogTitle>
-              <DialogDescription className="text-zinc-600 text-[8px] uppercase font-bold tracking-[0.2em]">
+              <DialogDescription className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
                 WS Studios • Protocolo Veterinário
               </DialogDescription>
             </div>
           </DialogHeader>
 
           <div className="relative">
-            <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
-            <ScrollArea className="h-[140px] md:h-[180px] pr-3 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium">
-              <div className="space-y-4 pb-6">
-                <p>
-                  <strong className="text-zinc-300">1. Natureza da IA:</strong> Você compreende que a Vet IA é um assistente experimental da WS Studios. As análises são baseadas em processamento de dados e não substituem exames clínicos presenciais.
-                </p>
-                <p>
-                  <strong className="text-zinc-300">2. Uso Responsável:</strong> O tutor é o único responsável pelas ações tomadas com base nas informações recebidas. Em caso de emergência, procure um veterinário imediatamente.
-                </p>
-                <p>
-                  <strong className="text-zinc-300">3. Tratamento de Dados:</strong> Suas interações são processadas para melhorar a precisão da IA. Seus dados são protegidos conforme a LGPD e nunca compartilhados sem consentimento.
-                </p>
-                <p>
-                  <strong className="text-zinc-300">4. Limitações:</strong> O sistema possui limites de uso diário para garantir a qualidade do serviço para toda a comunidade de tutores.
-                </p>
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+            <ScrollArea className="h-[140px] md:h-[180px] pr-4 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium custom-scrollbar">
+              <div className="space-y-6 pb-8">
+                <div className="space-y-2">
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">01. Natureza da IA</h4>
+                  <p>A Vet IA é um assistente experimental da WS Studios. As análises são baseadas em processamento de dados e não substituem exames clínicos presenciais.</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">02. Uso Responsável</h4>
+                  <p>O tutor é o único responsável pelas ações tomadas com base nas informações recebidas. Em caso de emergência, procure um veterinário imediatamente.</p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">03. Tratamento de Dados</h4>
+                  <p>Suas interações são processadas para melhorar a precisão da IA. Seus dados são protegidos conforme a LGPD e nunca compartilhados.</p>
+                </div>
               </div>
             </ScrollArea>
           </div>
 
-          <div className="flex items-center space-x-3 bg-zinc-950 p-3 rounded-xl border border-zinc-900 transition-all hover:border-primary/20 group">
-            <Checkbox 
-              id="terms" 
-              checked={hasAgreed} 
-              onCheckedChange={(checked) => setHasAgreed(checked as boolean)}
-              className="border-zinc-800 data-[state=checked]:bg-primary data-[state=checked]:text-black h-4 w-4 rounded-md"
-            />
-            <label 
-              htmlFor="terms" 
-              className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest leading-none cursor-pointer group-hover:text-zinc-400 transition-colors"
-            >
-              Li e concordo com os termos
-            </label>
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900 transition-all hover:border-primary/20 group cursor-pointer" onClick={() => setHasAgreed(!hasAgreed)}>
+              <Checkbox 
+                id="terms" 
+                checked={hasAgreed} 
+                onCheckedChange={(checked) => setHasAgreed(checked as boolean)}
+                className="border-zinc-800 data-[state=checked]:bg-primary data-[state=checked]:text-black h-5 w-5 rounded-lg transition-all"
+              />
+              <label 
+                htmlFor="terms" 
+                className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none cursor-pointer group-hover:text-zinc-400 transition-colors"
+              >
+                Li e concordo com os termos
+              </label>
+            </div>
+
+            <DialogFooter>
+              <div className="relative w-full overflow-hidden rounded-[1.5rem]">
+                {/* Sweep Animation Effect no Botão */}
+                {isAnimating && (
+                  <div className="absolute inset-0 z-20 pointer-events-none">
+                    <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
+                  </div>
+                )}
+                <Button 
+                  className="w-full h-14 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all relative z-10 shadow-xl shadow-primary/5 active:scale-[0.98]"
+                  disabled={!hasAgreed || isAnimating}
+                  onClick={handleAccept}
+                >
+                  {isAnimating ? "Ativando Protocolo..." : "Confirmar e Iniciar"}
+                </Button>
+              </div>
+            </DialogFooter>
           </div>
 
-          <DialogFooter className="pt-1">
-            <div className="relative w-full overflow-hidden rounded-xl">
-              {isAnimating && (
-                <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
-                </div>
-              )}
-              <Button 
-                className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all relative z-10"
-                disabled={!hasAgreed || isAnimating}
-                onClick={handleAccept}
-              >
-                Confirmar e Iniciar
-              </Button>
-            </div>
-          </DialogFooter>
-
-          <div className="flex items-center justify-center gap-2 opacity-10 grayscale">
-            <PawPrint className="w-2.5 h-2.5 text-primary" />
-            <span className="text-[7px] font-black uppercase tracking-widest text-white">Vet IA Security Shield</span>
+          <div className="flex items-center justify-center gap-3 opacity-20 grayscale hover:opacity-40 transition-all duration-700">
+            <PawPrint className="w-3 h-3 text-primary" />
+            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">Vet IA Security Shield</span>
           </div>
         </div>
       </DialogContent>
