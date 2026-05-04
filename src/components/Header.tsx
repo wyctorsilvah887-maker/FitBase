@@ -22,8 +22,13 @@ export default function Header() {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut(auth);
-    router.push('/');
+    try {
+      await signOut(auth);
+      // Redireciona para a página de login após o logout
+      router.push('/login');
+    } catch (error) {
+      console.error('Erro ao sair:', error);
+    }
   };
 
   return (
