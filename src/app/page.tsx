@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint } from "lucide-react";
+import { ShieldCheck, Sparkles, ClipboardList, PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
@@ -83,13 +83,6 @@ export default function Home() {
                 <ClipboardList className="w-4 h-4 mr-2" />
                 Gerar Guia de Cuidados
               </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-zinc-600 animate-pulse">
-              <AlertCircle className="w-3 h-3 text-primary/40" />
-              <p className="text-[7px] font-bold uppercase tracking-[0.25em]">
-                Importante: Leia os <Link href="/terms" className="text-zinc-400 hover:text-primary underline underline-offset-2 transition-colors">termos de uso</Link> antes de iniciar.
-              </p>
             </div>
           </div>
         </section>
