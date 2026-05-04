@@ -33,7 +33,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
         updatedAt: serverTimestamp(),
       }, { merge: true });
       setIsAnimating(false);
-    }, 600);
+    }, 800);
   };
 
   return (
@@ -43,23 +43,25 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
       >
         <div className="p-6 md:p-10 space-y-8">
           <DialogHeader className="text-center space-y-4">
-            {/* Ícone de Escudo com Efeito de Flash Gradiente Contínuo */}
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden group shadow-2xl shadow-primary/5 animate-icon-flash">
+            {/* Ícone de Escudo com Flash Gradiente Contínuo e Sweep ao Clicar */}
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden shadow-2xl shadow-primary/5 animate-icon-flash group">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
               
-              {/* Sweep Animation Effect no Escudo (Disparado no clique) */}
+              {/* Sweep Animation Effect no Escudo (Percorre toda a extensão no clique) */}
               {isAnimating && (
-                <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-sweep" />
+                <div className="absolute inset-0 z-30 pointer-events-none">
+                  <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep -left-1/4" />
                 </div>
               )}
               
-              <ShieldCheck className="h-10 w-10 text-primary relative z-10" />
+              <ShieldCheck className="h-10 w-10 text-primary relative z-10 transition-transform duration-500 group-hover:scale-110" />
             </div>
 
             <div className="space-y-1">
               <DialogTitle className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">
-                <span className="animate-text-flash italic inline-block pr-2">Segurança</span> <span className="text-white">&</span> <span className="text-zinc-500">Privacidade</span>
+                <span className="animate-text-flash italic inline-block pr-2 leading-none">Segurança</span> 
+                <span className="text-white">&</span> 
+                <span className="text-zinc-500 block sm:inline"> Privacidade</span>
               </DialogTitle>
               <DialogDescription className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
                 WS Studios • Protocolo Veterinário
@@ -88,7 +90,10 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center space-x-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900 transition-all hover:border-primary/20 group cursor-pointer" onClick={() => setHasAgreed(!hasAgreed)}>
+            <div 
+              className="flex items-center space-x-3 bg-zinc-950 p-4 rounded-2xl border border-zinc-900 transition-all hover:border-primary/20 group cursor-pointer" 
+              onClick={() => setHasAgreed(!hasAgreed)}
+            >
               <Checkbox 
                 id="terms" 
                 checked={hasAgreed} 
@@ -108,11 +113,11 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                 {/* Sweep Animation Effect no Botão */}
                 {isAnimating && (
                   <div className="absolute inset-0 z-20 pointer-events-none">
-                    <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
+                    <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep -left-1/4" />
                   </div>
                 )}
                 <Button 
-                  className="w-full h-14 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all relative z-10 shadow-xl shadow-primary/5 active:scale-[0.98]"
+                  className="w-full h-14 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.4em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all relative z-10 shadow-xl shadow-primary/10 active:scale-[0.98]"
                   disabled={!hasAgreed || isAnimating}
                   onClick={handleAccept}
                 >
