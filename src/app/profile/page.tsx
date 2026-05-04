@@ -64,7 +64,7 @@ export default function ProfilePage() {
             </div>
             
             <Link href="/">
-              <Button variant="ghost" className="h-12 px-6 rounded-2xl border border-white/5 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-[0.3em] transition-all group">
+              <Button variant="ghost" className="h-12 px-6 rounded-2xl border border-primary/10 bg-primary/5 hover:bg-primary/10 text-[9px] font-black uppercase tracking-[0.3em] transition-all group">
                 <LayoutDashboard className="w-4 h-4 mr-2 group-hover:text-primary transition-colors" />
                 Painel Geral
               </Button>
@@ -131,7 +131,7 @@ export default function ProfilePage() {
                 Linha do Tempo <span className="animate-text-flash italic">Preventiva</span>
               </h3>
             </div>
-            <div className="hidden md:block text-[8px] font-black uppercase tracking-[0.4em] text-zinc-700 bg-white/5 px-4 py-2 rounded-full border border-white/5">
+            <div className="hidden md:block text-[8px] font-black uppercase tracking-[0.4em] text-primary bg-primary/5 px-4 py-2 rounded-full border border-primary/10">
               Dados atualizados em tempo real
             </div>
           </div>
@@ -139,7 +139,7 @@ export default function ProfilePage() {
           <div className="relative group">
              <div className="absolute -inset-1 bg-gradient-to-b from-primary/10 via-transparent to-transparent rounded-[3.5rem] blur-2xl opacity-10" />
              <div className="relative bg-black p-6 md:p-12 rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none" />
                 <HistoryList refreshTrigger={0} />
              </div>
           </div>

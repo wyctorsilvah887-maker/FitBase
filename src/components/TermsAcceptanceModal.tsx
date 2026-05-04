@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -74,7 +75,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
           </DialogHeader>
 
           <div className="relative">
-            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none z-10" />
             <ScrollArea className="h-[140px] md:h-[180px] pr-4 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium custom-scrollbar">
               <div className="space-y-6 pb-8">
                 <div className="space-y-2">

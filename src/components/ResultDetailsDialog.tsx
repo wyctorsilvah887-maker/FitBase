@@ -48,7 +48,7 @@ export function ResultDetailsDialog({ entry, isOpen, onClose }: ResultDetailsDia
               {isImage ? (
                 <div className="relative w-full aspect-video rounded-[1.5rem] overflow-hidden border-2 border-zinc-900 group">
                   <img src={entry.input} alt="Análise de entrada" className="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent" />
                 </div>
               ) : (
                 <div className="bg-zinc-950 p-6 rounded-[1.5rem] border-2 border-zinc-900 italic text-zinc-400 text-sm leading-relaxed">
