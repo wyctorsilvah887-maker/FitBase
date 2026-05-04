@@ -172,20 +172,28 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {formData.guideType === 'saude' && (
+                  <div className="sm:col-span-2 px-4 py-3 bg-primary/10 border border-primary/20 rounded-2xl animate-in fade-in zoom-in slide-in-from-top-2">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.15em] text-center leading-relaxed">
+                      🐾 Módulo de Saúde & Prevenção:<br />Disponível em breve para assinantes premium.
+                    </p>
+                  </div>
+                )}
               </div>
               
               <div className="pt-2">
                 <Button 
                   className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98]" 
                   onClick={handleGenerate}
-                  disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed}
+                  disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed || formData.guideType === 'saude'}
                 >
                   {isLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-2" />
                   ) : (
                     <Sparkles className="w-4 h-4 mr-2" />
                   )}
-                  {isLoading ? "Gerando..." : "Criar Guia Premium"}
+                  {formData.guideType === 'saude' ? "Módulo em Breve" : isLoading ? "Gerando..." : "Criar Guia Premium"}
                 </Button>
                 <p className="text-center mt-4 text-[8px] font-bold text-zinc-700 uppercase tracking-widest flex items-center justify-center gap-2">
                   <PawPrint className="w-2.5 h-2.5" />
