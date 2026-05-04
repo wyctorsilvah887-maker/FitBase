@@ -159,17 +159,26 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Tecnologia WS Studios Card */}
-        <section className="mt-4 rounded-[2.5rem] bg-black backdrop-blur-sm p-8 text-center border border-white/5 max-w-2xl mx-auto shadow-sm">
-          <div className="mb-4 flex justify-center">
-            <div className="bg-primary/10 p-3 rounded-full ring-1 ring-primary/20">
-              <ShieldCheck className="h-6 w-6 text-primary" />
+        {/* Tecnologia WS Studios Card - Enhanced Design */}
+        <section className="mt-4 relative group max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
+          <div className="relative rounded-[2.5rem] bg-black border border-primary/20 p-8 text-center overflow-hidden shadow-2xl transition-all hover:border-primary/40">
+            {/* Subtle premium gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
+            
+            <div className="relative z-10">
+              <div className="mb-5 flex justify-center">
+                <div className="bg-black border border-primary/30 p-3.5 rounded-2xl shadow-inner shadow-primary/5 group-hover:scale-110 transition-transform duration-500 group-hover:border-primary/60">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                </div>
+              </div>
+              <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em] text-white">
+                Tecnologia Preventiva <span className="text-primary italic">WS Studios</span>
+              </h2>
+              <p className="mx-auto max-w-[420px] text-[9px] text-zinc-500 leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
+                Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
+              </p>
             </div>
           </div>
-          <h2 className="font-headline mb-2 text-sm font-bold uppercase tracking-widest text-white">Tecnologia Preventiva WS Studios</h2>
-          <p className="mx-auto max-w-[420px] text-[9px] text-muted-foreground leading-relaxed italic opacity-80 uppercase tracking-tighter">
-            Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
-          </p>
         </section>
       </main>
 
