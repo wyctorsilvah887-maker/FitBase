@@ -16,9 +16,10 @@ import { collection, serverTimestamp } from "firebase/firestore";
 interface CareGuideModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
+export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     species: "",
@@ -65,6 +66,7 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
 
       incrementUsage('guides');
       setLimitStatus(checkLimit('guides'));
+      onSuccess?.();
     } catch (err) {
       setError("Não foi possível gerar o guia agora. Tente novamente.");
     } finally {
@@ -102,7 +104,7 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
           {error && (
             <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl">
               <AlertCircle className="h-5 w-5" />
-              <AlertTitle className="font-bold">Limite Atingido</AlertTitle>
+              <AlertTitle className="font-bold">Atenção</AlertTitle>
               <AlertDescription className="text-xs font-medium">{error}</AlertDescription>
             </Alert>
           )}
@@ -199,7 +201,7 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
                     <p className="text-[9px] font-black uppercase tracking-[0.2em]">Dica de Tutor</p>
                   </div>
                   <p className="text-[10px] text-zinc-500 font-medium leading-relaxed max-w-[280px]">
-                    Tire um <span className="text-white font-bold">print</span> para não esquecer! Em breve teremos funções de salvar dentro do app. 🐾
+                    Todas as informações foram salvas no seu histórico! 🐾
                   </p>
                 </div>
                 

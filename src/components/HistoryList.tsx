@@ -1,76 +1,119 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnalysisEntry, getHistory, clearHistory } from "@/app/lib/history-store";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Clock, Trash2, FileText, ImageIcon, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { useMemoFirebase, useCollection, useUser, useFirestore } from "@/firebase";
+import { collection, query, orderBy, limit } from "firebase/firestore";
+import { Card, CardContent } from "@/components/ui/card";
+import { FileText, ClipboardList, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { ResultDetailsDialog } from "@/components/ResultDetailsDialog";
 
 interface HistoryListProps {
-  onSelect: (entry: AnalysisEntry) => void;
   refreshTrigger: number;
 }
 
-export function HistoryList({ onSelect, refreshTrigger }: HistoryListProps) {
-  const [history, setHistory] = useState<AnalysisEntry[]>([]);
+export function HistoryList({ refreshTrigger }: HistoryListProps) {
+  const { user } = useUser();
+  const db = useFirestore();
+  const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
 
-  useEffect(() => {
-    setHistory(getHistory());
-  }, [refreshTrigger]);
+  // Memoize as consultas para evitar re-renderizações infinitas
+  const textAnalysesQuery = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return query(
+      collection(db, "users", user.uid, "textAnalyses"),
+      orderBy("createdAt", "desc"),
+      limit(5)
+    );
+  }, [user, db, refreshTrigger]);
 
-  const handleClear = () => {
-    clearHistory();
-    setHistory([]);
-  };
+  const careGuidesQuery = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return query(
+      collection(db, "users", user.uid, "careGuides"),
+      orderBy("createdAt", "desc"),
+      limit(5)
+    );
+  }, [user, db, refreshTrigger]);
 
-  if (history.length === 0) return null;
+  const { data: textAnalyses, isLoading: loadingText } = useCollection(textAnalysesQuery);
+  const { data: careGuides, isLoading: loadingGuides } = useCollection(careGuidesQuery);
+
+  const combinedHistory = useMemoFirebase(() => {
+    const list = [
+      ...(textAnalyses || []).map(a => ({ ...a, type: 'text' })),
+      ...(careGuides || []).map(g => ({ ...g, type: 'guide' }))
+    ];
+    return list.sort((a, b) => {
+      const dateA = a.createdAt?.toDate?.() || new Date(0);
+      const dateB = b.createdAt?.toDate?.() || new Date(0);
+      return dateB - dateA;
+    });
+  }, [textAnalyses, careGuides]);
+
+  if (loadingText || loadingGuides) {
+    return (
+      <div className="flex justify-center py-10">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (combinedHistory.length === 0) {
+    return (
+      <div className="text-center py-12 bg-zinc-900/20 rounded-[2rem] border border-white/5">
+        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Nenhum registro encontrado ainda 🐾</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between px-2">
-        <h2 className="text-xl font-headline font-semibold flex items-center gap-2">
-          <Clock className="w-5 h-5 text-primary" />
-          Histórico Recente
-        </h2>
-        <Button variant="ghost" size="sm" onClick={handleClear} className="text-muted-foreground hover:text-destructive">
-          <Trash2 className="w-4 h-4 mr-2" />
-          Limpar
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {history.map((entry) => (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {combinedHistory.map((entry) => (
           <Card 
             key={entry.id} 
-            className="cursor-pointer hover:shadow-md transition-shadow group overflow-hidden border-teal-100"
-            onClick={() => onSelect(entry)}
+            className="group cursor-pointer bg-zinc-900/40 border-zinc-800/50 hover:bg-zinc-800/50 transition-all rounded-3xl overflow-hidden border-2"
+            onClick={() => setSelectedEntry(entry)}
           >
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="p-2 rounded-full bg-secondary/50">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="bg-primary/10 p-3 rounded-2xl ring-1 ring-primary/20">
                   {entry.type === 'text' ? (
-                    <FileText className="w-4 h-4 text-primary" />
+                    <FileText className="w-5 h-5 text-primary" />
                   ) : (
-                    <ImageIcon className="w-4 h-4 text-primary" />
+                    <ClipboardList className="w-5 h-5 text-primary" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground mb-1">
-                    {format(entry.timestamp, "d 'de' MMMM, HH:mm", { locale: ptBR })}
+                  <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 flex items-center gap-2">
+                    {entry.type === 'text' ? 'Análise de Sintomas' : 'Guia de Cuidados'}
+                    <span className="w-1 h-1 rounded-full bg-zinc-700" />
+                    <span className="text-zinc-500">
+                      {entry.createdAt?.toDate?.().toLocaleDateString('pt-BR') || 'Recente'}
+                    </span>
+                  </h4>
+                  <p className="text-xs font-bold text-white truncate">
+                    {entry.type === 'text' ? entry.inputText : `Guia para ${entry.petData?.name}`}
                   </p>
-                  <p className="text-sm font-medium line-clamp-2 mb-1">
-                    {entry.type === 'text' ? entry.input : "Análise de Imagem"}
-                  </p>
-                  <div className="flex items-center text-xs text-primary font-medium group-hover:translate-x-1 transition-transform">
-                    Ver resultado <ChevronRight className="w-3 h-3 ml-1" />
-                  </div>
                 </div>
+                <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-primary transition-colors" />
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
-    </div>
+
+      <ResultDetailsDialog 
+        isOpen={!!selectedEntry}
+        onClose={() => setSelectedEntry(null)}
+        entry={selectedEntry ? {
+          ...selectedEntry,
+          input: selectedEntry.type === 'text' ? selectedEntry.inputText : `Dados de ${selectedEntry.petData?.name}`,
+          output: selectedEntry.type === 'text' ? selectedEntry.aiResponse : selectedEntry.guide,
+          timestamp: selectedEntry.createdAt?.toDate?.().getTime() || Date.now()
+        } : null}
+      />
+    </>
   );
 }

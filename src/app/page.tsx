@@ -2,10 +2,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint } from "lucide-react";
+import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint, History } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
+import { HistoryList } from "@/components/HistoryList";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { useUser } from "@/firebase";
@@ -15,8 +16,9 @@ export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -39,13 +41,17 @@ export default function Home() {
     setIsCareGuideModalOpen(true);
   };
 
+  const handleSuccess = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
       <div className="bg-noise" />
       
       <Header />
 
-      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-12">
+      <main className="relative z-10 max-w-4xl mx-auto px-6 pt-16 md:pt-24 pb-24 space-y-20">
         {/* Hero Section */}
         <section className="text-center space-y-10 md:space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/20 bg-primary/5 text-[7px] font-black tracking-[0.3em] text-primary uppercase">
@@ -81,15 +87,25 @@ export default function Home() {
               </Button>
             </div>
 
-            {/* Aviso Importante */}
             <div className="flex items-center justify-center gap-2 text-zinc-600 animate-pulse">
               <AlertCircle className="w-3 h-3 text-primary/40" />
               <p className="text-[7px] font-bold uppercase tracking-[0.25em]">
-                Importante: Leia os <Link href="/terms" className="text-zinc-400 hover:text-primary underline underline-offset-2 transition-colors">termos de uso</Link> no rodapé antes de iniciar.
+                Importante: Leia os <Link href="/terms" className="text-zinc-400 hover:text-primary underline underline-offset-2 transition-colors">termos de uso</Link> antes de iniciar.
               </p>
             </div>
           </div>
         </section>
+
+        {/* Histórico Section - Only for logged users */}
+        {user && (
+          <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="flex items-center gap-3 px-2">
+              <History className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-headline font-bold tracking-tight uppercase">Seu Histórico de Prevenção</h3>
+            </div>
+            <HistoryList refreshTrigger={refreshTrigger} />
+          </section>
+        )}
 
         {/* Tecnologia WS Studios Card */}
         <section className="mt-8 rounded-2xl bg-gradient-to-b from-white/[0.02] to-transparent p-5 text-center border border-white/5 max-w-md mx-auto">
@@ -132,13 +148,14 @@ export default function Home() {
       <AnalysisModal 
         isOpen={isAnalysisModalOpen}
         onClose={() => setIsAnalysisModalOpen(false)}
-        onSuccess={() => {}}
+        onSuccess={handleSuccess}
         type="text"
       />
 
       <CareGuideModal 
         isOpen={isCareGuideModalOpen}
         onClose={() => setIsCareGuideModalOpen(false)}
+        onSuccess={handleSuccess}
       />
     </div>
   );
