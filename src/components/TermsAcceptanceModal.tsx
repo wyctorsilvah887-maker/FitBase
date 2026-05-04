@@ -47,6 +47,14 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
             <div className="mx-auto bg-primary/10 p-3 rounded-full ring-2 ring-primary/20 w-fit relative overflow-hidden">
               {/* Efeito de Flash Pulsante no Escudo */}
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse blur-xl" />
+              
+              {/* Sweep Animation Effect no Escudo */}
+              {isAnimating && (
+                <div className="absolute inset-0 z-20 pointer-events-none">
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep" />
+                </div>
+              )}
+              
               <ShieldCheck className="h-8 w-8 text-primary relative z-10" />
             </div>
             <div className="space-y-1">
