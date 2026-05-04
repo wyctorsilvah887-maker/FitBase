@@ -86,8 +86,8 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
           <DialogHeader className="text-left relative space-y-2">
             <div className="flex justify-between items-start">
               <div className="space-y-1">
-                <DialogTitle className="text-2xl md:text-3xl font-headline font-black tracking-tighter uppercase">
-                  Manual de <span className="animate-text-flash italic">Bem-estar</span>
+                <DialogTitle className="text-2xl md:text-3xl font-headline font-black tracking-tighter uppercase leading-tight">
+                  Manual de <span className="animate-text-flash italic inline-block pr-2">Bem-estar</span>
                 </DialogTitle>
                 <DialogDescription className="text-zinc-500 font-bold text-[9px] uppercase tracking-[0.2em]">
                   Personalização avançada via IA
