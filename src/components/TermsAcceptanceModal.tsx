@@ -48,10 +48,10 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
               {/* Efeito de Flash Pulsante no Escudo */}
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse blur-xl" />
               
-              {/* Sweep Animation Effect no Escudo */}
+              {/* Sweep Animation Effect no Escudo - Gradiente Intenso */}
               {isAnimating && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep" />
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
                 </div>
               )}
               
@@ -59,7 +59,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
             </div>
             <div className="space-y-1">
               <DialogTitle className="text-xl md:text-2xl font-headline font-black uppercase tracking-tighter">
-                Segurança <span className="text-primary italic">&</span> Privacidade
+                <span className="animate-text-flash italic inline-block pr-2">Segurança</span> <span className="text-zinc-500">&</span> Privacidade
               </DialogTitle>
               <DialogDescription className="text-zinc-600 text-[8px] uppercase font-bold tracking-[0.2em]">
                 WS Studios • Protocolo Veterinário
@@ -106,7 +106,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
             <div className="relative w-full overflow-hidden rounded-xl">
               {isAnimating && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep" />
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep" />
                 </div>
               )}
               <Button 
