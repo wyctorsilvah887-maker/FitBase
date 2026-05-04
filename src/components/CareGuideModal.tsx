@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateCareGuide } from "@/ai/flows/generate-care-guide";
-import { Loader2, AlertCircle, Sparkles, ClipboardList, Camera } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, ClipboardList, Camera, PawPrint } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
@@ -55,7 +54,6 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
       const output = await generateCareGuide(formData);
       setResult(output);
 
-      // Salva no Firestore
       const guidesRef = collection(db, "users", user.uid, "careGuides");
       addDocumentNonBlocking(guidesRef, {
         userId: user.uid,
@@ -83,130 +81,154 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-zinc-950 border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar">
-        <div className="p-8 md:p-12 space-y-8">
-          <DialogHeader className="text-left">
+      <DialogContent className="w-[95vw] sm:max-w-2xl max-h-[90vh] overflow-y-auto bg-black border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar">
+        <div className="p-8 md:p-12 space-y-10">
+          <DialogHeader className="text-left relative space-y-4">
             <div className="flex justify-between items-start">
-              <div>
+              <div className="space-y-1">
                 <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
-                  Guia de Cuidados
+                  Manual de <span className="text-primary italic">Bem-estar</span>
                 </DialogTitle>
-                <DialogDescription className="text-zinc-500 font-medium text-sm md:text-base mt-2">
-                  Personalize o bem-estar do seu pet com a IA.
+                <DialogDescription className="text-zinc-500 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.2em] mt-2">
+                  Personalização avançada via inteligência artificial
                 </DialogDescription>
               </div>
-              <div className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest text-zinc-400">
-                {limitStatus.remaining} restantes hoje
+              <div className="bg-primary/5 border border-primary/20 px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.2em] text-primary backdrop-blur-sm">
+                {limitStatus.remaining} restantes
               </div>
             </div>
           </DialogHeader>
 
           {error && (
-            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl">
+            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-[1.5rem] animate-in fade-in zoom-in">
               <AlertCircle className="h-5 w-5" />
-              <AlertTitle className="font-bold">Atenção</AlertTitle>
-              <AlertDescription className="text-xs font-medium">{error}</AlertDescription>
+              <AlertTitle className="font-bold text-[10px] uppercase tracking-widest">Limite Atingido</AlertTitle>
+              <AlertDescription className="text-[11px] font-medium opacity-80">{error}</AlertDescription>
             </Alert>
           )}
 
           {!result ? (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Nome do Pet</Label>
-                  <Input 
-                    placeholder="Ex: Totó" 
-                    className="h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl px-6 focus:ring-primary"
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    disabled={!limitStatus.allowed}
-                  />
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-4">Nome do Pet</Label>
+                  <div className="relative group">
+                    <Input 
+                      placeholder="Ex: Totó" 
+                      className="h-16 bg-zinc-950 border-zinc-800 rounded-[1.25rem] px-8 focus:ring-primary border-2 transition-all placeholder:text-zinc-800"
+                      value={formData.name}
+                      onChange={(e) => setFormData({...formData, name: e.target.value})}
+                      disabled={!limitStatus.allowed}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Espécie</Label>
+                <div className="space-y-3">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-4">Espécie</Label>
                   <Input 
                     placeholder="Ex: Cão, Gato..." 
-                    className="h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl px-6 focus:ring-primary"
+                    className="h-16 bg-zinc-950 border-zinc-800 rounded-[1.25rem] px-8 focus:ring-primary border-2 transition-all placeholder:text-zinc-800"
                     value={formData.species}
                     onChange={(e) => setFormData({...formData, species: e.target.value})}
                     disabled={!limitStatus.allowed}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Raça</Label>
+                <div className="space-y-3">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-4">Raça</Label>
                   <Input 
                     placeholder="Ex: Golden, SRD..." 
-                    className="h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl px-6 focus:ring-primary"
+                    className="h-16 bg-zinc-950 border-zinc-800 rounded-[1.25rem] px-8 focus:ring-primary border-2 transition-all placeholder:text-zinc-800"
                     value={formData.breed}
                     onChange={(e) => setFormData({...formData, breed: e.target.value})}
                     disabled={!limitStatus.allowed}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Idade Aproximada</Label>
+                <div className="space-y-3">
+                  <Label className="text-[10px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-4">Idade Aproximada</Label>
                   <Input 
                     placeholder="Ex: 2 anos" 
-                    className="h-14 bg-zinc-900/50 border-zinc-800 rounded-2xl px-6 focus:ring-primary"
+                    className="h-16 bg-zinc-950 border-zinc-800 rounded-[1.25rem] px-8 focus:ring-primary border-2 transition-all placeholder:text-zinc-800"
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
                     disabled={!limitStatus.allowed}
                   />
                 </div>
               </div>
-              <Button 
-                className="w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 mt-4" 
-                onClick={handleGenerate}
-                disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed}
-              >
-                {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin mr-3" />
-                ) : (
-                  <ClipboardList className="w-5 h-5 mr-3" />
-                )}
-                {isLoading ? "Gerando Guia..." : "Gerar Guia Personalizado"}
-              </Button>
+              
+              <div className="pt-4">
+                <Button 
+                  className="w-full h-18 py-8 rounded-[1.5rem] text-[11px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-2xl shadow-primary/20 transition-all active:scale-[0.98]" 
+                  onClick={handleGenerate}
+                  disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed}
+                >
+                  {isLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin mr-3" />
+                  ) : (
+                    <Sparkles className="w-5 h-5 mr-3" />
+                  )}
+                  {isLoading ? "Processando Dados..." : "Gerar Guia Premium"}
+                </Button>
+                <p className="text-center mt-6 text-[9px] font-bold text-zinc-700 uppercase tracking-widest flex items-center justify-center gap-2">
+                  <PawPrint className="w-3 h-3" />
+                  Powered by WS Studios Veterinary AI
+                </p>
+              </div>
             </div>
           ) : (
-            <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4">
-              <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20">
-                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">
-                  {result.guideTitle}
-                </h3>
-                <div className="space-y-8">
-                  <div>
-                    <h4 className="text-[9px] font-black text-white uppercase tracking-[0.2em] mb-2">Cuidados Essenciais</h4>
-                    <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line font-medium">
-                      {result.essentialCare}
-                    </p>
+            <div className="space-y-12 animate-in fade-in slide-in-from-bottom-6">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none rounded-[2rem]"></div>
+                <div className="relative z-10 bg-zinc-950 p-8 md:p-10 rounded-[2rem] border-2 border-primary/20 space-y-10">
+                  <div className="space-y-2 border-b border-zinc-900 pb-6">
+                    <h3 className="text-2xl font-headline font-bold text-white uppercase tracking-tighter">
+                      {result.guideTitle}
+                    </h3>
                   </div>
-                  <div>
-                    <h4 className="text-[9px] font-black text-white uppercase tracking-[0.2em] mb-2">Dicas de Nutrição</h4>
-                    <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-line font-medium">
-                      {result.nutritionTips}
-                    </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="space-y-4">
+                      <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                        <ClipboardList className="w-3 h-3" />
+                        Cuidados Essenciais
+                      </h4>
+                      <p className="text-[13px] text-zinc-400 leading-relaxed whitespace-pre-line font-medium">
+                        {result.essentialCare}
+                      </p>
+                    </div>
+                    <div className="space-y-4">
+                      <h4 className="text-[10px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
+                        <Sparkles className="w-3 h-3" />
+                        Dicas Nutricionais
+                      </h4>
+                      <p className="text-[13px] text-zinc-400 leading-relaxed whitespace-pre-line font-medium">
+                        {result.nutritionTips}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-[9px] font-black text-primary uppercase tracking-[0.2em] mb-2">Alertas de Saúde</h4>
-                    <p className="text-sm font-bold text-white bg-primary/10 p-6 rounded-2xl border border-primary/20 whitespace-pre-line">
-                      {result.healthAlerts}
-                    </p>
+
+                  <div className="pt-6 border-t border-zinc-900">
+                    <div className="bg-primary/5 border border-primary/10 p-6 rounded-2xl space-y-3">
+                      <h4 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Alertas de Saúde Preventiva</h4>
+                      <p className="text-[12px] font-bold text-white leading-relaxed whitespace-pre-line">
+                        {result.healthAlerts}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-8 border-t border-zinc-900 space-y-6">
-                <div className="flex flex-col items-center gap-2 text-center">
-                  <div className="flex items-center gap-2 text-primary">
-                    <Camera className="w-3 h-3" />
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em]">Dica de Tutor</p>
-                  </div>
-                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed max-w-[280px]">
-                    Todas as informações foram salvas no seu histórico! 🐾
+              <div className="pt-4 space-y-6">
+                <div className="flex flex-col items-center gap-2 text-center opacity-40">
+                  <p className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500">
+                    Informações arquivadas em seu histórico seguro
                   </p>
                 </div>
                 
-                <Button variant="outline" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-zinc-800 hover:bg-zinc-900" onClick={handleClose}>
-                  Fechar Guia
+                <Button 
+                  variant="outline" 
+                  className="w-full h-16 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] border-zinc-800 hover:bg-zinc-900 transition-all" 
+                  onClick={handleClose}
+                >
+                  Concluir e Fechar
                 </Button>
               </div>
             </div>
