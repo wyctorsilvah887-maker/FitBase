@@ -1,5 +1,4 @@
-
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
 import { useUser, useFirestore, useMemoFirebase } from '@/firebase';
@@ -55,7 +54,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <Card className="bg-zinc-900/30 border-zinc-800 rounded-[2.5rem] overflow-hidden border-2">
+          <Card className="bg-black border-zinc-800 rounded-[2.5rem] overflow-hidden border-2">
             <CardContent className="p-8 md:p-10 flex flex-col md:flex-row gap-8 items-center md:items-start">
               <div className="w-24 h-24 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center shrink-0">
                 <User className="w-10 h-10 text-primary" />
@@ -69,11 +68,11 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                  <div className="px-3 py-1.5 rounded-full bg-zinc-950 border border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                  <div className="px-3 py-1.5 rounded-full bg-black border border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
                     <ShieldCheck className="w-3 h-3 text-primary" />
                     Conta Verificada
                   </div>
-                  <div className="px-3 py-1.5 rounded-full bg-zinc-950 border border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
+                  <div className="px-3 py-1.5 rounded-full bg-black border border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-400 flex items-center gap-2">
                     <Calendar className="w-3 h-3 text-primary" />
                     Membro WS Studios
                   </div>
@@ -90,7 +89,7 @@ export default function ProfilePage() {
             <h3 className="text-xl font-headline font-bold tracking-tight uppercase">Seu Histórico de Prevenção</h3>
           </div>
           
-          <div className="bg-zinc-900/10 p-4 md:p-8 rounded-[3rem] border border-white/5 shadow-2xl">
+          <div className="bg-black p-4 md:p-8 rounded-[3rem] border border-white/5 shadow-2xl">
             <HistoryList refreshTrigger={0} />
           </div>
         </section>

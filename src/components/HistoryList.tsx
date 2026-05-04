@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useMemoFirebase, useCollection, useUser, useFirestore } from "@/firebase";
@@ -39,7 +38,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
 
   if (!careGuides || careGuides.length === 0) {
     return (
-      <div className="text-center py-12 bg-zinc-900/20 rounded-[2rem] border border-white/5">
+      <div className="text-center py-12 bg-black rounded-[2rem] border border-white/5">
         <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Nenhum guia de cuidados encontrado ainda 🐾</p>
       </div>
     );
@@ -52,7 +51,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
           {careGuides.map((entry) => (
             <Card 
               key={entry.id} 
-              className="group cursor-pointer bg-zinc-900/40 border-zinc-800/50 hover:bg-zinc-800/50 transition-all rounded-3xl overflow-hidden border-2"
+              className="group cursor-pointer bg-black border-zinc-800/50 hover:bg-zinc-900/20 transition-all rounded-3xl overflow-hidden border-2"
               onClick={() => setSelectedEntry(entry)}
             >
               <CardContent className="p-6">
