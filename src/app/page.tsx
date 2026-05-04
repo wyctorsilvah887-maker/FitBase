@@ -1,7 +1,8 @@
+
 "use client";
 
-import { useState } from "react";
-import { ShieldCheck, Sparkles, AlertCircle, ClipboardList } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
@@ -11,6 +12,11 @@ import Link from "next/link";
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear());
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
@@ -82,7 +88,7 @@ export default function Home() {
       <footer className="py-20 flex flex-col items-center gap-6 relative z-10">
         <div className="flex items-center gap-2 opacity-10 grayscale transition-opacity duration-700 hover:opacity-30 cursor-default">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-primary" />
+            <PawPrint className="w-5 h-5 text-primary" />
             <span className="text-lg font-headline font-bold tracking-tighter text-white">
               Vet <span className="text-primary italic">IA</span>
             </span>
@@ -91,7 +97,7 @@ export default function Home() {
         
         <div className="flex flex-col items-center gap-2">
           <div className="text-[9px] font-black text-zinc-900 uppercase tracking-[0.6em] text-center px-6">
-            © {new Date().getFullYear()} Vet IA • Powered by WS Studios
+            © {currentYear || '...'} Vet IA • Powered by WS Studios
           </div>
           <Link 
             href="/terms"
