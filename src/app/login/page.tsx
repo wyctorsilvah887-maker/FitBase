@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -23,7 +22,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       initiateEmailSignIn(auth, email, password);
-      // Redirecionamento ocorre via onAuthStateChanged no layout/provider
+      // O redirecionamento é tratado pelo observer de estado de auth no layout/provider
       router.push('/');
     } catch (error) {
       console.error('Erro ao entrar:', error);
@@ -44,57 +43,68 @@ export default function LoginPage() {
             <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-[0.2em]">Entre para acessar seu histórico Vet IA</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-6 bg-zinc-900/30 p-8 rounded-[2rem] border border-white/5 shadow-2xl">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">E-mail</Label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                  <Input 
-                    type="email" 
-                    placeholder="seu@email.com" 
-                    className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Senha</Label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-black hover:bg-primary/90"
-              disabled={isLoading}
+          <div className="relative group">
+            {/* Card com Estilo Premium & Gradiente Verde */}
+            <form 
+              onSubmit={handleLogin} 
+              className="relative z-10 space-y-6 bg-black p-8 rounded-[2.5rem] border border-primary/30 shadow-2xl overflow-hidden"
             >
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                <>
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Entrar
-                </>
-              )}
-            </Button>
+              {/* Gradiente Verde Estático */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none"></div>
 
-            <div className="text-center pt-2">
-              <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider">
-                Não tem uma conta? <Link href="/register" className="text-primary hover:underline underline-offset-4">Cadastre-se aqui</Link>
-              </p>
-            </div>
-          </form>
+              <div className="relative z-10 space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">E-mail</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                    <Input 
+                      type="email" 
+                      placeholder="seu@email.com" 
+                      className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Senha</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                    <Input 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative z-10 pt-2">
+                <Button 
+                  type="submit" 
+                  className="w-full h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-black hover:bg-primary/90 transition-all"
+                  disabled={isLoading}
+                >
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                    <>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Entrar
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              <div className="relative z-10 text-center pt-2">
+                <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider">
+                  Não tem uma conta? <Link href="/register" className="text-primary hover:underline underline-offset-4">Cadastre-se aqui</Link>
+                </p>
+              </div>
+            </form>
+          </div>
         </div>
       </main>
     </div>
