@@ -4,9 +4,10 @@
 import { useMemoFirebase, useCollection, useUser, useFirestore } from "@/firebase";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ClipboardList, ChevronRight, Loader2 } from "lucide-react";
+import { FileText, ClipboardList, ChevronRight, Loader2, History } from "lucide-react";
 import { useState } from "react";
 import { ResultDetailsDialog } from "@/components/ResultDetailsDialog";
+import { Button } from "@/components/ui/button";
 
 interface HistoryListProps {
   refreshTrigger: number;
@@ -17,7 +18,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const db = useFirestore();
   const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
 
-  // Consultas limitadas a 3 itens cada para garantir que tenhamos os mais recentes
+  // Consultamos um pouco mais de cada para garantir que o merge final tenha os 3 mais recentes globais
   const textAnalysesQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
     return query(
@@ -44,12 +45,12 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
       ...(textAnalyses || []).map(a => ({ ...a, type: 'text' })),
       ...(careGuides || []).map(g => ({ ...g, type: 'guide' }))
     ];
-    // Ordena por data e limita ao total de 3 itens conforme solicitado
+    
     return list
       .sort((a, b) => {
         const dateA = a.createdAt?.toDate?.() || new Date(0);
         const dateB = b.createdAt?.toDate?.() || new Date(0);
-        return dateB - dateA;
+        return dateB.getTime() - dateA.getTime();
       })
       .slice(0, 3);
   }, [textAnalyses, careGuides]);
@@ -72,39 +73,51 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4">
-        {combinedHistory.map((entry) => (
-          <Card 
-            key={entry.id} 
-            className="group cursor-pointer bg-zinc-900/40 border-zinc-800/50 hover:bg-zinc-800/50 transition-all rounded-3xl overflow-hidden border-2"
-            onClick={() => setSelectedEntry(entry)}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-primary/10 p-3 rounded-2xl ring-1 ring-primary/20">
-                  {entry.type === 'text' ? (
-                    <FileText className="w-5 h-5 text-primary" />
-                  ) : (
-                    <ClipboardList className="w-5 h-5 text-primary" />
-                  )}
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-4">
+          {combinedHistory.map((entry) => (
+            <Card 
+              key={entry.id} 
+              className="group cursor-pointer bg-zinc-900/40 border-zinc-800/50 hover:bg-zinc-800/50 transition-all rounded-3xl overflow-hidden border-2"
+              onClick={() => setSelectedEntry(entry)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-primary/10 p-3 rounded-2xl ring-1 ring-primary/20">
+                    {entry.type === 'text' ? (
+                      <FileText className="w-5 h-5 text-primary" />
+                    ) : (
+                      <ClipboardList className="w-5 h-5 text-primary" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 flex items-center gap-2">
+                      {entry.type === 'text' ? 'Análise de Sintomas' : 'Guia de Cuidados'}
+                      <span className="w-1 h-1 rounded-full bg-zinc-700" />
+                      <span className="text-zinc-500">
+                        {entry.createdAt?.toDate?.().toLocaleDateString('pt-BR') || 'Recente'}
+                      </span>
+                    </h4>
+                    <p className="text-xs font-bold text-white truncate">
+                      {entry.type === 'text' ? entry.inputText : `Guia para ${entry.petData?.name}`}
+                    </p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-primary transition-colors" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 flex items-center gap-2">
-                    {entry.type === 'text' ? 'Análise de Sintomas' : 'Guia de Cuidados'}
-                    <span className="w-1 h-1 rounded-full bg-zinc-700" />
-                    <span className="text-zinc-500">
-                      {entry.createdAt?.toDate?.().toLocaleDateString('pt-BR') || 'Recente'}
-                    </span>
-                  </h4>
-                  <p className="text-xs font-bold text-white truncate">
-                    {entry.type === 'text' ? entry.inputText : `Guia para ${entry.petData?.name}`}
-                  </p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-primary transition-colors" />
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex flex-col items-center gap-4 pt-4">
+          <p className="text-[8px] font-black text-zinc-600 uppercase tracking-[0.3em] italic">
+            Exibindo os 3 registros mais recentes. O restante está guardado em seu banco de dados.
+          </p>
+          <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors cursor-default opacity-50">
+            <History className="w-3 h-3 mr-2" />
+            Ver histórico completo em breve
+          </Button>
+        </div>
       </div>
 
       <ResultDetailsDialog 
