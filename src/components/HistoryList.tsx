@@ -7,6 +7,7 @@ import { ClipboardList, ChevronRight, Loader2, History } from "lucide-react";
 import { useState } from "react";
 import { ResultDetailsDialog } from "@/components/ResultDetailsDialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface HistoryListProps {
   refreshTrigger: number;
@@ -16,6 +17,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const { user } = useUser();
   const db = useFirestore();
   const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
+  const [flashId, setFlashId] = useState<string | null>(null);
 
   const careGuidesQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -27,6 +29,14 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   }, [user, db, refreshTrigger]);
 
   const { data: careGuides, isLoading: loadingGuides } = useCollection(careGuidesQuery);
+
+  const handleEntryClick = (entry: any) => {
+    setFlashId(entry.id);
+    setTimeout(() => {
+      setFlashId(null);
+      setSelectedEntry(entry);
+    }, 150);
+  };
 
   if (loadingGuides) {
     return (
@@ -51,9 +61,15 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
           {careGuides.map((entry) => (
             <Card 
               key={entry.id} 
-              className="group cursor-pointer bg-black border-zinc-800/50 hover:bg-zinc-900/20 transition-all rounded-3xl overflow-hidden border-2"
-              onClick={() => setSelectedEntry(entry)}
+              className="group cursor-pointer relative bg-black border-zinc-800/50 hover:bg-zinc-900/20 transition-all rounded-3xl overflow-hidden border-2"
+              onClick={() => handleEntryClick(entry)}
             >
+              {/* Flash Effect */}
+              <div className={cn(
+                "absolute inset-0 bg-primary/20 transition-opacity duration-150 pointer-events-none",
+                flashId === entry.id ? "opacity-100" : "opacity-0"
+              )} />
+
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="bg-primary/10 p-3 rounded-2xl ring-1 ring-primary/20">

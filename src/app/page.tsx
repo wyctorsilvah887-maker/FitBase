@@ -8,11 +8,13 @@ import Header from "@/components/Header";
 import Link from "next/link";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  const [flashType, setFlashType] = useState<string | null>(null);
   
   const { user } = useUser();
   const router = useRouter();
@@ -21,7 +23,13 @@ export default function Home() {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
+  const triggerFlash = (type: string) => {
+    setFlashType(type);
+    setTimeout(() => setFlashType(null), 150);
+  };
+
   const handleStartAnalysis = () => {
+    triggerFlash('analysis');
     if (!user) {
       router.push('/login');
       return;
@@ -30,6 +38,7 @@ export default function Home() {
   };
 
   const handleGenerateGuide = () => {
+    triggerFlash('guide');
     if (!user) {
       router.push('/login');
       return;
@@ -72,10 +81,16 @@ export default function Home() {
             onClick={handleStartAnalysis}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              {/* Static Green Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent"></div>
+            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
+              {/* Green Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
               
+              {/* Flash Effect */}
+              <div className={cn(
+                "absolute inset-0 bg-primary/20 transition-opacity duration-150 pointer-events-none",
+                flashType === 'analysis' ? "opacity-100" : "opacity-0"
+              )} />
+
               <div className="relative z-10 space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
                   <Sparkles className="w-6 h-6 text-primary" />
@@ -83,7 +98,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter text-white">Análise de Saúde IA</h3>
                   <p className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                    Descreva sintomas e receba uma análise preliminar instantânea baseada em dados veterinários.
+                    Descreva sintomas e receba uma análise instantânea.
                   </p>
                 </div>
               </div>
@@ -101,9 +116,15 @@ export default function Home() {
             onClick={handleGenerateGuide}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              {/* Static Green Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent"></div>
+            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
+              {/* Green Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
+
+              {/* Flash Effect */}
+              <div className={cn(
+                "absolute inset-0 bg-primary/20 transition-opacity duration-150 pointer-events-none",
+                flashType === 'guide' ? "opacity-100" : "opacity-0"
+              )} />
 
               <div className="relative z-10 space-y-4">
                 <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
@@ -112,7 +133,7 @@ export default function Home() {
                 <div className="space-y-1">
                   <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter text-white">Guia Personalizado</h3>
                   <p className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                    Gere um manual de cuidados específicos para as necessidades biológicas do seu pet.
+                    Gere um manual de cuidados para o seu pet.
                   </p>
                 </div>
               </div>
