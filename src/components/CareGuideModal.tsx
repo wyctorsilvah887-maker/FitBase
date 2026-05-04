@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { generateCareGuide } from "@/ai/flows/generate-care-guide";
-import { Loader2, AlertCircle, Sparkles, ClipboardList, Camera, PawPrint } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, ClipboardList, PawPrint } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
@@ -87,7 +87,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
             <div className="flex justify-between items-start">
               <div className="space-y-1">
                 <DialogTitle className="text-3xl md:text-4xl font-headline font-black tracking-tighter uppercase">
-                  Manual de <span className="text-primary italic">Bem-estar</span>
+                  Manual de <span className="animate-text-flash italic">Bem-estar</span>
                 </DialogTitle>
                 <DialogDescription className="text-zinc-500 font-bold text-[10px] md:text-[11px] uppercase tracking-[0.2em] mt-2">
                   Personalização avançada via inteligência artificial
