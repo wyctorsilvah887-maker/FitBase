@@ -14,12 +14,13 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
     try {
@@ -29,6 +30,8 @@ export default function Header() {
       console.error('Erro ao sair:', error);
     }
   };
+
+  const isLoginPage = pathname === '/login';
 
   return (
     <header className="relative z-10 max-w-7xl mx-auto px-6 py-10 flex items-center justify-end">
@@ -78,12 +81,14 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link href="/login">
-              <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary hover:bg-transparent">
-                <LogIn className="w-4 h-4 mr-2" />
-                Entrar
-              </Button>
-            </Link>
+            !isLoginPage && (
+              <Link href="/login">
+                <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary hover:bg-transparent">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Entrar
+                </Button>
+              </Link>
+            )
           )
         )}
       </div>
