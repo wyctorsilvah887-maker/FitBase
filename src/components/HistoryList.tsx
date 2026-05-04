@@ -4,7 +4,7 @@
 import { useMemoFirebase, useCollection, useUser, useFirestore } from "@/firebase";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ClipboardList, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { FileText, ClipboardList, ChevronRight, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { ResultDetailsDialog } from "@/components/ResultDetailsDialog";
 
@@ -17,13 +17,13 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const db = useFirestore();
   const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
 
-  // Memoize as consultas para evitar re-renderizações infinitas
+  // Consultas limitadas a 3 itens cada para garantir que tenhamos os mais recentes
   const textAnalysesQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
     return query(
       collection(db, "users", user.uid, "textAnalyses"),
       orderBy("createdAt", "desc"),
-      limit(5)
+      limit(3)
     );
   }, [user, db, refreshTrigger]);
 
@@ -32,7 +32,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
     return query(
       collection(db, "users", user.uid, "careGuides"),
       orderBy("createdAt", "desc"),
-      limit(5)
+      limit(3)
     );
   }, [user, db, refreshTrigger]);
 
@@ -44,11 +44,14 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
       ...(textAnalyses || []).map(a => ({ ...a, type: 'text' })),
       ...(careGuides || []).map(g => ({ ...g, type: 'guide' }))
     ];
-    return list.sort((a, b) => {
-      const dateA = a.createdAt?.toDate?.() || new Date(0);
-      const dateB = b.createdAt?.toDate?.() || new Date(0);
-      return dateB - dateA;
-    });
+    // Ordena por data e limita ao total de 3 itens conforme solicitado
+    return list
+      .sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(0);
+        const dateB = b.createdAt?.toDate?.() || new Date(0);
+        return dateB - dateA;
+      })
+      .slice(0, 3);
   }, [textAnalyses, careGuides]);
 
   if (loadingText || loadingGuides) {
@@ -69,7 +72,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {combinedHistory.map((entry) => (
           <Card 
             key={entry.id} 
