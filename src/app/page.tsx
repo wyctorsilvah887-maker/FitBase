@@ -2,11 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint, History } from "lucide-react";
+import { ShieldCheck, Sparkles, AlertCircle, ClipboardList, PawPrint } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
-import { HistoryList } from "@/components/HistoryList";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { useUser } from "@/firebase";
@@ -16,9 +15,8 @@ export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  const { user, isUserLoading } = useUser();
+  const { user } = useUser();
   const router = useRouter();
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export default function Home() {
   };
 
   const handleSuccess = () => {
-    setRefreshTrigger(prev => prev + 1);
+    // Agora o histórico está na página de perfil
   };
 
   return (
@@ -95,17 +93,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Histórico Section - Only for logged users */}
-        {user && (
-          <section className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center gap-3 px-2">
-              <History className="w-5 h-5 text-primary" />
-              <h3 className="text-lg font-headline font-bold tracking-tight uppercase">Seu Histórico de Prevenção</h3>
-            </div>
-            <HistoryList refreshTrigger={refreshTrigger} />
-          </section>
-        )}
 
         {/* Tecnologia WS Studios Card */}
         <section className="mt-8 rounded-2xl bg-gradient-to-b from-white/[0.02] to-transparent p-5 text-center border border-white/5 max-w-md mx-auto">
