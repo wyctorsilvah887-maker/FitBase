@@ -137,9 +137,10 @@ export default function ProfilePage() {
           </div>
           
           <div className="relative group">
-             <div className="absolute -inset-1 bg-gradient-to-b from-primary/10 via-transparent to-transparent rounded-[3.5rem] blur-2xl opacity-10" />
+             <div className="absolute -inset-1 bg-gradient-to-tr from-primary/10 via-transparent to-transparent rounded-[3.5rem] blur-2xl opacity-10" />
              <div className="relative bg-black p-6 md:p-12 rounded-[3.5rem] border border-white/5 shadow-2xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none" />
+                {/* Ajuste da posição do gradiente para diagonal superior esquerda */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
                 <HistoryList refreshTrigger={0} />
              </div>
           </div>
