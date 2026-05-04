@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { generateCareGuide } from "@/ai/flows/generate-care-guide";
 import { Loader2, AlertCircle, Sparkles, ClipboardList, PawPrint } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
@@ -18,12 +19,15 @@ interface CareGuideModalProps {
   onSuccess?: () => void;
 }
 
+type GuideType = 'cuidados' | 'saude' | 'adestramento' | 'nutricao';
+
 export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalProps) {
   const [formData, setFormData] = useState({
     name: "",
     species: "",
     breed: "",
-    age: ""
+    age: "",
+    guideType: "cuidados" as GuideType
   });
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -74,7 +78,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
 
   const handleClose = () => {
     setResult(null);
-    setFormData({ name: "", species: "", breed: "", age: "" });
+    setFormData({ name: "", species: "", breed: "", age: "", guideType: "cuidados" });
     setError(null);
     onClose();
   };
@@ -114,7 +118,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                   <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-3">Nome do Pet</Label>
                   <Input 
                     placeholder="Ex: Totó" 
-                    className="h-12 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
+                    className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
                     disabled={!limitStatus.allowed}
@@ -124,7 +128,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                   <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-3">Espécie</Label>
                   <Input 
                     placeholder="Ex: Cão, Gato..." 
-                    className="h-12 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
+                    className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
                     value={formData.species}
                     onChange={(e) => setFormData({...formData, species: e.target.value})}
                     disabled={!limitStatus.allowed}
@@ -134,7 +138,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                   <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-3">Raça</Label>
                   <Input 
                     placeholder="Ex: Golden, SRD..." 
-                    className="h-12 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
+                    className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
                     value={formData.breed}
                     onChange={(e) => setFormData({...formData, breed: e.target.value})}
                     disabled={!limitStatus.allowed}
@@ -144,17 +148,35 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                   <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-3">Idade</Label>
                   <Input 
                     placeholder="Ex: 2 anos" 
-                    className="h-12 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
+                    className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 transition-all placeholder:text-zinc-800 text-sm"
                     value={formData.age}
                     onChange={(e) => setFormData({...formData, age: e.target.value})}
                     disabled={!limitStatus.allowed}
                   />
                 </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-zinc-600 ml-3">Tipo de Guia</Label>
+                  <Select 
+                    value={formData.guideType} 
+                    onValueChange={(value) => setFormData({...formData, guideType: value as GuideType})}
+                    disabled={!limitStatus.allowed}
+                  >
+                    <SelectTrigger className="h-10 bg-zinc-950 border-zinc-800 rounded-[1rem] px-5 focus:ring-primary border-2 text-sm">
+                      <SelectValue placeholder="Selecione o foco" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-950 border-zinc-800 text-white rounded-xl">
+                      <SelectItem value="cuidados" className="focus:bg-primary/20">Cuidados Gerais</SelectItem>
+                      <SelectItem value="saude" className="focus:bg-primary/20">Saúde & Prevenção</SelectItem>
+                      <SelectItem value="adestramento" className="focus:bg-primary/20">Adestramento</SelectItem>
+                      <SelectItem value="nutricao" className="focus:bg-primary/20">Nutrição</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               
               <div className="pt-2">
                 <Button 
-                  className="w-full h-14 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98]" 
+                  className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98]" 
                   onClick={handleGenerate}
                   disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed}
                 >
@@ -186,7 +208,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                     <div className="space-y-3">
                       <h4 className="text-[9px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
                         <ClipboardList className="w-2.5 h-2.5" />
-                        Cuidados
+                        Foco Principal
                       </h4>
                       <p className="text-[12px] text-zinc-400 leading-relaxed whitespace-pre-line font-medium">
                         {result.essentialCare}
@@ -195,7 +217,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                     <div className="space-y-3">
                       <h4 className="text-[9px] font-black text-primary uppercase tracking-[0.3em] flex items-center gap-2">
                         <Sparkles className="w-2.5 h-2.5" />
-                        Nutrição
+                        Sugestões Vet IA
                       </h4>
                       <p className="text-[12px] text-zinc-400 leading-relaxed whitespace-pre-line font-medium">
                         {result.nutritionTips}
@@ -205,7 +227,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
 
                   <div className="pt-4 border-t border-zinc-900">
                     <div className="bg-primary/5 border border-primary/10 p-4 rounded-xl space-y-2">
-                      <h4 className="text-[9px] font-black text-white uppercase tracking-[0.3em]">Saúde Preventiva</h4>
+                      <h4 className="text-[9px] font-black text-white uppercase tracking-[0.3em]">Alertas de Saúde</h4>
                       <p className="text-[11px] font-bold text-white leading-relaxed whitespace-pre-line">
                         {result.healthAlerts}
                       </p>
