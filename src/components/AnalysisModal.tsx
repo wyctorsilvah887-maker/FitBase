@@ -9,7 +9,8 @@ import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
 
 interface AnalysisModalProps {
   type: 'text' | null;
@@ -26,6 +27,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
 
   const { user } = useUser();
+  const db = useFirestore();
 
   useEffect(() => {
     if (isOpen) {
@@ -48,8 +50,14 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
       const output = await analyzeTextualInput({ description: input });
       setResult(output);
       
-      // Note: Análises de texto não são mais salvas no Firestore por solicitação do usuário.
-      // Apenas o limite de uso é incrementado.
+      // Salva no Firestore para registro interno, mas não será listado no HistoryList
+      const analysisRef = collection(db, "users", user.uid, "textAnalyses");
+      addDocumentNonBlocking(analysisRef, {
+        userId: user.uid,
+        inputText: input,
+        aiResponse: output,
+        createdAt: serverTimestamp(),
+      });
 
       incrementUsage('analysis');
       setLimitStatus(checkLimit('analysis'));
@@ -98,13 +106,16 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
           {!result ? (
             <div className="space-y-8">
-              <Textarea 
-                placeholder="Ex: Meu gato comeu um pedaço de pizza e está quieto..." 
-                className="min-h-[200px] bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary rounded-3xl p-6 md:p-8 text-sm md:text-base placeholder:text-zinc-700 resize-none border-2 transition-all"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                disabled={isLoading || !limitStatus.allowed}
-              />
+              <div className="space-y-2">
+                 <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest ml-4">Sintomas ou Comportamento</p>
+                 <Textarea 
+                  placeholder="Ex: Meu gato comeu um pedaço de pizza e está quieto..." 
+                  className="min-h-[200px] bg-zinc-900/50 border-zinc-800 focus-visible:ring-primary rounded-3xl p-6 md:p-8 text-sm md:text-base placeholder:text-zinc-700 resize-none border-2 transition-all"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={isLoading || !limitStatus.allowed}
+                />
+              </div>
               <Button 
                 className="w-full h-16 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] shadow-2xl shadow-primary/10 bg-primary text-black hover:bg-primary/90 disabled:opacity-30" 
                 onClick={handleTextAnalysis}
@@ -152,10 +163,10 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
               <div className="pt-8 border-t border-zinc-900">
                 <p className="text-[9px] text-zinc-600 font-black uppercase tracking-[0.4em] text-center mb-8 px-4">
-                  A Vet IA da WS Studios é uma ferramenta auxiliar e não substitui diagnósticos clínicos. Esta análise não ficará salva no seu histórico.
+                  Esta análise foi salva para seu controle interno de saúde pet.
                 </p>
                 <Button variant="outline" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-zinc-800 hover:bg-zinc-900" onClick={handleClose}>
-                  Finalizar Sessão
+                  Fechar Análise
                 </Button>
               </div>
             </div>
