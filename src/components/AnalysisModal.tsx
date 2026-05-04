@@ -9,8 +9,7 @@ import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
+import { useUser } from "@/firebase";
 
 interface AnalysisModalProps {
   type: 'text' | null;
@@ -26,7 +25,6 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [error, setError] = useState<string | null>(null);
   const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
 
-  const db = useFirestore();
   const { user } = useUser();
 
   useEffect(() => {
@@ -50,14 +48,8 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
       const output = await analyzeTextualInput({ description: input });
       setResult(output);
       
-      // Salva no Firestore usando a função utilitária do sistema
-      const analysesRef = collection(db, "users", user.uid, "textAnalyses");
-      addDocumentNonBlocking(analysesRef, {
-        userId: user.uid,
-        inputText: input,
-        aiResponse: output,
-        createdAt: serverTimestamp(),
-      });
+      // Note: Análises de texto não são mais salvas no Firestore por solicitação do usuário.
+      // Apenas o limite de uso é incrementado.
 
       incrementUsage('analysis');
       setLimitStatus(checkLimit('analysis'));
@@ -160,7 +152,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
               <div className="pt-8 border-t border-zinc-900">
                 <p className="text-[9px] text-zinc-600 font-black uppercase tracking-[0.4em] text-center mb-8 px-4">
-                  A Vet IA da WS Studios é uma ferramenta auxiliar e não substitui diagnósticos clínicos.
+                  A Vet IA da WS Studios é uma ferramenta auxiliar e não substitui diagnósticos clínicos. Esta análise não ficará salva no seu histórico.
                 </p>
                 <Button variant="outline" className="w-full h-14 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border-zinc-800 hover:bg-zinc-900" onClick={handleClose}>
                   Finalizar Sessão

@@ -4,7 +4,7 @@
 import { useMemoFirebase, useCollection, useUser, useFirestore } from "@/firebase";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, ClipboardList, ChevronRight, Loader2, History } from "lucide-react";
+import { ClipboardList, ChevronRight, Loader2, History } from "lucide-react";
 import { useState } from "react";
 import { ResultDetailsDialog } from "@/components/ResultDetailsDialog";
 import { Button } from "@/components/ui/button";
@@ -18,16 +18,6 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const db = useFirestore();
   const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
 
-  // Consultamos um pouco mais de cada para garantir que o merge final tenha os 3 mais recentes globais
-  const textAnalysesQuery = useMemoFirebase(() => {
-    if (!user || !db) return null;
-    return query(
-      collection(db, "users", user.uid, "textAnalyses"),
-      orderBy("createdAt", "desc"),
-      limit(3)
-    );
-  }, [user, db, refreshTrigger]);
-
   const careGuidesQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
     return query(
@@ -37,25 +27,9 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
     );
   }, [user, db, refreshTrigger]);
 
-  const { data: textAnalyses, isLoading: loadingText } = useCollection(textAnalysesQuery);
   const { data: careGuides, isLoading: loadingGuides } = useCollection(careGuidesQuery);
 
-  const combinedHistory = useMemoFirebase(() => {
-    const list = [
-      ...(textAnalyses || []).map(a => ({ ...a, type: 'text' })),
-      ...(careGuides || []).map(g => ({ ...g, type: 'guide' }))
-    ];
-    
-    return list
-      .sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(0);
-        const dateB = b.createdAt?.toDate?.() || new Date(0);
-        return dateB.getTime() - dateA.getTime();
-      })
-      .slice(0, 3);
-  }, [textAnalyses, careGuides]);
-
-  if (loadingText || loadingGuides) {
+  if (loadingGuides) {
     return (
       <div className="flex justify-center py-10">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -63,10 +37,10 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
     );
   }
 
-  if (combinedHistory.length === 0) {
+  if (!careGuides || careGuides.length === 0) {
     return (
       <div className="text-center py-12 bg-zinc-900/20 rounded-[2rem] border border-white/5">
-        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Nenhum registro encontrado ainda 🐾</p>
+        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-600">Nenhum guia de cuidados encontrado ainda 🐾</p>
       </div>
     );
   }
@@ -75,7 +49,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
     <>
       <div className="space-y-6">
         <div className="grid grid-cols-1 gap-4">
-          {combinedHistory.map((entry) => (
+          {careGuides.map((entry) => (
             <Card 
               key={entry.id} 
               className="group cursor-pointer bg-zinc-900/40 border-zinc-800/50 hover:bg-zinc-800/50 transition-all rounded-3xl overflow-hidden border-2"
@@ -84,22 +58,18 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
                   <div className="bg-primary/10 p-3 rounded-2xl ring-1 ring-primary/20">
-                    {entry.type === 'text' ? (
-                      <FileText className="w-5 h-5 text-primary" />
-                    ) : (
-                      <ClipboardList className="w-5 h-5 text-primary" />
-                    )}
+                    <ClipboardList className="w-5 h-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-[10px] font-black text-primary uppercase tracking-widest mb-1 flex items-center gap-2">
-                      {entry.type === 'text' ? 'Análise de Sintomas' : 'Guia de Cuidados'}
+                      Guia de Cuidados
                       <span className="w-1 h-1 rounded-full bg-zinc-700" />
                       <span className="text-zinc-500">
                         {entry.createdAt?.toDate?.().toLocaleDateString('pt-BR') || 'Recente'}
                       </span>
                     </h4>
                     <p className="text-xs font-bold text-white truncate">
-                      {entry.type === 'text' ? entry.inputText : `Guia para ${entry.petData?.name}`}
+                      Guia para {entry.petData?.name}
                     </p>
                   </div>
                   <ChevronRight className="w-4 h-4 text-zinc-700 group-hover:text-primary transition-colors" />
@@ -111,7 +81,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
 
         <div className="flex flex-col items-center gap-4 pt-4">
           <p className="text-[8px] font-black text-zinc-600 uppercase tracking-[0.3em] italic">
-            Exibindo os 3 registros mais recentes. O restante está guardado em seu banco de dados.
+            Exibindo os 3 guias mais recentes. O restante está guardado em seu banco de dados.
           </p>
           <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest text-zinc-500 hover:text-primary transition-colors cursor-default opacity-50">
             <History className="w-3 h-3 mr-2" />
@@ -125,8 +95,9 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
         onClose={() => setSelectedEntry(null)}
         entry={selectedEntry ? {
           ...selectedEntry,
-          input: selectedEntry.type === 'text' ? selectedEntry.inputText : `Dados de ${selectedEntry.petData?.name}`,
-          output: selectedEntry.type === 'text' ? selectedEntry.aiResponse : selectedEntry.guide,
+          type: 'guide',
+          input: `Dados de ${selectedEntry.petData?.name}`,
+          output: selectedEntry.guide,
           timestamp: selectedEntry.createdAt?.toDate?.().getTime() || Date.now()
         } : null}
       />
