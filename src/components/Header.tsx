@@ -24,7 +24,6 @@ export default function Header() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      // Redireciona para a página de login após o logout
       router.push('/login');
     } catch (error) {
       console.error('Erro ao sair:', error);
@@ -32,14 +31,18 @@ export default function Header() {
   };
 
   return (
-    <header className="relative z-10 max-w-7xl mx-auto px-6 py-10 flex justify-between items-center">
-      <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-        <PawPrint className="w-6 h-6 text-primary" />
-        <h1 className="text-xl font-headline font-bold tracking-tighter text-white">
-          Vet <span className="text-primary italic">IA</span>
-        </h1>
-      </Link>
+    <header className="relative z-10 max-w-7xl mx-auto px-6 py-10 flex items-center justify-end">
+      {/* Logo Centralizada */}
+      <div className="absolute left-1/2 -translate-x-1/2">
+        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+          <PawPrint className="w-6 h-6 text-primary" />
+          <h1 className="text-xl font-headline font-bold tracking-tighter text-white">
+            Vet <span className="text-primary italic">IA</span>
+          </h1>
+        </Link>
+      </div>
 
+      {/* Ações do Usuário (Direita) */}
       <div className="flex items-center gap-4">
         {!isUserLoading && (
           user ? (
