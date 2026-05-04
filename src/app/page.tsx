@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -80,7 +81,7 @@ export default function Home() {
           
           <div className="space-y-3">
             <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight leading-[1.05]">
-              Cuidando do seu <span className="text-primary italic">pet</span><br className="hidden md:block" /> com inteligência pura
+              Cuidando do seu <span className="animate-text-flash italic inline-block pr-2">pet</span><br className="hidden md:block" /> com inteligência pura
             </h2>
             <p className="text-zinc-500 max-w-lg mx-auto text-[10px] md:text-[11px] leading-relaxed font-medium px-4 opacity-80 uppercase tracking-wide">
               Análise inteligente de sintomas e nutrição animal. O bem-estar do seu amigo começa com a prevenção avançada da WS Studios.
