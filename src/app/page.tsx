@@ -8,31 +8,36 @@ import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
 import Header from "@/components/Header";
 import Link from "next/link";
-import { useAuth, useUser, initiateAnonymousSignIn } from "@/firebase";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   
-  const auth = useAuth();
-  const { user, isUserLoading } = useUser();
+  const { user } = useUser();
+  const router = useRouter();
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
   }, []);
 
-  useEffect(() => {
-    // Tenta o login anônimo apenas se não houver usuário e não estiver carregando
-    if (!isUserLoading && !user) {
-      try {
-        initiateAnonymousSignIn(auth);
-      } catch (err) {
-        // Silencia erro admin-restricted se o provedor não estiver ativo no console
-        console.warn("Aviso: Login anônimo pode não estar habilitado no Console do Firebase.");
-      }
+  const handleStartAnalysis = () => {
+    if (!user) {
+      router.push('/login');
+      return;
     }
-  }, [auth, user, isUserLoading]);
+    setIsAnalysisModalOpen(true);
+  };
+
+  const handleGenerateGuide = () => {
+    if (!user) {
+      router.push('/login');
+      return;
+    }
+    setIsCareGuideModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
@@ -60,14 +65,14 @@ export default function Home() {
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 px-4">
               <Button 
-                onClick={() => setIsAnalysisModalOpen(true)}
+                onClick={handleStartAnalysis}
                 className="w-full sm:w-auto rounded-full px-8 h-12 text-[10px] font-black uppercase tracking-[0.25em] hover:scale-105 transition-all shadow-2xl shadow-primary/20 bg-primary text-black hover:bg-primary/90"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
                 Iniciar Análise IA
               </Button>
               <Button 
-                onClick={() => setIsCareGuideModalOpen(true)}
+                onClick={handleGenerateGuide}
                 variant="outline"
                 className="w-full sm:w-auto rounded-full px-8 h-12 text-[10px] font-black uppercase tracking-[0.25em] hover:scale-105 transition-all border-zinc-800 hover:bg-zinc-900 text-white"
               >
