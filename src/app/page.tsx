@@ -72,12 +72,12 @@ export default function Home() {
             onClick={handleStartAnalysis}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.01] active:scale-[0.99]">
+            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
               {/* Static Green Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-40"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent"></div>
               
               <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-zinc-900/50 border border-primary/30 flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
                   <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
@@ -101,12 +101,12 @@ export default function Home() {
             onClick={handleGenerateGuide}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.01] active:scale-[0.99]">
+            <div className="relative flex flex-col justify-between min-h-[220px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
               {/* Static Green Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-40"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-transparent"></div>
 
               <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-zinc-900/50 border border-primary/30 flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
                   <ClipboardList className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
