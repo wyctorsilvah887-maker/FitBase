@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import { ShieldCheck, Sparkles, ClipboardList, PawPrint, ChevronRight } from "lucide-react";
 import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
+import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import Header from "@/components/Header";
 import Link from "next/link";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { doc } from "firebase/firestore";
 
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
@@ -16,8 +17,16 @@ export default function Home() {
   const [currentYear, setCurrentYear] = useState<number | null>(null);
   const [activeSweep, setActiveSweep] = useState<string | null>(null);
   
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const db = useFirestore();
   const router = useRouter();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return doc(db, "users", user.uid);
+  }, [user, db]);
+
+  const { data: userData, isLoading: isUserDataLoading } = useDoc(userDocRef);
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
@@ -53,6 +62,8 @@ export default function Home() {
     // Registro efetuado com sucesso
   };
 
+  const showTermsModal = user && !isUserDataLoading && (!userData || !userData.acceptedTerms);
+
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
       <div className="bg-noise" />
@@ -85,10 +96,8 @@ export default function Home() {
             className="group relative cursor-pointer"
           >
             <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              {/* Green Gradient Overlay (Static) */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
               
-              {/* Sweep Animation Effect */}
               {activeSweep === 'analysis' && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
                   <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-sweep" />
@@ -121,10 +130,8 @@ export default function Home() {
             className="group relative cursor-pointer"
           >
             <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              {/* Green Gradient Overlay (Static) */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
 
-              {/* Sweep Animation Effect */}
               {activeSweep === 'guide' && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
                   <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-sweep" />
@@ -200,6 +207,8 @@ export default function Home() {
         onClose={() => setIsCareGuideModalOpen(false)}
         onSuccess={handleSuccess}
       />
+
+      {showTermsModal && <TermsAcceptanceModal isOpen={true} />}
     </div>
   );
 }
