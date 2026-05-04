@@ -10,6 +10,7 @@ import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection, serverTimestamp } from "firebase/firestore";
+import { saveAnalysis } from "@/app/lib/history-store";
 
 interface AnalysisModalProps {
   type: 'text' | null;
@@ -49,12 +50,20 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
       const output = await analyzeTextualInput({ description: input });
       setResult(output);
       
+      // Salva no Firestore
       const analysisRef = collection(db, "users", user.uid, "textAnalyses");
       addDocumentNonBlocking(analysisRef, {
         userId: user.uid,
         inputText: input,
         aiResponse: output,
         createdAt: serverTimestamp(),
+      });
+
+      // Cache Local no Navegador
+      saveAnalysis({
+        type: 'text',
+        input: input,
+        output: output
       });
 
       incrementUsage('analysis');
@@ -115,23 +124,25 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                 />
               </div>
               <div className="pt-2">
-                <Button 
-                  className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all" 
-                  onClick={handleTextAnalysis}
-                  disabled={isLoading || !input.trim() || !limitStatus.allowed}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Processando Dados...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Gerar Relatório IA
-                    </>
-                  )}
-                </Button>
+                <div className="relative overflow-hidden rounded-[1.25rem]">
+                   <Button 
+                    className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98] relative z-10" 
+                    onClick={handleTextAnalysis}
+                    disabled={isLoading || !input.trim() || !limitStatus.allowed}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Processando Dados...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Gerar Relatório IA
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <p className="text-center mt-4 text-[8px] font-bold text-zinc-700 uppercase tracking-widest flex items-center justify-center gap-2">
                   <ShieldCheck className="w-2.5 h-2.5" />
                   Segurança Veterinária WS Studios
@@ -172,7 +183,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
 
               <div className="flex flex-col gap-4">
                 <p className="text-[8px] text-zinc-700 font-black uppercase tracking-[0.4em] text-center italic">
-                  Relatório salvo no histórico de saúde do pet.
+                  Relatório salvo no histórico local e em nuvem.
                 </p>
                 <Button 
                   variant="outline" 

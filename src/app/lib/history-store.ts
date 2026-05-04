@@ -1,8 +1,8 @@
 export type AnalysisEntry = {
   id: string;
-  type: 'text' | 'image';
+  type: 'text' | 'image' | 'guide';
   timestamp: number;
-  input: string; // text description or image dataUri
+  input: string; // text description, image dataUri, or pet name
   output: any; // Result from AI
 };
 

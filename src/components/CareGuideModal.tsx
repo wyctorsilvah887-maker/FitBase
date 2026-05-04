@@ -12,6 +12,7 @@ import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
 import { collection, serverTimestamp } from "firebase/firestore";
+import { saveAnalysis } from "@/app/lib/history-store";
 
 interface CareGuideModalProps {
   isOpen: boolean;
@@ -55,16 +56,23 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
     setIsLoading(true);
     setError(null);
     try {
-      // O fluxo Genkit ainda aceita 'cuidados', mas não ofereceremos mais no formulário
       const output = await generateCareGuide(formData as any);
       setResult(output);
 
+      // Salva no Firestore
       const guidesRef = collection(db, "users", user.uid, "careGuides");
       addDocumentNonBlocking(guidesRef, {
         userId: user.uid,
         petData: formData,
         guide: output,
         createdAt: serverTimestamp(),
+      });
+
+      // Cache Local no Navegador
+      saveAnalysis({
+        type: 'guide',
+        input: `Guia para ${formData.name}`,
+        output: output
       });
 
       incrementUsage('guides');
@@ -86,7 +94,7 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto bg-black border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar">
+      <DialogContent className="w-[95vw] sm:max-w-xl max-h-[90vh] overflow-y-auto bg-black border-zinc-900 text-white p-0 rounded-[2.5rem] outline-none custom-scrollbar shadow-2xl">
         <div className="p-6 md:p-10 space-y-8">
           <DialogHeader className="text-left relative space-y-2">
             <div className="flex justify-between items-start">
@@ -183,18 +191,20 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
               </div>
               
               <div className="pt-2">
-                <Button 
-                  className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98]" 
-                  onClick={handleGenerate}
-                  disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed || formData.guideType === 'saude'}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : (
-                    <Sparkles className="w-4 h-4 mr-2" />
-                  )}
-                  {formData.guideType === 'saude' ? "Módulo em Breve" : isLoading ? "Gerando..." : "Criar Guia Premium"}
-                </Button>
+                <div className="relative overflow-hidden rounded-[1.25rem]">
+                   <Button 
+                    className="w-full h-12 rounded-[1.25rem] text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-30 shadow-xl shadow-primary/10 transition-all active:scale-[0.98] relative z-10" 
+                    onClick={handleGenerate}
+                    disabled={isLoading || !formData.name || !formData.species || !limitStatus.allowed || formData.guideType === 'saude'}
+                  >
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    ) : (
+                      <Sparkles className="w-4 h-4 mr-2" />
+                    )}
+                    {formData.guideType === 'saude' ? "Módulo em Breve" : isLoading ? "Gerando..." : "Criar Guia Premium"}
+                  </Button>
+                </div>
                 <p className="text-center mt-4 text-[8px] font-bold text-zinc-700 uppercase tracking-widest flex items-center justify-center gap-2">
                   <PawPrint className="w-2.5 h-2.5" />
                   WS Studios Veterinary AI
@@ -244,13 +254,18 @@ export function CareGuideModal({ isOpen, onClose, onSuccess }: CareGuideModalPro
                 </div>
               </div>
 
-              <Button 
-                variant="outline" 
-                className="w-full h-12 rounded-[1rem] text-[9px] font-black uppercase tracking-[0.3em] border-zinc-800 hover:bg-zinc-900 transition-all" 
-                onClick={handleClose}
-              >
-                Concluir
-              </Button>
+              <div className="flex flex-col gap-4">
+                 <p className="text-[8px] text-zinc-700 font-black uppercase tracking-[0.4em] text-center italic">
+                  Guia salvo no histórico local e em nuvem.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full h-12 rounded-[1rem] text-[9px] font-black uppercase tracking-[0.3em] border-zinc-800 hover:bg-zinc-900 transition-all" 
+                  onClick={handleClose}
+                >
+                  Concluir
+                </Button>
+              </div>
             </div>
           )}
         </div>
