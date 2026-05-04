@@ -15,19 +15,26 @@ interface TermsAcceptanceModalProps {
 
 export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
   const [hasAgreed, setHasAgreed] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const { user } = useUser();
   const db = useFirestore();
 
   const handleAccept = () => {
-    if (!user || !db || !hasAgreed) return;
+    if (!user || !db || !hasAgreed || isAnimating) return;
 
-    const userRef = doc(db, 'users', user.uid);
-    setDocumentNonBlocking(userRef, {
-      acceptedTerms: true,
-      acceptedAt: serverTimestamp(),
-      email: user.email,
-      updatedAt: serverTimestamp(),
-    }, { merge: true });
+    setIsAnimating(true);
+    
+    // Dispara a ação após a animação de sweep (600ms)
+    setTimeout(() => {
+      const userRef = doc(db, 'users', user.uid);
+      setDocumentNonBlocking(userRef, {
+        acceptedTerms: true,
+        acceptedAt: serverTimestamp(),
+        email: user.email,
+        updatedAt: serverTimestamp(),
+      }, { merge: true });
+      setIsAnimating(false);
+    }, 600);
   };
 
   return (
@@ -37,8 +44,8 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
       >
         <div className="p-6 md:p-8 space-y-5">
           <DialogHeader className="text-center space-y-3">
-            <div className="mx-auto bg-primary/10 p-3 rounded-full ring-2 ring-primary/20 w-fit relative">
-              {/* Efeito de Flash/Brilho no Escudo */}
+            <div className="mx-auto bg-primary/10 p-3 rounded-full ring-2 ring-primary/20 w-fit relative overflow-hidden">
+              {/* Efeito de Flash Pulsante no Escudo */}
               <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse blur-xl" />
               <ShieldCheck className="h-8 w-8 text-primary relative z-10" />
             </div>
@@ -54,7 +61,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
 
           <div className="relative">
             <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
-            <ScrollArea className="h-[160px] md:h-[180px] pr-3 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium">
+            <ScrollArea className="h-[140px] md:h-[180px] pr-3 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium">
               <div className="space-y-4 pb-6">
                 <p>
                   <strong className="text-zinc-300">1. Natureza da IA:</strong> Você compreende que a Vet IA é um assistente experimental da WS Studios. As análises são baseadas em processamento de dados e não substituem exames clínicos presenciais.
@@ -88,13 +95,20 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
           </div>
 
           <DialogFooter className="pt-1">
-            <Button 
-              className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all"
-              disabled={!hasAgreed}
-              onClick={handleAccept}
-            >
-              Confirmar e Iniciar
-            </Button>
+            <div className="relative w-full overflow-hidden rounded-xl">
+              {isAnimating && (
+                <div className="absolute inset-0 z-20 pointer-events-none">
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep" />
+                </div>
+              )}
+              <Button 
+                className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] bg-primary text-black hover:bg-primary/90 disabled:opacity-10 transition-all relative z-10"
+                disabled={!hasAgreed || isAnimating}
+                onClick={handleAccept}
+              >
+                Confirmar e Iniciar
+              </Button>
+            </div>
           </DialogFooter>
 
           <div className="flex items-center justify-center gap-2 opacity-10 grayscale">
