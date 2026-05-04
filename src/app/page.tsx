@@ -172,7 +172,7 @@ export default function Home() {
                 </div>
               </div>
               <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em] text-white">
-                Tecnologia Preventiva <span className="text-primary italic">WS Studios</span>
+                Tecnologia Preventiva <span className="animate-text-flash italic inline-block">WS Studios</span>
               </h2>
               <p className="mx-auto max-w-[420px] text-[9px] text-zinc-500 leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
                 Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
