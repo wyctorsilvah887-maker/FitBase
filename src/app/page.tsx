@@ -8,15 +8,24 @@ import { AnalysisModal } from "@/components/AnalysisModal";
 import { CareGuideModal } from "@/components/CareGuideModal";
 import Header from "@/components/Header";
 import Link from "next/link";
+import { useAuth, useUser } from "@/firebase";
+import { signInAnonymously } from "firebase/auth";
 
 export default function Home() {
   const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
   const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
   const [currentYear, setCurrentYear] = useState<number | null>(null);
+  
+  const auth = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear());
-  }, []);
+    // Garante que o usuário esteja logado anonimamente para usar o banco de dados
+    if (!user) {
+      signInAnonymously(auth).catch(console.error);
+    }
+  }, [auth, user]);
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">

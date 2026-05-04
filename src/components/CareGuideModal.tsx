@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,6 +10,8 @@ import { generateCareGuide } from "@/ai/flows/generate-care-guide";
 import { Loader2, AlertCircle, Sparkles, ClipboardList, Camera } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
 
 interface CareGuideModalProps {
   isOpen: boolean;
@@ -27,6 +30,9 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
 
+  const db = useFirestore();
+  const { user } = useUser();
+
   useEffect(() => {
     if (isOpen) {
       setLimitStatus(checkLimit('guides'));
@@ -34,7 +40,7 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
   }, [isOpen]);
 
   const handleGenerate = async () => {
-    if (!formData.name || !formData.species) return;
+    if (!formData.name || !formData.species || !user) return;
 
     const { allowed } = checkLimit('guides');
     if (!allowed) {
@@ -47,6 +53,16 @@ export function CareGuideModal({ isOpen, onClose }: CareGuideModalProps) {
     try {
       const output = await generateCareGuide(formData);
       setResult(output);
+
+      // Salva no Firestore
+      const guidesRef = collection(db, "users", user.uid, "careGuides");
+      addDocumentNonBlocking(guidesRef, {
+        userId: user.uid,
+        petData: formData,
+        guide: output,
+        createdAt: serverTimestamp(),
+      });
+
       incrementUsage('guides');
       setLimitStatus(checkLimit('guides'));
     } catch (err) {

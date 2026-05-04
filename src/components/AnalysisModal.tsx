@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -6,9 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
 import { Loader2, AlertCircle, Sparkles } from "lucide-react";
-import { saveAnalysis } from "@/app/lib/history-store";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { useFirestore, useUser, addDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
 
 interface AnalysisModalProps {
   type: 'text' | null;
@@ -24,6 +26,9 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [error, setError] = useState<string | null>(null);
   const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
 
+  const db = useFirestore();
+  const { user } = useUser();
+
   useEffect(() => {
     if (isOpen) {
       setLimitStatus(checkLimit('analysis'));
@@ -31,7 +36,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   }, [isOpen]);
 
   const handleTextAnalysis = async () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
     
     const { allowed } = checkLimit('analysis');
     if (!allowed) {
@@ -44,7 +49,16 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
     try {
       const output = await analyzeTextualInput({ description: input });
       setResult(output);
-      saveAnalysis({ type: 'text', input, output });
+      
+      // Salva no Firestore usando a função utilitária do sistema
+      const analysesRef = collection(db, "users", user.uid, "textAnalyses");
+      addDocumentNonBlocking(analysesRef, {
+        userId: user.uid,
+        inputText: input,
+        aiResponse: output,
+        createdAt: serverTimestamp(),
+      });
+
       incrementUsage('analysis');
       setLimitStatus(checkLimit('analysis'));
       onSuccess();
