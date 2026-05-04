@@ -7,64 +7,31 @@ service cloud.firestore {
      * This ruleset enforces a strict User-Ownership model. All data is organized hierarchically 
      * under individual user document paths. Access is strictly limited to the authenticated 
      * user whose UID matches the path parameter.
-     * 
-     * DATA STRUCTURE:
-     * All analytical data is nested within subcollections of a specific user:
-     * - /users/{userId}/textAnalyses/{analysisId}
-     * - /users/{userId}/imageAnalyses/{analysisId}
-     * 
-     * KEY SECURITY DECISIONS:
-     * 1. Path-Based Authorization: The {userId} wildcard in the path is the primary source of truth.
-     * 2. Relational Integrity: On document creation, the rules verify that internal 'userId' fields 
-     *    match the path to prevent data from being associated with the wrong account.
-     * 3. Ownership Immutability: Once a record is created, its ownership (the 'userId' field) 
-     *    cannot be changed via updates.
-     * 4. State-Change Protection: Updates and deletes require the document to exist and the 
-     *    requestor to be the verified owner.
-     * 
-     * DENORMALIZATION FOR AUTHORIZATION:
-     * To ensure high performance and avoid costly get() calls, ownership fields (userId) 
-     * are denormalized into every analysis document. This allows the rules to perform 
-     * immediate, local validation of the user's identity against the data payload.
      */
 
     // --- Helper Functions ---
 
-    /** @description Checks if the request is from an authenticated user. */
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /** @description Checks if the authenticated user matches the provided userId from the path. */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    /** @description Verifies ownership and ensures the document exists for state-changing operations. */
     function isExistingOwner(userId) {
       return resource != null && isOwner(userId);
     }
 
     // --- Collection Rules ---
 
-    /**
-     * @description Rules for the root user document.
-     * @path /users/{userId}
-     * @allow Authenticated user to create/read/write their own profile (create).
-     * @deny User 'A' attempting to read or write to /users/UserB (mismatched UID).
-     * @principle Restricts access to a user's own data tree based on verified identity.
-     */
     match /users/{userId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
       allow update, delete: if isExistingOwner(userId);
 
       /**
-       * @description Stores individual AI-powered textual analyses performed by a user.
-       * @path /users/{userId}/textAnalyses/{textAnalysisId}
-       * @allow Owner to list their analyses: list /users/123/textAnalyses where auth.uid == '123' (list).
-       * @deny Non-owners or unauthenticated users attempting to read or create data (if false).
-       * @principle Enforces path-based ownership and validates relational integrity between data and path.
+       * @description Stores individual AI-powered textual analyses.
        */
       match /textAnalyses/{textAnalysisId} {
         allow get, list: if isOwner(userId);
@@ -74,11 +41,17 @@ service cloud.firestore {
       }
 
       /**
-       * @description Stores individual AI-powered image analyses performed by a user.
-       * @path /users/{userId}/imageAnalyses/{imageAnalysisId}
-       * @allow Owner to create a new image analysis record with matching userId field (create).
-       * @deny Updating the userId field to a different value (immutability check).
-       * @principle Enforces document ownership for writes and prevents cross-user data injection.
+       * @description Stores personalized care guides.
+       */
+      match /careGuides/{guideId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && request.resource.data.userId == userId;
+        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+        allow delete: if isExistingOwner(userId);
+      }
+
+      /**
+       * @description Stores individual AI-powered image analyses.
        */
       match /imageAnalyses/{imageAnalysisId} {
         allow get, list: if isOwner(userId);
