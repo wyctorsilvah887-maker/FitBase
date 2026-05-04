@@ -24,14 +24,18 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
 
     setIsAnimating(true);
     
+    // Simula a ativação do protocolo com animação antes do commit no banco
     setTimeout(() => {
       const userRef = doc(db, 'users', user.uid);
+      
+      // Salvando aceitação com data e hora exatas do servidor
       setDocumentNonBlocking(userRef, {
         acceptedTerms: true,
-        acceptedAt: serverTimestamp(),
+        acceptedAt: serverTimestamp(), // Captura Data e Hora simultaneamente
         email: user.email,
         updatedAt: serverTimestamp(),
       }, { merge: true });
+      
       setIsAnimating(false);
     }, 800);
   };
@@ -47,7 +51,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
             <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden shadow-2xl shadow-primary/5 animate-icon-flash group">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
               
-              {/* Sweep Animation Effect no Escudo (Percorre toda a extensão no clique) */}
+              {/* Sweep Animation Effect no Escudo */}
               {isAnimating && (
                 <div className="absolute inset-0 z-30 pointer-events-none">
                   <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep -left-1/4" />
