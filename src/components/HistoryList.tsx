@@ -17,7 +17,7 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const { user } = useUser();
   const db = useFirestore();
   const [selectedEntry, setSelectedEntry] = useState<any | null>(null);
-  const [flashId, setFlashId] = useState<string | null>(null);
+  const [activeSweepId, setActiveSweepId] = useState<string | null>(null);
 
   const careGuidesQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
@@ -31,11 +31,12 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
   const { data: careGuides, isLoading: loadingGuides } = useCollection(careGuidesQuery);
 
   const handleEntryClick = (entry: any) => {
-    setFlashId(entry.id);
+    if (activeSweepId) return;
+    setActiveSweepId(entry.id);
     setTimeout(() => {
-      setFlashId(null);
+      setActiveSweepId(null);
       setSelectedEntry(entry);
-    }, 150);
+    }, 600);
   };
 
   if (loadingGuides) {
@@ -64,11 +65,12 @@ export function HistoryList({ refreshTrigger }: HistoryListProps) {
               className="group cursor-pointer relative bg-black border-zinc-800/50 hover:bg-zinc-900/20 transition-all rounded-3xl overflow-hidden border-2"
               onClick={() => handleEntryClick(entry)}
             >
-              {/* Flash Effect */}
-              <div className={cn(
-                "absolute inset-0 bg-primary/20 transition-opacity duration-150 pointer-events-none",
-                flashId === entry.id ? "opacity-100" : "opacity-0"
-              )} />
+              {/* Sweep Animation Effect */}
+              {activeSweepId === entry.id && (
+                <div className="absolute inset-0 z-20 pointer-events-none">
+                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-sweep" />
+                </div>
+              )}
 
               <CardContent className="p-6">
                 <div className="flex items-center gap-4">
