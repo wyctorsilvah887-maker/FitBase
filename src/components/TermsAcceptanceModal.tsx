@@ -24,7 +24,6 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
 
     setIsAnimating(true);
     
-    // Dispara a ação após a animação de sweep (600ms)
     setTimeout(() => {
       const userRef = doc(db, 'users', user.uid);
       setDocumentNonBlocking(userRef, {
@@ -44,11 +43,11 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
       >
         <div className="p-6 md:p-10 space-y-8">
           <DialogHeader className="text-center space-y-4">
-            {/* Ícone de Escudo com Efeito de Sweep */}
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden group shadow-2xl shadow-primary/5">
+            {/* Ícone de Escudo com Efeito de Flash Gradiente Contínuo */}
+            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden group shadow-2xl shadow-primary/5 animate-icon-flash">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
               
-              {/* Sweep Animation Effect no Escudo */}
+              {/* Sweep Animation Effect no Escudo (Disparado no clique) */}
               {isAnimating && (
                 <div className="absolute inset-0 z-20 pointer-events-none">
                   <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-sweep" />
