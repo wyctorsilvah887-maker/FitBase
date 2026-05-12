@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "TextAnalysis": {
@@ -72,27 +71,17 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}/textAnalyses/{analysisId}",
-        "definition": {
-          "entityName": "TextAnalysis",
-          "schema": {
-            "$ref": "#/backend/entities/TextAnalysis"
-          },
-          "description": "Stores individual AI-powered textual analyses."
-        }
+    "/users/{userId}/textAnalyses/{analysisId}": {
+      "schema": {
+        "$ref": "#/entities/TextAnalysis"
       },
-      {
-        "path": "/users/{userId}/careGuides/{guideId}",
-        "definition": {
-          "entityName": "CareGuide",
-          "schema": {
-            "$ref": "#/backend/entities/CareGuide"
-          },
-          "description": "Stores personalized care guides."
-        }
-      }
-    ]
+      "description": "Stores individual AI-powered textual analyses."
+    },
+    "/users/{userId}/careGuides/{guideId}": {
+      "schema": {
+        "$ref": "#/entities/CareGuide"
+      },
+      "description": "Stores personalized care guides."
+    }
   }
 }
