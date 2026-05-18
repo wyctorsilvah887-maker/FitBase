@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -8,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth, initiateEmailSignIn, initiateAnonymousSignIn } from '@/firebase';
 import Header from '@/components/Header';
 import Link from 'next/link';
-import { LogIn, Mail, Lock, Loader2, UserRound, Sparkles } from 'lucide-react';
+import { LogIn, Mail, Lock, Loader2, Sparkles } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -18,28 +19,19 @@ export default function LoginPage() {
   const auth = useAuth();
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      initiateEmailSignIn(auth, email, password);
-      router.push('/');
-    } catch (error) {
-      console.error('Erro ao entrar:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    initiateEmailSignIn(auth, email, password);
+    // Reset loading state after a short delay since it's non-blocking
+    setTimeout(() => setIsLoading(false), 2000);
   };
 
   const handleAnonymousLogin = () => {
     setIsAnonLoading(true);
-    try {
-      initiateAnonymousSignIn(auth);
-      router.push('/');
-    } catch (error) {
-      console.error('Erro ao entrar como teste:', error);
-      setIsAnonLoading(false);
-    }
+    initiateAnonymousSignIn(auth);
+    // Reset loading state after a short delay since it's non-blocking
+    setTimeout(() => setIsAnonLoading(false), 2000);
   };
 
   return (
@@ -58,7 +50,6 @@ export default function LoginPage() {
             <div className="relative z-10 space-y-6 bg-black p-8 rounded-[2.5rem] border border-primary/30 shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none"></div>
 
-              {/* Botão de Teste Rápido */}
               <div className="relative z-10 space-y-4">
                 <Button 
                   type="button"

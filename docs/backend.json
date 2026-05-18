@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "TextAnalysis": {
@@ -67,7 +68,8 @@
   },
   "auth": {
     "providers": [
-      "password"
+      "password",
+      "anonymous"
     ]
   },
   "firestore": {
