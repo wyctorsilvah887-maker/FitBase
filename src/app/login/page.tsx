@@ -1,12 +1,12 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth, initiateEmailSignIn, initiateAnonymousSignIn } from '@/firebase';
+import { useAuth, useUser, initiateEmailSignIn, initiateAnonymousSignIn } from '@/firebase';
 import Header from '@/components/Header';
 import Link from 'next/link';
 import { LogIn, Mail, Lock, Loader2, Sparkles } from 'lucide-react';
@@ -17,20 +17,28 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAnonLoading, setIsAnonLoading] = useState(false);
   const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const router = useRouter();
+
+  useEffect(() => {
+    // Redireciona se o usuário já estiver logado ou acabar de logar
+    if (!isUserLoading && user) {
+      router.push('/');
+    }
+  }, [user, isUserLoading, router]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     initiateEmailSignIn(auth, email, password);
-    // Reset loading state after a short delay since it's non-blocking
+    // O redirecionamento será tratado pelo useEffect após a mudança de estado do auth
     setTimeout(() => setIsLoading(false), 2000);
   };
 
   const handleAnonymousLogin = () => {
     setIsAnonLoading(true);
     initiateAnonymousSignIn(auth);
-    // Reset loading state after a short delay since it's non-blocking
+    // O redirecionamento será tratado pelo useEffect após a mudança de estado do auth
     setTimeout(() => setIsAnonLoading(false), 2000);
   };
 
@@ -55,7 +63,7 @@ export default function LoginPage() {
                   type="button"
                   variant="outline"
                   onClick={handleAnonymousLogin}
-                  disabled={isAnonLoading || isLoading}
+                  disabled={isAnonLoading || isLoading || isUserLoading}
                   className="w-full h-14 rounded-2xl border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary transition-all group overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -89,6 +97,7 @@ export default function LoginPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
+                        disabled={isLoading || isAnonLoading || isUserLoading}
                       />
                     </div>
                   </div>
@@ -103,6 +112,7 @@ export default function LoginPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        disabled={isLoading || isAnonLoading || isUserLoading}
                       />
                     </div>
                   </div>
@@ -112,7 +122,7 @@ export default function LoginPage() {
                   <Button 
                     type="submit" 
                     className="w-full h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-black hover:bg-primary/90 transition-all shadow-xl shadow-primary/10"
-                    disabled={isLoading || isAnonLoading}
+                    disabled={isLoading || isAnonLoading || isUserLoading}
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                       <>
