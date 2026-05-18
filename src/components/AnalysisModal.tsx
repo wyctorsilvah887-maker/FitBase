@@ -5,12 +5,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeTextualInput } from "@/ai/flows/analyze-textual-input";
-import { Loader2, AlertCircle, Sparkles, ShieldCheck, PawPrint } from "lucide-react";
+import { Loader2, AlertCircle, Sparkles, ShieldCheck, UserPlus } from "lucide-react";
 import { checkLimit, incrementUsage } from "@/app/lib/usage-limits";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
 import { collection, serverTimestamp } from "firebase/firestore";
 import { saveAnalysis } from "@/app/lib/history-store";
+import Link from "next/link";
 
 interface AnalysisModalProps {
   type: 'text' | null;
@@ -24,23 +25,26 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0 });
+  const [limitStatus, setLimitStatus] = useState({ allowed: true, remaining: 0, limit: 0 });
 
   const { user } = useUser();
   const db = useFirestore();
 
   useEffect(() => {
-    if (isOpen) {
-      setLimitStatus(checkLimit('analysis'));
+    if (isOpen && user) {
+      setLimitStatus(checkLimit('analysis', user.isAnonymous));
     }
-  }, [isOpen]);
+  }, [isOpen, user]);
 
   const handleTextAnalysis = async () => {
     if (!input.trim() || !user) return;
     
-    const { allowed } = checkLimit('analysis');
+    const { allowed } = checkLimit('analysis', user.isAnonymous);
     if (!allowed) {
-      setError("Você atingiu o limite de 6 análises hoje. Volte amanhã! 🐾");
+      const msg = user.isAnonymous 
+        ? "Você atingiu o limite de 3 análises do modo teste. Crie uma conta gratuita para ter 6 análises diárias! 🐾"
+        : "Você atingiu seu limite de 6 análises diárias. Volte amanhã! 🐾";
+      setError(msg);
       return;
     }
 
@@ -67,7 +71,7 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
       });
 
       incrementUsage('analysis');
-      setLimitStatus(checkLimit('analysis'));
+      setLimitStatus(checkLimit('analysis', user.isAnonymous));
       onSuccess();
     } catch (err) {
       setError("Ocorreu um erro ao processar sua solicitação. Tente novamente.");
@@ -94,21 +98,32 @@ export function AnalysisModal({ type, isOpen, onClose, onSuccess }: AnalysisModa
                   Análise <span className="animate-text-flash italic inline-block pr-2">Inteligente</span>
                 </DialogTitle>
                 <DialogDescription className="text-zinc-500 font-bold text-[9px] uppercase tracking-[0.2em]">
-                  Diagnóstico preventivo avançado
+                  {user?.isAnonymous ? 'Protocolo de Teste WS Studios' : 'Diagnóstico preventivo avançado'}
                 </DialogDescription>
               </div>
               <div className="bg-primary/5 border border-primary/20 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-[0.2em] text-primary backdrop-blur-sm">
-                {limitStatus.remaining} restantes
+                {limitStatus.remaining} / {limitStatus.limit} restantes
               </div>
             </div>
           </DialogHeader>
 
           {error && (
-            <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl animate-in fade-in zoom-in">
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="font-bold text-[9px] uppercase tracking-widest">Atenção</AlertTitle>
-              <AlertDescription className="text-[10px] font-medium opacity-80">{error}</AlertDescription>
-            </Alert>
+            <div className="space-y-4 animate-in fade-in zoom-in">
+              <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle className="font-bold text-[9px] uppercase tracking-widest">Limite Atingido</AlertTitle>
+                <AlertDescription className="text-[10px] font-medium opacity-80">{error}</AlertDescription>
+              </Alert>
+              
+              {user?.isAnonymous && (
+                <Link href="/register" className="block">
+                  <Button className="w-full h-12 rounded-2xl bg-primary text-black font-black uppercase text-[9px] tracking-[0.2em] hover:bg-primary/90">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Criar Conta Agora (6 análises/dia)
+                  </Button>
+                </Link>
+              )}
+            </div>
           )}
 
           {!result ? (

@@ -13,8 +13,14 @@ interface UsageData {
 }
 
 const LIMITS = {
-  analysis: 6,
-  guides: 2,
+  analysis: {
+    authenticated: 6,
+    anonymous: 3,
+  },
+  guides: {
+    authenticated: 2,
+    anonymous: 1,
+  },
 };
 
 function getTodayStr(): string {
@@ -42,14 +48,15 @@ function getUsage(): UsageData {
   }
 }
 
-export function checkLimit(type: UsageType): { allowed: boolean; remaining: number } {
+export function checkLimit(type: UsageType, isAnonymous: boolean): { allowed: boolean; remaining: number; limit: number } {
   const usage = getUsage();
   const currentCount = type === 'analysis' ? usage.analysisCount : usage.guidesCount;
-  const limit = LIMITS[type];
+  const limit = isAnonymous ? LIMITS[type].anonymous : LIMITS[type].authenticated;
   
   return {
     allowed: currentCount < limit,
     remaining: Math.max(0, limit - currentCount),
+    limit,
   };
 }
 
