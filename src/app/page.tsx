@@ -172,7 +172,7 @@ export default function Home() {
                 </div>
               </div>
               <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em]">
-                Tecnologia Preventiva <span className="animate-text-flash italic inline-block">WS Studios</span>
+                Tecnologia Preventiva <span className="animate-text-flash italic inline-block">WS Studios Company</span>
               </h2>
               <p className="mx-auto max-w-[420px] text-[9px] text-muted-foreground leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
                 Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
@@ -193,7 +193,7 @@ export default function Home() {
         
         <div className="flex flex-col items-center gap-4">
           <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.7em] text-center px-6">
-            © {currentYear || '...'} Vet IA • Powered by WS Studios
+            © {currentYear || '...'} Vet IA • Powered by WS Studios Company
           </div>
           <Link 
             href="/terms"
