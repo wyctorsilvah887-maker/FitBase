@@ -1,9 +1,33 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 142 70.6% 45.3%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 142 70.6% 45.3%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 142 70.6% 45.3%;
+    --radius: 1.5rem;
+  }
+
+  .dark {
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
     --card: 0 0% 0%;
@@ -12,18 +36,17 @@
     --popover-foreground: 0 0% 100%;
     --primary: 142 100% 50%;
     --primary-foreground: 0 0% 0%;
-    --secondary: 0 0% 0%;
+    --secondary: 0 0% 5%;
     --secondary-foreground: 0 0% 100%;
     --muted: 0 0% 5%;
     --muted-foreground: 0 0% 50%;
     --accent: 142 100% 50%;
     --accent-foreground: 0 0% 0%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 8%;
-    --input: 0 0% 5%;
+    --input: 0 0% 8%;
     --ring: 142 100% 50%;
-    --radius: 1.5rem;
   }
 }
 
@@ -33,7 +56,6 @@
   }
   body {
     @apply bg-background text-foreground font-body antialiased selection:bg-primary selection:text-black;
-    background-color: #000000;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline tracking-tighter;
@@ -61,7 +83,7 @@
     90deg, 
     hsl(var(--primary)) 0%, 
     hsl(var(--primary)) 35%, 
-    #ffffff 50%, 
+    currentColor 50%, 
     hsl(var(--primary)) 65%, 
     hsl(var(--primary)) 100%
   );
@@ -109,12 +131,11 @@
   width: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #000000;
+  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #18181b;
-  border-radius: 10px;
+  @apply bg-border/50 rounded-full;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #27272a;
+  @apply bg-border;
 }
