@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -66,7 +65,7 @@ export default function Home() {
   const showTermsModal = user && !isUserDataLoading && (!userData || !userData.acceptedTerms);
 
   return (
-    <div className="min-h-screen bg-black text-white selection:bg-primary selection:text-black font-body overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-black font-body overflow-x-hidden">
       <div className="bg-noise" />
       
       <Header />
@@ -83,7 +82,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight leading-[1.05]">
               Cuidando do seu <span className="animate-text-flash italic inline-block pr-2">pet</span><br className="hidden md:block" /> com inteligência pura
             </h2>
-            <p className="text-zinc-500 max-w-lg mx-auto text-[10px] md:text-[11px] leading-relaxed font-medium px-4 opacity-80 uppercase tracking-wide">
+            <p className="text-muted-foreground max-w-lg mx-auto text-[10px] md:text-[11px] leading-relaxed font-medium px-4 opacity-80 uppercase tracking-wide">
               Análise inteligente de sintomas e nutrição animal. O bem-estar do seu amigo começa com a prevenção avançada da WS Studios.
             </p>
           </div>
@@ -96,7 +95,7 @@ export default function Home() {
             onClick={handleStartAnalysis}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
+            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-card border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
               
               {activeSweep === 'analysis' && (
@@ -106,12 +105,12 @@ export default function Home() {
               )}
 
               <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 rounded-2xl bg-background border border-primary/30 flex items-center justify-center shadow-inner">
                   <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter text-white">Análise de Saúde IA</h3>
-                  <p className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter">Análise de Saúde IA</h3>
+                  <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
                     Descreva sintomas e receba uma análise instantânea.
                   </p>
                 </div>
@@ -130,7 +129,7 @@ export default function Home() {
             onClick={handleGenerateGuide}
             className="group relative cursor-pointer"
           >
-            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-black border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
+            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-card border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
 
               {activeSweep === 'guide' && (
@@ -140,12 +139,12 @@ export default function Home() {
               )}
 
               <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-black border border-primary/30 flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 rounded-2xl bg-background border border-primary/30 flex items-center justify-center shadow-inner">
                   <ClipboardList className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter text-white">Guia Personalizado</h3>
-                  <p className="text-zinc-500 text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
+                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter">Guia Personalizado</h3>
+                  <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
                     Gere um manual de cuidados para o seu pet.
                   </p>
                 </div>
@@ -162,20 +161,20 @@ export default function Home() {
 
         {/* Tecnologia WS Studios Card - Enhanced Design */}
         <section className="mt-4 relative group max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
-          <div className="relative rounded-[2.5rem] bg-black border border-primary/20 p-8 text-center overflow-hidden shadow-2xl transition-all hover:border-primary/40">
+          <div className="relative rounded-[2.5rem] bg-card border border-primary/20 p-8 text-center overflow-hidden shadow-2xl transition-all hover:border-primary/40">
             {/* Subtle premium gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
             
             <div className="relative z-10">
               <div className="mb-5 flex justify-center">
-                <div className="bg-black border border-primary/30 p-3.5 rounded-2xl shadow-inner shadow-primary/5 group-hover:scale-110 transition-transform duration-500 group-hover:border-primary/60">
+                <div className="bg-background border border-primary/30 p-3.5 rounded-2xl shadow-inner shadow-primary/5 group-hover:scale-110 transition-transform duration-500 group-hover:border-primary/60">
                   <ShieldCheck className="h-6 w-6 text-primary" />
                 </div>
               </div>
-              <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em] text-white">
+              <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em]">
                 Tecnologia Preventiva <span className="animate-text-flash italic inline-block">WS Studios</span>
               </h2>
-              <p className="mx-auto max-w-[420px] text-[9px] text-zinc-500 leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
+              <p className="mx-auto max-w-[420px] text-[9px] text-muted-foreground leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
                 Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
               </p>
             </div>
@@ -184,21 +183,21 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-20 flex flex-col items-center gap-8 relative z-10 border-t border-white/5">
+      <footer className="py-20 flex flex-col items-center gap-8 relative z-10 border-t border-border/50">
         <div className="flex items-center gap-2 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 cursor-default transition-all duration-700">
           <PawPrint className="w-5 h-5 text-primary" />
-          <span className="text-xl font-headline font-bold tracking-tighter text-white">
+          <span className="text-xl font-headline font-bold tracking-tighter">
             Vet <span className="text-primary italic">IA</span>
           </span>
         </div>
         
         <div className="flex flex-col items-center gap-4">
-          <div className="text-[9px] font-black text-zinc-800 uppercase tracking-[0.7em] text-center px-6">
+          <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.7em] text-center px-6">
             © {currentYear || '...'} Vet IA • Powered by WS Studios
           </div>
           <Link 
             href="/terms"
-            className="text-[9px] font-bold text-zinc-600 uppercase tracking-[0.5em] hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5"
+            className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.5em] hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5"
           >
             Termos de Uso
           </Link>

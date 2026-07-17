@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -43,7 +42,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-body selection:bg-primary selection:text-black">
+    <div className="min-h-screen bg-background text-foreground font-body selection:bg-primary selection:text-black">
       <div className="bg-noise" />
       <Header />
       
@@ -51,11 +50,11 @@ export default function LoginPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-headline font-black tracking-tighter uppercase">Acesso Vet IA</h1>
-            <p className="text-zinc-500 text-[10px] uppercase font-bold tracking-[0.2em]">Entre ou experimente o protocolo preventivo</p>
+            <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-[0.2em]">Entre ou experimente o protocolo preventivo</p>
           </div>
 
           <div className="relative group">
-            <div className="relative z-10 space-y-6 bg-black p-8 rounded-[2.5rem] border border-primary/30 shadow-2xl overflow-hidden">
+            <div className="relative z-10 space-y-6 bg-card p-8 rounded-[2.5rem] border border-primary/30 shadow-2xl overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none"></div>
 
               <div className="relative z-10 space-y-4">
@@ -78,22 +77,22 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="relative flex items-center gap-4 py-2">
-                  <div className="flex-1 h-px bg-zinc-900"></div>
-                  <span className="text-[8px] font-black uppercase tracking-[0.3em] text-zinc-700">ou entre com e-mail</span>
-                  <div className="flex-1 h-px bg-zinc-900"></div>
+                  <div className="flex-1 h-px bg-border"></div>
+                  <span className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground">ou entre com e-mail</span>
+                  <div className="flex-1 h-px bg-border"></div>
                 </div>
               </div>
 
               <form onSubmit={handleLogin} className="relative z-10 space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">E-mail</Label>
+                    <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">E-mail</Label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input 
                         type="email" 
                         placeholder="seu@email.com" 
-                        className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
+                        className="h-14 bg-background border-border rounded-2xl pl-12 focus:ring-primary"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
@@ -102,13 +101,13 @@ export default function LoginPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase font-black tracking-widest text-zinc-500 ml-2">Senha</Label>
+                    <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-2">Senha</Label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-600" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                       <Input 
                         type="password" 
                         placeholder="••••••••" 
-                        className="h-14 bg-zinc-950 border-zinc-800 rounded-2xl pl-12 focus:ring-primary"
+                        className="h-14 bg-background border-border rounded-2xl pl-12 focus:ring-primary"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
@@ -121,7 +120,7 @@ export default function LoginPage() {
                 <div className="pt-2">
                   <Button 
                     type="submit" 
-                    className="w-full h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-black hover:bg-primary/90 transition-all shadow-xl shadow-primary/10"
+                    className="w-full h-14 rounded-2xl text-[11px] font-black uppercase tracking-[0.25em] bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-xl shadow-primary/10"
                     disabled={isLoading || isAnonLoading || isUserLoading}
                   >
                     {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : (
@@ -135,7 +134,7 @@ export default function LoginPage() {
               </form>
 
               <div className="relative z-10 text-center pt-2">
-                <p className="text-zinc-600 text-[10px] font-bold uppercase tracking-wider">
+                <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-wider">
                   Novo por aqui? <Link href="/register" className="text-primary hover:underline underline-offset-4">Crie seu perfil</Link>
                 </p>
               </div>
