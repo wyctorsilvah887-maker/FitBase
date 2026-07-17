@@ -105,7 +105,7 @@ export default function TermsPage() {
               </span>
             </div>
             <p className="text-[8px] font-black uppercase tracking-[0.5em] text-muted-foreground">
-              Desenvolvido por <span className="animate-text-flash italic inline-block">WS Studios</span>
+              Desenvolvido por <span className="animate-text-flash italic inline-block">WS Studios Company</span>
             </p>
           </div>
         </section>
