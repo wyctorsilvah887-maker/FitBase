@@ -44,7 +44,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden">
-      <div className="bg-noise" />
       <Header />
 
       <main className="relative z-10 flex items-center justify-center px-6 py-12 md:py-24">

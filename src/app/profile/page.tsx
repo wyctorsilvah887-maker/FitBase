@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -5,7 +6,7 @@ import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import { HistoryList } from '@/components/HistoryList';
-import { History, User, Mail, ShieldCheck, PawPrint, Calendar, Zap, LayoutDashboard } from 'lucide-react';
+import { History, User, Mail, ShieldCheck, Wind, Calendar, Zap, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -29,7 +30,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
           <div className="w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center animate-icon-flash relative overflow-hidden border border-primary/20">
-             <PawPrint className="w-8 h-8 text-primary relative z-10" />
+             <Wind className="w-8 h-8 text-primary relative z-10" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
             Sincronizando <span className="text-primary italic">Protocolo...</span>
@@ -41,7 +42,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body selection:bg-primary selection:text-black overflow-x-hidden">
-      <div className="bg-noise" />
       <Header />
       
       <main className="relative z-10 max-w-4xl mx-auto px-6 pt-4 md:pt-12 pb-32 space-y-20">
@@ -51,7 +51,7 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-[9px] font-black uppercase tracking-widest text-primary backdrop-blur-md mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Central do Tutor WS Studios
+                Central do Especialista WS Studios
               </div>
               <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase leading-none">
                 Olá, <span className="animate-text-flash italic inline-block pr-2">Bem-vindo</span>
@@ -62,10 +62,10 @@ export default function ProfilePage() {
               </p>
             </div>
             
-            <Link href="/">
+            <Link href="/dashboard">
               <Button variant="ghost" className="h-12 px-6 rounded-2xl border border-border bg-card hover:bg-accent text-[9px] font-black uppercase tracking-widest transition-all group">
                 <LayoutDashboard className="w-4 h-4 mr-2 group-hover:text-primary transition-colors" />
-                Painel Geral
+                Painel Técnico
               </Button>
             </Link>
           </div>
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                       <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
                          <Mail className="w-4 h-4 text-primary" />
                       </div>
-                      <span className="text-xl md:text-2xl font-headline font-bold text-foreground tracking-tight">{user.email}</span>
+                      <span className="text-xl md:text-2xl font-headline font-bold text-foreground tracking-tight">{user.email || "Especialista em Teste"}</span>
                     </div>
                   </div>
 
@@ -107,10 +107,6 @@ export default function ProfilePage() {
                     <div className="px-5 py-2.5 rounded-2xl bg-background border border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-3 hover:border-primary/30 transition-all cursor-default">
                       <ShieldCheck className="w-4 h-4 text-primary animate-icon-flash relative overflow-hidden rounded-sm" />
                       Segurança Blindada
-                    </div>
-                    <div className="px-5 py-2.5 rounded-2xl bg-background border border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-3 hover:border-primary/30 transition-all cursor-default">
-                      <PawPrint className="w-4 h-4 text-primary" />
-                      Protocolo Animal
                     </div>
                   </div>
                 </div>
@@ -143,21 +139,6 @@ export default function ProfilePage() {
              </div>
           </div>
         </section>
-
-        {/* Footer Info */}
-        <div className="text-center pt-20">
-          <div className="inline-flex flex-col items-center gap-4 group cursor-default">
-            <div className="flex items-center gap-3 opacity-20 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-700">
-              <ShieldCheck className="w-4 h-4 text-primary" />
-              <p className="text-[9px] font-black uppercase tracking-widest text-foreground">
-                Criptografia Avançada WS Studios
-              </p>
-            </div>
-            <p className="text-[8px] font-bold uppercase tracking-widest text-muted-foreground px-10">
-              Seus dados de saúde animal são protegidos por protocolos de segurança de nível bancário e conformidade integral com a LGPD.
-            </p>
-          </div>
-        </div>
       </main>
     </div>
   );

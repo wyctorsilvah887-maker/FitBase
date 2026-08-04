@@ -81,7 +81,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
-      <div className="bg-noise" />
       <Header />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
