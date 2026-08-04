@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
-import { Loader2, ClipboardCheck, DollarSign, Wrench } from "lucide-react";
+import { useUser, useFirestore, addDocumentNonBlocking, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, serverTimestamp, query, orderBy } from "firebase/firestore";
+import { Loader2, ClipboardCheck, DollarSign, Wrench, UserCog } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface NewOSModalProps {
@@ -28,8 +28,16 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
     equipment: "",
     btus: "",
     value: "",
-    status: "pendente"
+    status: "pendente",
+    technicianId: "sem_tecnico"
   });
+
+  const techsQuery = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return query(collection(db, "users", user.uid, "technicians"), orderBy("name", "asc"));
+  }, [user, db]);
+
+  const { data: technicians } = useCollection(techsQuery);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,6 +63,7 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
         equipment: formData.equipment,
         btus: formData.btus,
         status: formData.status,
+        technicianId: formData.technicianId === "sem_tecnico" ? null : formData.technicianId,
         value: parseFloat(formData.value.replace(',', '.')),
         date: new Date().toISOString(),
         createdAt: serverTimestamp(),
@@ -70,7 +79,8 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
         equipment: "",
         btus: "",
         value: "",
-        status: "pendente"
+        status: "pendente",
+        technicianId: "sem_tecnico"
       });
       onClose();
     } catch (error) {
@@ -82,7 +92,7 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] sm:max-w-lg bg-card border-border text-foreground p-0 rounded-[2.5rem] outline-none shadow-2xl">
+      <DialogContent className="w-[95vw] sm:max-w-lg bg-card border-border text-foreground p-0 rounded-[2.5rem] outline-none shadow-2xl overflow-y-auto max-h-[90vh] custom-scrollbar">
         <form onSubmit={handleSubmit}>
           <div className="p-8 md:p-10 space-y-8">
             <DialogHeader className="text-left space-y-2">
@@ -129,6 +139,28 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
                     onChange={(e) => setFormData({...formData, btus: e.target.value})}
                     disabled={isSubmitting}
                   />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-muted-foreground ml-3">Técnico Responsável</Label>
+                <div className="relative">
+                  <UserCog className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary z-10" />
+                  <Select 
+                    value={formData.technicianId} 
+                    onValueChange={(value) => setFormData({...formData, technicianId: value})}
+                    disabled={isSubmitting}
+                  >
+                    <SelectTrigger className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all">
+                      <SelectValue placeholder="Selecione um técnico" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border-border rounded-xl">
+                      <SelectItem value="sem_tecnico">Aguardando Atribuição</SelectItem>
+                      {technicians?.map(tech => (
+                        <SelectItem key={tech.id} value={tech.id}>{tech.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

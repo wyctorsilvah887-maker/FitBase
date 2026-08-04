@@ -16,7 +16,8 @@ import {
   BadgeCheck,
   MoreVertical,
   ShieldCheck,
-  UserPlus
+  UserPlus,
+  Calendar
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { collection, query, orderBy } from "firebase/firestore";
 import { NewTechnicianModal } from "@/components/NewTechnicianModal";
+import { TechnicianScheduleModal } from "@/components/TechnicianScheduleModal";
 
 export default function TechniciansPage() {
   const { user, isUserLoading } = useUser();
@@ -31,6 +33,7 @@ export default function TechniciansPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isNewTechModalOpen, setIsNewTechModalOpen] = useState(false);
+  const [selectedTechForSchedule, setSelectedTechForSchedule] = useState<any | null>(null);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -107,7 +110,11 @@ export default function TechniciansPage() {
             ))
           ) : filteredTechs.length > 0 ? (
             filteredTechs.map((tech) => (
-              <TechnicianCard key={tech.id} tech={tech} />
+              <TechnicianCard 
+                key={tech.id} 
+                tech={tech} 
+                onViewSchedule={() => setSelectedTechForSchedule(tech)} 
+              />
             ))
           ) : (
             <div className="col-span-full py-20 flex flex-col items-center justify-center space-y-4 bg-card/30 rounded-[3rem] border-2 border-dashed border-border">
@@ -128,11 +135,16 @@ export default function TechniciansPage() {
       </main>
 
       <NewTechnicianModal isOpen={isNewTechModalOpen} onClose={() => setIsNewTechModalOpen(false)} />
+      <TechnicianScheduleModal 
+        technician={selectedTechForSchedule} 
+        isOpen={!!selectedTechForSchedule} 
+        onClose={() => setSelectedTechForSchedule(null)} 
+      />
     </div>
   );
 }
 
-function TechnicianCard({ tech }: { tech: any }) {
+function TechnicianCard({ tech, onViewSchedule }: { tech: any, onViewSchedule: () => void }) {
   const statusConfig: any = {
     ativo: { label: "Disponível", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
     inativo: { label: "Indisponível", color: "bg-red-500/10 text-red-600 border-red-600/20" },
@@ -178,8 +190,12 @@ function TechnicianCard({ tech }: { tech: any }) {
              <ShieldCheck className="w-4 h-4 text-emerald-500" />
              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Credenciado WS</span>
           </div>
-          <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest h-10 hover:text-primary">
-            Ver Escala
+          <Button 
+            variant="ghost" 
+            onClick={onViewSchedule}
+            className="text-[9px] font-black uppercase tracking-widest h-10 hover:text-primary gap-2"
+          >
+            <Calendar className="w-3.5 h-3.5" /> Ver Escala
           </Button>
         </div>
       </CardContent>
