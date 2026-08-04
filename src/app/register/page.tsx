@@ -1,21 +1,30 @@
 
 "use client";
 
-import { useState } from "react";
-import { useAuth, initiateEmailSignUp } from "@/firebase";
+import { useState, useEffect } from "react";
+import { useAuth, useUser, initiateEmailSignUp } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wind, UserPlus, Sparkles, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { UserPlus, Sparkles, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const auth = useAuth();
+  const { user } = useUser();
+  const router = useRouter();
+
+  // Redireciona para a home se o usuário já estiver logado (após cadastro)
+  useEffect(() => {
+    if (user) {
+      router.push("/");
+    }
+  }, [user, router]);
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
