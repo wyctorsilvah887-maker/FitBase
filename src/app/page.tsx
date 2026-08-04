@@ -25,6 +25,7 @@ import { ACMaintenanceModal } from "@/components/ACMaintenanceModal";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
+import { useUser } from "@/firebase";
 import {
   Accordion,
   AccordionContent,
@@ -35,6 +36,7 @@ import {
 export default function HomePage() {
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const { user } = useUser();
 
   const heroImg = PlaceHolderImages?.find(img => img.id === 'hero-hvac');
   const serviceInstall = PlaceHolderImages?.find(img => img.id === 'service-install');
@@ -72,14 +74,17 @@ export default function HomePage() {
               >
                 Diagnóstico Instantâneo <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg" 
-                className="h-14 px-8 rounded-2xl border-2 border-border bg-card/50 font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent transition-all"
-                onClick={() => setIsGuideOpen(true)}
-              >
-                Gerar Protocolo Técnico
-              </Button>
+              {!user && (
+                <Link href="/register">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="h-14 px-8 rounded-2xl border-2 border-border bg-card/50 font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent transition-all w-full"
+                  >
+                    Começar Agora
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <div className="flex items-center gap-6 pt-4 text-muted-foreground">
@@ -179,13 +184,15 @@ export default function HomePage() {
                 />
               </div>
 
-              <Link href="/register">
-                <Button 
-                  className="h-14 px-8 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] hover:scale-105 transition-all w-full sm:w-auto"
-                >
-                  Começar agora <Zap className="ml-2 w-4 h-4 text-primary" />
-                </Button>
-              </Link>
+              {!user && (
+                <Link href="/register">
+                  <Button 
+                    className="h-14 px-8 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] hover:scale-105 transition-all w-full sm:w-auto"
+                  >
+                    Começar agora <Zap className="ml-2 w-4 h-4 text-primary" />
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <div className="flex-1 grid grid-cols-2 gap-4">
@@ -260,15 +267,17 @@ export default function HomePage() {
                 >
                   Começar Diagnóstico <MousePointer2 className="ml-2 w-4 h-4" />
                 </Button>
-                <Link href="/login">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="h-14 px-8 rounded-2xl border-2 border-background/20 bg-transparent text-background font-black uppercase text-[10px] tracking-[0.2em] hover:bg-background/10 transition-all"
-                  >
-                    Entrar como Especialista
-                  </Button>
-                </Link>
+                {!user && (
+                  <Link href="/login">
+                    <Button 
+                      variant="outline" 
+                      size="lg" 
+                      className="h-14 px-8 rounded-2xl border-2 border-background/20 bg-transparent text-background font-black uppercase text-[10px] tracking-[0.2em] hover:bg-background/10 transition-all w-full sm:w-auto"
+                    >
+                      Entrar como Especialista
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </div>

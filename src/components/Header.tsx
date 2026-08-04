@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Wind, User, LogOut, LogIn, LayoutDashboard } from "lucide-react";
+import { Wind, User, LogOut, LogIn, LayoutDashboard, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useUser, useAuth } from "@/firebase";
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ export default function Header() {
   };
 
   const isLoginPage = pathname === '/login';
+  const isRegisterPage = pathname === '/register';
 
   return (
     <header className="relative z-50 max-w-7xl mx-auto px-6 py-10 flex items-center justify-between">
@@ -53,7 +54,7 @@ export default function Header() {
         <ThemeToggle />
         
         {!isUserLoading && (
-          user ? (
+          user && !user.isAnonymous ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="rounded-2xl h-11 w-11 p-0 hover:bg-accent/50 border-2 border-border/50 transition-all overflow-hidden relative group">
@@ -87,13 +88,20 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            !isLoginPage && (
-              <Link href="/login">
-                <Button size="sm" className="rounded-xl h-10 px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Entrar
-                </Button>
-              </Link>
+            !isLoginPage && !isRegisterPage && (
+              <div className="flex gap-2">
+                <Link href="/login" className="hidden sm:block">
+                  <Button variant="ghost" size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest hover:bg-accent">
+                    Entrar
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm" className="rounded-xl h-10 px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Começar Agora
+                  </Button>
+                </Link>
+              </div>
             )
           )
         )}

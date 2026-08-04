@@ -21,7 +21,7 @@ export default function LoginPage() {
 
   // Redireciona para a home se o usuário já estiver logado
   useEffect(() => {
-    if (user) {
+    if (user && !user.isAnonymous) {
       router.push("/");
     }
   }, [user, router]);
@@ -96,7 +96,7 @@ export default function LoginPage() {
                   className="h-14 rounded-2xl border-2 border-border font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent transition-all"
                   onClick={handleGuestLogin}
                 >
-                  <Sparkles className="mr-2 w-4 h-4 text-primary" /> Modo Teste Grátis
+                  <span className="animate-text-flash italic inline-block pr-2">Modo Teste</span> <Sparkles className="ml-2 w-4 h-4 text-primary" />
                 </Button>
               </div>
 

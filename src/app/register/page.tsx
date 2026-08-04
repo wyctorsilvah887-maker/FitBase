@@ -21,7 +21,7 @@ export default function RegisterPage() {
 
   // Redireciona para a home se o usuário já estiver logado (após cadastro)
   useEffect(() => {
-    if (user) {
+    if (user && !user.isAnonymous) {
       router.push("/");
     }
   }, [user, router]);
