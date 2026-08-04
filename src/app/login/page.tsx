@@ -9,29 +9,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wind, LogIn, Sparkles, ShieldCheck } from "lucide-react";
+import { Wind, LogIn, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const auth = useAuth();
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a home se o usuário já estiver logado
+  // Redireciona para a home assim que o estado do usuário for detectado
   useEffect(() => {
-    if (user && !user.isAnonymous) {
+    if (user) {
       router.push("/");
     }
   }, [user, router]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    initiateEmailSignIn(auth, email, password);
+    setIsSubmitting(true);
+    try {
+      initiateEmailSignIn(auth, email, password);
+    } finally {
+      // O redirecionamento é tratado pelo useEffect acima
+      setIsSubmitting(false);
+    }
   };
 
   const handleGuestLogin = () => {
+    setIsSubmitting(true);
     initiateAnonymousSignIn(auth);
   };
 
@@ -64,6 +72,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="space-y-2">
@@ -75,13 +84,15 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <Button 
                   type="submit" 
+                  disabled={isSubmitting}
                   className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-primary/10 hover:scale-[1.02] transition-all"
                 >
-                  Entrar no Painel <LogIn className="ml-2 w-4 h-4" />
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Entrar no Painel <LogIn className="ml-2 w-4 h-4" /></>}
                 </Button>
               </form>
 
@@ -95,6 +106,7 @@ export default function LoginPage() {
                   variant="outline" 
                   className="h-14 rounded-2xl border-2 border-border font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent transition-all"
                   onClick={handleGuestLogin}
+                  disabled={isSubmitting}
                 >
                   <span className="animate-text-flash italic inline-block pr-2">Modo Teste</span> <Sparkles className="ml-2 w-4 h-4 text-primary" />
                 </Button>

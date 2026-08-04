@@ -9,26 +9,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Sparkles, CheckCircle2 } from "lucide-react";
+import { UserPlus, Sparkles, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const auth = useAuth();
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a home se o usuário já estiver logado (após cadastro)
+  // Redireciona para a home assim que o cadastro for detectado
   useEffect(() => {
-    if (user && !user.isAnonymous) {
+    if (user) {
       router.push("/");
     }
   }, [user, router]);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    initiateEmailSignUp(auth, email, password);
+    setIsSubmitting(true);
+    try {
+      initiateEmailSignUp(auth, email, password);
+    } finally {
+      // O redirecionamento é tratado pelo useEffect acima
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -60,6 +67,7 @@ export default function RegisterPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
                 <div className="space-y-2">
@@ -72,13 +80,15 @@ export default function RegisterPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     minLength={6}
+                    disabled={isSubmitting}
                   />
                 </div>
                 <Button 
                   type="submit" 
+                  disabled={isSubmitting}
                   className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all"
                 >
-                  Criar Conta Técnica <Sparkles className="ml-2 w-4 h-4 text-primary" />
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Criar Conta Técnica <Sparkles className="ml-2 w-4 h-4 text-primary" /></>}
                 </Button>
               </form>
 
