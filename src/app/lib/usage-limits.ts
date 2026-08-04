@@ -1,4 +1,3 @@
-
 /**
  * @fileOverview Gerencia os limites de uso diário da Clima IA.
  */
@@ -15,11 +14,11 @@ interface UsageData {
 
 const LIMITS = {
   analysis: {
-    authenticated: 6,
+    authenticated: 10,
     anonymous: 3,
   },
   guides: {
-    authenticated: 2,
+    authenticated: 5,
     anonymous: 1,
   },
 };
