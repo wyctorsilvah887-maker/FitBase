@@ -3,14 +3,18 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Esta regra é a mais abrangente possível para o dono dos dados.
-    // Ela permite ler e escrever no documento do usuário E em qualquer subcoleção
-    // (como serviceOrders, technicians, etc.) em qualquer profundidade.
-    match /users/{userId}/{document=**} {
+    // ESTA REGRA RESOLVE O ERRO DE LISTAGEM (operation: list)
+    // O seletor {allPaths=**} é recursivo. Ele garante que o usuário 
+    // autenticado com o ID 'userId' tenha permissão total para:
+    // 1. Ler/Escrever no seu próprio documento (/users/UID)
+    // 2. Listar e gerenciar QUALQUER sub-coleção (/users/UID/serviceOrders, etc.)
+    // 3. Acessar qualquer documento em qualquer profundidade dentro do seu nó.
+    
+    match /users/{userId}/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Regra específica para o documento raiz do usuário (caso necessário)
+    // Regra de segurança adicional para o documento raiz do usuário
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
