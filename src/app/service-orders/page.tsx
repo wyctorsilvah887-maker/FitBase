@@ -25,12 +25,14 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { collection, query, orderBy, where } from "firebase/firestore";
+import { NewOSModal } from "@/components/NewOSModal";
 
 export default function ServiceOrdersPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isNewOSModalOpen, setIsNewOSModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -47,16 +49,21 @@ export default function ServiceOrdersPage() {
 
   const activeOS = serviceOrders?.filter(os => os.status !== "concluido" && os.status !== "cancelado") || [];
 
+  const filteredOS = serviceOrders?.filter(os => 
+    os.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    os.equipment.toLowerCase().includes(searchTerm.toLowerCase())
+  ) || [];
+
   if (isUserLoading || !user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <Clock className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-body">
+    <div className="min-h-screen bg-black text-foreground font-body">
       <Header />
 
       <main className="max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
@@ -87,7 +94,10 @@ export default function ServiceOrdersPage() {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
              </div>
-             <Button className="h-11 px-6 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/10">
+             <Button 
+                onClick={() => setIsNewOSModalOpen(true)}
+                className="h-11 px-6 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/10 hover:scale-105 transition-all"
+              >
                 <Plus className="w-4 h-4 mr-2" /> Nova OS
              </Button>
           </div>
@@ -109,7 +119,13 @@ export default function ServiceOrdersPage() {
                 <Wrench className="w-8 h-8 text-muted-foreground" />
               </div>
               <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Nenhuma OS ativa no momento</p>
-              <Button variant="outline" className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 border-2">Criar Primeira OS</Button>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsNewOSModalOpen(true)}
+                className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 border-2"
+              >
+                Criar Primeira OS
+              </Button>
             </div>
           )}
         </div>
@@ -138,14 +154,14 @@ export default function ServiceOrdersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {serviceOrders && serviceOrders.length > 0 ? (
-                  serviceOrders.map((os) => (
+                {filteredOS && filteredOS.length > 0 ? (
+                  filteredOS.map((os) => (
                     <OSTableRow key={os.id} os={os} />
                   ))
                 ) : (
                   <TableRow>
                     <TableCell colSpan={5} className="h-32 text-center text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                      Sem dados de histórico disponíveis
+                      {isLoading ? "Buscando dados..." : "Nenhum resultado encontrado"}
                     </TableCell>
                   </TableRow>
                 )}
@@ -154,6 +170,8 @@ export default function ServiceOrdersPage() {
           </CardContent>
         </Card>
       </main>
+
+      <NewOSModal isOpen={isNewOSModalOpen} onClose={() => setIsNewOSModalOpen(false)} />
     </div>
   );
 }
@@ -190,7 +208,7 @@ function OSCard({ os }: { os: any }) {
             <MapPin className="w-3.5 h-3.5" /> <span>Endereço não informado</span>
           </div>
           <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
-            <Phone className="w-3.5 h-3.5" /> <span>(11) 98888-7777</span>
+            <Phone className="w-3.5 h-3.5" /> <span>Contato não informado</span>
           </div>
         </div>
 
