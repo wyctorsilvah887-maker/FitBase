@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,23 +6,18 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
   TrendingUp, 
-  TrendingDown, 
   DollarSign, 
   ClipboardList, 
-  Wrench, 
   Clock, 
-  CheckCircle2, 
-  AlertCircle,
   BarChart3,
   CalendarCheck,
   Users
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, orderBy, limit } from "firebase/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
 import { 
   BarChart, 
   Bar, 
@@ -37,11 +31,12 @@ import {
   Pie
 } from "recharts";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const MOCK_FINANCIAL_DATA = [
   { month: "Jan", receita: 4500, despesa: 2100 },
   { month: "Fev", receita: 5200, despesa: 2400 },
-  { month: "Mar", receita: 4800, ecespa: 2200 },
+  { month: "Mar", receita: 4800, despesa: 2200 },
   { month: "Abr", receita: 6100, despesa: 2800 },
   { month: "Mai", receita: 5900, despesa: 2600 },
   { month: "Jun", receita: 7200, despesa: 3100 },
@@ -60,7 +55,6 @@ export default function DashboardPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Busca todas as OS para estatísticas
   const allOSQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
     return query(collection(db, "users", user.uid, "serviceOrders"), orderBy("date", "desc"));
@@ -68,7 +62,6 @@ export default function DashboardPage() {
 
   const { data: allOS, isLoading: loadingStats } = useCollection(allOSQuery);
 
-  // Busca técnicos
   const techsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
     return collection(db, "users", user.uid, "technicians");
@@ -76,7 +69,6 @@ export default function DashboardPage() {
 
   const { data: technicians } = useCollection(techsQuery);
 
-  // Cálculos dinâmicos baseados no Firestore
   const activeOS = allOS?.filter(os => os.status !== "concluido" && os.status !== "cancelado") || [];
   const pendingOS = allOS?.filter(os => os.status === "pendente") || [];
   const inProgressOS = allOS?.filter(os => os.status === "em_andamento") || [];
@@ -112,21 +104,8 @@ export default function DashboardPage() {
               WS Studios Company • Gestão Técnica & Financeira
             </p>
           </div>
-          <div className="flex gap-2">
-            <Link href="/technicians">
-              <Button variant="outline" className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 border-2">
-                Gerenciar Equipe <Users className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
-            <Link href="/service-orders">
-              <Button className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 shadow-lg shadow-primary/20">
-                Nova Ordem de Serviço +
-              </Button>
-            </Link>
-          </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
             title="Receita Total" 
@@ -149,7 +128,7 @@ export default function DashboardPage() {
             <StatsCard 
               title="Equipe Técnica" 
               value={technicians?.length.toString() || "0"} 
-              trend={technicians?.filter(t => t.status === 'ativo').length + " ativos" || "0"} 
+              trend={(technicians?.filter(t => t.status === 'ativo').length || 0) + " ativos"} 
               icon={<Users className="w-5 h-5" />} 
               color="text-primary" 
               isClickable
@@ -164,7 +143,6 @@ export default function DashboardPage() {
           />
         </div>
 
-        {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card/50 overflow-hidden">
             <CardHeader>
@@ -229,7 +207,6 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        {/* Management & Recent OS Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card/50 overflow-hidden">
             <CardHeader className="flex flex-row items-center justify-between">
