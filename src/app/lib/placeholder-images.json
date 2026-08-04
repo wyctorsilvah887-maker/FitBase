@@ -1,0 +1,29 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-hvac",
+      "description": "Unidade condensadora de ar condicionado moderna em um ambiente tecnológico",
+      "imageUrl": "https://picsum.photos/seed/clima1/1200/800",
+      "imageHint": "hvac technology"
+    },
+    {
+      "id": "service-install",
+      "description": "Técnico instalando unidade evaporadora split",
+      "imageUrl": "https://picsum.photos/seed/clima2/600/400",
+      "imageHint": "air conditioner installation"
+    },
+    {
+      "id": "service-clean",
+      "description": "Limpeza de filtros e higienização química",
+      "imageUrl": "https://picsum.photos/seed/clima3/600/400",
+      "imageHint": "hvac cleaning"
+    },
+    {
+      "id": "service-repair",
+      "description": "Manutenção corretiva em placa eletrônica",
+      "imageUrl": "https://picsum.photos/seed/clima4/600/400",
+      "imageHint": "hvac repair"
+    }
+  ]
+}
