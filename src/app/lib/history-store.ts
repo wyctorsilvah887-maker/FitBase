@@ -1,12 +1,13 @@
+
 export type AnalysisEntry = {
   id: string;
   type: 'text' | 'image' | 'guide';
   timestamp: number;
-  input: string; // text description, image dataUri, or pet name
-  output: any; // Result from AI
+  input: string; // descrição do problema ou marca do aparelho
+  output: any; // Resultado da IA (Clima IA)
 };
 
-const HISTORY_KEY = 'vet_ia_history';
+const HISTORY_KEY = 'clima_ia_history';
 
 export function saveAnalysis(entry: Omit<AnalysisEntry, 'id' | 'timestamp'>) {
   if (typeof window === 'undefined') return;

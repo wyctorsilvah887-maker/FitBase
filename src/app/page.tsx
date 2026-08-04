@@ -1,223 +1,146 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
-import { ShieldCheck, Sparkles, ClipboardList, PawPrint, ChevronRight } from "lucide-react";
-import { AnalysisModal } from "@/components/AnalysisModal";
-import { CareGuideModal } from "@/components/CareGuideModal";
-import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
+import { useState } from "react";
 import Header from "@/components/Header";
+import { 
+  Wind, 
+  ThermometerSnowflake, 
+  Wrench, 
+  ShieldCheck, 
+  ArrowRight, 
+  Zap, 
+  History,
+  Info
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { ACAnalysisModal } from "@/components/ACAnalysisModal";
+import { ACMaintenanceModal } from "@/components/ACMaintenanceModal";
 import Link from "next/link";
-import { useUser, useFirestore, useMemoFirebase, useDoc } from "@/firebase";
-import { useRouter } from "next/navigation";
-import { doc } from "firebase/firestore";
 
-export default function Home() {
-  const [isAnalysisModalOpen, setIsAnalysisModalOpen] = useState(false);
-  const [isCareGuideModalOpen, setIsCareGuideModalOpen] = useState(false);
-  const [currentYear, setCurrentYear] = useState<number | null>(null);
-  const [activeSweep, setActiveSweep] = useState<string | null>(null);
-  
-  const { user, isUserLoading } = useUser();
-  const db = useFirestore();
-  const router = useRouter();
-
-  const userDocRef = useMemoFirebase(() => {
-    if (!user || !db) return null;
-    return doc(db, "users", user.uid);
-  }, [user, db]);
-
-  const { data: userData, isLoading: isUserDataLoading } = useDoc(userDocRef);
-
-  useEffect(() => {
-    setCurrentYear(new Date().getFullYear());
-  }, []);
-
-  const handleStartAnalysis = () => {
-    if (activeSweep) return;
-    setActiveSweep('analysis');
-    setTimeout(() => {
-      setActiveSweep(null);
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      setIsAnalysisModalOpen(true);
-    }, 600);
-  };
-
-  const handleGenerateGuide = () => {
-    if (activeSweep) return;
-    setActiveSweep('guide');
-    setTimeout(() => {
-      setActiveSweep(null);
-      if (!user) {
-        router.push('/login');
-        return;
-      }
-      setIsCareGuideModalOpen(true);
-    }, 600);
-  };
-
-  const handleSuccess = () => {
-    // Registro efetuado com sucesso
-  };
-
-  const showTermsModal = user && !isUserDataLoading && (!userData || !userData.acceptedTerms);
+export default function HomePage() {
+  const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-black font-body overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden">
       <div className="bg-noise" />
-      
       <Header />
-
-      <main className="relative z-10 max-w-5xl mx-auto px-6 pt-4 md:pt-8 pb-24 space-y-12">
+      
+      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-8 pb-32">
         {/* Hero Section */}
-        <section className="text-center space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-[8px] font-black tracking-[0.4em] text-primary uppercase mx-auto backdrop-blur-md">
-            <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-            IA Preventiva de Saúde Animal
+        <section className="flex flex-col items-center text-center space-y-8 py-12 md:py-24 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-widest text-primary backdrop-blur-md">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+            Inteligência em Climatização WS Studios Company
           </div>
           
-          <div className="space-y-3">
-            <h2 className="text-4xl md:text-5xl font-headline font-bold tracking-tight leading-[1.05]">
-              Cuidando do seu <span className="animate-text-flash italic inline-block pr-2">pet</span><br className="hidden md:block" /> com inteligência pura
-            </h2>
-            <p className="text-muted-foreground max-w-lg mx-auto text-[10px] md:text-[11px] leading-relaxed font-medium px-4 opacity-80 uppercase tracking-wide">
-              Análise inteligente de sintomas e nutrição animal. O bem-estar do seu amigo começa com a prevenção avançada da WS Studios.
-            </p>
+          <h1 className="text-5xl md:text-8xl font-headline font-bold tracking-tighter uppercase leading-[0.85]">
+            O Futuro do <br />
+            <span className="animate-text-flash italic inline-block pr-4">Conforto Térmico</span>
+          </h1>
+          
+          <p className="max-w-2xl text-muted-foreground text-sm md:text-lg font-medium leading-relaxed">
+            Diagnósticos precisos, guias de manutenção inteligente e suporte técnico avançado 
+            movido por IA para sistemas de ar condicionado residenciais e industriais.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <Button 
+              size="lg" 
+              className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
+              onClick={() => setIsAnalysisOpen(true)}
+            >
+              Diagnosticar Problema <ArrowRight className="ml-2 w-4 h-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="h-14 px-8 rounded-2xl border-2 border-border bg-card/50 font-black uppercase text-[10px] tracking-[0.2em] hover:bg-accent transition-all"
+              onClick={() => setIsGuideOpen(true)}
+            >
+              Criar Guia Técnico
+            </Button>
           </div>
         </section>
 
-        {/* Action Cards Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto px-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-          {/* Card Análise IA */}
-          <div 
-            onClick={handleStartAnalysis}
-            className="group relative cursor-pointer"
-          >
-            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-card border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
-              
-              {activeSweep === 'analysis' && (
-                <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-sweep" />
-                </div>
-              )}
-
-              <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-background border border-primary/30 flex items-center justify-center shadow-inner">
-                  <Sparkles className="w-6 h-6 text-primary" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter">Análise de Saúde IA</h3>
-                  <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                    Descreva sintomas e receba uma análise instantânea.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative z-10 pt-2">
-                <div className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-3 transition-all">
-                  Iniciar Análise <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card Guia de Cuidados */}
-          <div 
-            onClick={handleGenerateGuide}
-            className="group relative cursor-pointer"
-          >
-            <div className="relative flex flex-col justify-between min-h-[200px] p-8 bg-card border border-primary/30 rounded-[2.5rem] overflow-hidden shadow-2xl transition-all hover:border-primary/60">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent"></div>
-
-              {activeSweep === 'guide' && (
-                <div className="absolute inset-0 z-20 pointer-events-none">
-                  <div className="w-full h-full bg-gradient-to-r from-transparent via-primary/40 to-transparent animate-sweep" />
-                </div>
-              )}
-
-              <div className="relative z-10 space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-background border border-primary/30 flex items-center justify-center shadow-inner">
-                  <ClipboardList className="w-6 h-6 text-primary" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-headline font-bold uppercase tracking-tighter">Guia Personalizado</h3>
-                  <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-[0.1em] leading-relaxed">
-                    Gere um manual de cuidados para o seu pet.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative z-10 pt-2">
-                <div className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.3em] text-primary group-hover:gap-3 transition-all">
-                  Criar Manual <ChevronRight className="w-4 h-4" />
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* Feature Grid */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+          <FeatureCard 
+            icon={<ThermometerSnowflake className="w-6 h-6" />}
+            title="Eficiência Energética"
+            desc="Análise inteligente para reduzir o consumo de energia do seu sistema."
+            color="bg-blue-500/10"
+          />
+          <FeatureCard 
+            icon={<Wrench className="w-6 h-6" />}
+            title="Manutenção Preditiva"
+            desc="Antecipe falhas no compressor e vazamentos antes que aconteçam."
+            color="bg-cyan-500/10"
+          />
+          <FeatureCard 
+            icon={<ShieldCheck className="w-6 h-6" />}
+            title="Protocolo de Segurança"
+            desc="Diretrizes técnicas seguindo as normas ABNT e PMOC."
+            color="bg-indigo-500/10"
+          />
         </section>
 
-        {/* Tecnologia WS Studios Card - Enhanced Design */}
-        <section className="mt-4 relative group max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
-          <div className="relative rounded-[2.5rem] bg-card border border-primary/20 p-8 text-center overflow-hidden shadow-2xl transition-all hover:border-primary/40">
-            {/* Subtle premium gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none" />
-            
-            <div className="relative z-10">
-              <div className="mb-5 flex justify-center">
-                <div className="bg-background border border-primary/30 p-3.5 rounded-2xl shadow-inner shadow-primary/5 group-hover:scale-110 transition-transform duration-500 group-hover:border-primary/60">
-                  <ShieldCheck className="h-6 w-6 text-primary" />
-                </div>
+        {/* Info Bar */}
+        <div className="mt-32 p-8 rounded-[3rem] bg-card border-2 border-border relative overflow-hidden group">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-transparent opacity-50" />
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary animate-icon-flash">
+                <Info className="w-6 h-6" />
               </div>
-              <h2 className="font-headline mb-3 text-[11px] font-black uppercase tracking-[0.3em]">
-                Tecnologia Preventiva <span className="animate-text-flash italic inline-block">WS Studios Company</span>
-              </h2>
-              <p className="mx-auto max-w-[420px] text-[9px] text-muted-foreground leading-relaxed font-bold opacity-80 uppercase tracking-widest px-4">
-                Nossa missão é antecipar problemas e educar tutores. Lembre-se: o Vet IA orienta através de análise de dados, mas não substitui a consulta profissional.
-              </p>
+              <div>
+                <h3 className="font-headline font-bold uppercase tracking-tight">Suporte Premium</h3>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest">Tecnologia Preventiva WS Studios Company</p>
+              </div>
             </div>
+            <Link href="/terms">
+              <Button variant="ghost" className="text-[10px] font-black uppercase tracking-widest hover:text-primary transition-colors">
+                Ver Termos de Uso
+              </Button>
+            </Link>
           </div>
-        </section>
+        </div>
+
+        <footer className="mt-20 text-center space-y-4 opacity-50">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+            © 2026 Clima IA • Powered by WS Studios Company
+          </p>
+          <div className="flex justify-center gap-8 text-[9px] font-bold uppercase tracking-widest">
+            <span className="flex items-center gap-2"><Zap className="w-3 h-3 text-primary" /> Alta Performance</span>
+            <span className="flex items-center gap-2"><History className="w-3 h-3 text-primary" /> Histórico em Nuvem</span>
+          </div>
+        </footer>
       </main>
 
-      {/* Footer */}
-      <footer className="py-20 flex flex-col items-center gap-8 relative z-10 border-t border-border/50">
-        <div className="flex items-center gap-2 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 cursor-default transition-all duration-700">
-          <PawPrint className="w-5 h-5 text-primary" />
-          <span className="text-xl font-headline font-bold tracking-tighter">
-            Vet <span className="text-primary italic">IA</span>
-          </span>
-        </div>
-        
-        <div className="flex flex-col items-center gap-4">
-          <div className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.7em] text-center px-6">
-            © {currentYear || '...'} Vet IA • Powered by WS Studios Company
-          </div>
-          <Link 
-            href="/terms"
-            className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.5em] hover:text-primary transition-all border-b border-transparent hover:border-primary pb-0.5"
-          >
-            Termos de Uso
-          </Link>
-        </div>
-      </footer>
-
-      <AnalysisModal 
-        isOpen={isAnalysisModalOpen}
-        onClose={() => setIsAnalysisModalOpen(false)}
-        onSuccess={handleSuccess}
-        type="text"
-      />
-
-      <CareGuideModal 
-        isOpen={isCareGuideModalOpen}
-        onClose={() => setIsCareGuideModalOpen(false)}
-        onSuccess={handleSuccess}
-      />
-
-      {showTermsModal && <TermsAcceptanceModal isOpen={true} />}
+      <ACAnalysisModal isOpen={isAnalysisOpen} onClose={() => setIsAnalysisOpen(false)} />
+      <ACMaintenanceModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </div>
+  );
+}
+
+function FeatureCard({ icon, title, desc, color }: { icon: any, title: string, desc: string, color: string }) {
+  return (
+    <Card className="group relative bg-card border-2 border-border rounded-[2.5rem] overflow-hidden transition-all hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/5">
+      <CardContent className="p-10 space-y-6">
+        <div className={`${color} w-14 h-14 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-500`}>
+          {icon}
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-xl font-headline font-bold uppercase tracking-tight group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+          <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+            {desc}
+          </p>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,89 +1,45 @@
 
 {
   "entities": {
-    "TextAnalysis": {
+    "ACAnalysis": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "TextAnalysis",
+      "title": "ACAnalysis",
       "type": "object",
-      "description": "Represents a record of an AI-powered textual analysis of animal food descriptions or symptoms.",
+      "description": "Registro de análise de problemas ou sintomas de aparelhos de ar condicionado via IA.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the TextAnalysis entity."
-        },
-        "userId": {
-          "type": "string",
-          "description": "Reference to the user who performed this analysis."
-        },
-        "inputText": {
-          "type": "string",
-          "description": "The textual description provided by the user."
-        },
-        "aiResponse": {
-          "type": "object",
-          "description": "The structured response from the AI."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "inputText": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "aiResponse": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "userId",
-        "inputText",
-        "aiResponse",
-        "createdAt"
-      ]
+      "required": ["userId", "aiResponse", "createdAt"]
     },
-    "CareGuide": {
+    "MaintenanceGuide": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "CareGuide",
+      "title": "MaintenanceGuide",
       "type": "object",
-      "description": "A personalized care guide for a pet.",
+      "description": "Guia personalizado de manutenção ou instalação de ar condicionado.",
       "properties": {
-        "id": {
-          "type": "string"
-        },
-        "userId": {
-          "type": "string"
-        },
-        "petData": {
-          "type": "object"
-        },
-        "guide": {
-          "type": "object"
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time"
-        }
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "unitData": { "type": "object" },
+        "guide": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
-      "required": [
-        "userId",
-        "petData",
-        "guide",
-        "createdAt"
-      ]
+      "required": ["userId", "unitData", "guide", "createdAt"]
     }
   },
   "auth": {
-    "providers": [
-      "password",
-      "anonymous"
-    ]
+    "providers": ["password", "anonymous"]
   },
   "firestore": {
-    "/users/{userId}/textAnalyses/{analysisId}": {
-      "schema": {
-        "$ref": "#/entities/TextAnalysis"
-      },
-      "description": "Stores individual AI-powered textual analyses."
+    "/users/{userId}/acAnalyses/{analysisId}": {
+      "schema": { "$ref": "#/entities/ACAnalysis" }
     },
-    "/users/{userId}/careGuides/{guideId}": {
-      "schema": {
-        "$ref": "#/entities/CareGuide"
-      },
-      "description": "Stores personalized care guides."
+    "/users/{userId}/maintenanceGuides/{guideId}": {
+      "schema": { "$ref": "#/entities/MaintenanceGuide" }
     }
   }
 }

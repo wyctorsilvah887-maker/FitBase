@@ -1,8 +1,9 @@
+
 /**
- * @fileOverview Gerencia os limites de uso diário da Vet IA.
+ * @fileOverview Gerencia os limites de uso diário da Clima IA.
  */
 
-const USAGE_KEY = 'vet_ia_daily_usage';
+const USAGE_KEY = 'clima_ia_usage';
 
 export type UsageType = 'analysis' | 'guides';
 
