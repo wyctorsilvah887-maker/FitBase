@@ -86,19 +86,24 @@
   },
   "firestore": {
     "/users/{userId}/acAnalyses/{analysisId}": {
-      "schema": { "$ref": "#/entities/ACAnalysis" }
+      "schema": { "$ref": "#/entities/ACAnalysis" },
+      "description": "Análises técnicas de ar condicionado do usuário."
     },
     "/users/{userId}/maintenanceGuides/{guideId}": {
-      "schema": { "$ref": "#/entities/MaintenanceGuide" }
+      "schema": { "$ref": "#/entities/MaintenanceGuide" },
+      "description": "Guias e protocolos de manutenção gerados."
     },
     "/users/{userId}/serviceOrders/{osId}": {
-      "schema": { "$ref": "#/entities/ServiceOrder" }
+      "schema": { "$ref": "#/entities/ServiceOrder" },
+      "description": "Ordens de serviço gerenciadas pelo especialista."
     },
     "/users/{userId}/technicians/{techId}": {
-      "schema": { "$ref": "#/entities/Technician" }
+      "schema": { "$ref": "#/entities/Technician" },
+      "description": "Técnicos da equipe do especialista."
     },
     "/users/{userId}/transactions/{txId}": {
-      "schema": { "$ref": "#/entities/Transaction" }
+      "schema": { "$ref": "#/entities/Transaction" },
+      "description": "Registros financeiros da operação."
     }
   }
 }

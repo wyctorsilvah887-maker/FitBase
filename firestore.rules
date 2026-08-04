@@ -2,37 +2,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Função auxiliar para verificar se o usuário está autenticado
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    // Função auxiliar para verificar se o usuário é o dono dos dados
-    function isOwner(userId) {
-      return isSignedIn() && request.auth.uid == userId;
-    }
-
-    // Regras para a coleção de usuários e suas sub-coleções
-    match /users/{userId} {
-      allow read, write: if isOwner(userId);
-
-      // Regras para sub-coleções (herdando a lógica de dono)
-      match /acAnalyses/{id} {
-        allow read, write: if isOwner(userId);
-      }
-      match /maintenanceGuides/{id} {
-        allow read, write: if isOwner(userId);
-      }
-      match /serviceOrders/{id} {
-        allow read, write: if isOwner(userId);
-      }
-      match /technicians/{id} {
-        allow read, write: if isOwner(userId);
-      }
-      match /transactions/{id} {
-        allow read, write: if isOwner(userId);
-      }
+    // Permite leitura e escrita se o usuário estiver autenticado e for o dono do caminho
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }
