@@ -105,7 +105,7 @@ export function NewTechnicianModal({ isOpen, onClose }: NewTechnicianModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[95vw] sm:max-w-lg bg-card border-border text-foreground p-0 rounded-[2.5rem] outline-none shadow-2xl">
+      <DialogContent className="w-[95vw] sm:max-w-lg max-h-[90vh] overflow-y-auto bg-card border-border text-foreground p-0 rounded-[2.5rem] outline-none shadow-2xl custom-scrollbar">
         <form onSubmit={handleSubmit}>
           <div className="p-8 md:p-10 space-y-8">
             <DialogHeader className="text-left space-y-2">
