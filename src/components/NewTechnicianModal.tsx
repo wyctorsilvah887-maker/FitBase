@@ -111,7 +111,7 @@ export function NewTechnicianModal({ isOpen, onClose }: NewTechnicianModalProps)
                   <Wrench className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
                     placeholder="Ex: Refrigeração Inverter, VRF, PMOC..." 
-                    className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                    className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                     value={formData.specialty}
                     onChange={(e) => setFormData({...formData, specialty: e.target.value})}
                     disabled={isSubmitting}
@@ -126,7 +126,7 @@ export function NewTechnicianModal({ isOpen, onClose }: NewTechnicianModalProps)
                     <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                     <Input 
                       placeholder="(00) 00000-0000" 
-                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                       value={formData.phone}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
                       disabled={isSubmitting}
@@ -140,7 +140,7 @@ export function NewTechnicianModal({ isOpen, onClose }: NewTechnicianModalProps)
                     <Input 
                       type="email"
                       placeholder="tecnico@exemplo.com" 
-                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
                       disabled={isSubmitting}

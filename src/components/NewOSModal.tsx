@@ -113,7 +113,7 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
                     <Wrench className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
                       placeholder="Ex: Split Hi-Wall" 
-                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                       value={formData.equipment}
                       onChange={(e) => setFormData({...formData, equipment: e.target.value})}
                       disabled={isSubmitting}
@@ -140,7 +140,7 @@ export function NewOSModal({ isOpen, onClose }: NewOSModalProps) {
                     <Input 
                       type="text"
                       placeholder="0,00" 
-                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all font-bold"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all font-bold"
                       value={formData.value}
                       onChange={(e) => setFormData({...formData, value: e.target.value})}
                       disabled={isSubmitting}
