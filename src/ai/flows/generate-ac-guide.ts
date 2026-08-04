@@ -1,8 +1,6 @@
 'use server';
 /**
  * @fileOverview Fluxo Genkit para geração de guias técnicos de ar condicionado.
- * 
- * - generateACGuide - Função principal para gerar guias de climatização.
  */
 
 import { ai } from '@/ai/genkit';
@@ -31,20 +29,18 @@ const generateACGuidePrompt = ai.definePrompt({
   name: 'generateACGuidePrompt',
   input: { schema: GenerateACGuideInputSchema },
   output: { schema: GenerateACGuideOutputSchema },
-  prompt: `Você é o Especialista Clima IA da WS Studios Company, uma autoridade em refrigeração e normas ABNT/PMOC.
-Sua tarefa é gerar um protocolo técnico rigoroso e seguro para o procedimento de: {{{guideType}}}.
+  prompt: `Você é o Especialista Clima IA da WS Studios Company.
+Gere um protocolo técnico rigoroso para: {{{guideType}}}.
 
-DADOS DO EQUIPAMENTO:
+EQUIPAMENTO:
 - Marca: {{{brand}}}
 - Capacidade: {{{btus}}}
 
-REGRAS DE RESPOSTA:
-- Use terminologia técnica correta (fluido refrigerante, superaquecimento, vácuo, etc.).
-- Use tópicos começando com "• ".
-- Destaque sempre a segurança elétrica.
-- Responda em Português do Brasil de forma clara para técnicos.
-
-IMPORTANTE: Se o guia for de instalação, mencione obrigatoriamente a necessidade de bomba de vácuo e teste de estanqueidade.`,
+REGRAS:
+- Use emojis relacionados a ferramentas (🔧, ⚡, ❄️).
+- Seja extremamente técnico e preciso.
+- Destaque sempre a segurança elétrica e o uso de EPIs.
+- Não use tags HTML no retorno.`,
 });
 
 const generateACGuideFlow = ai.defineFlow(
@@ -55,7 +51,7 @@ const generateACGuideFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await generateACGuidePrompt(input);
-    if (!output) throw new Error('O Clima IA não conseguiu processar o protocolo no momento.');
+    if (!output) throw new Error('Falha técnica na geração do protocolo.');
     return output;
   }
 );

@@ -2,7 +2,7 @@
  * @fileOverview Gerencia os limites de uso diário da Clima IA.
  */
 
-const USAGE_KEY = 'clima_ia_usage';
+const USAGE_KEY = 'clima_ia_usage_v2';
 
 export type UsageType = 'analysis' | 'guides';
 
@@ -14,11 +14,11 @@ interface UsageData {
 
 const LIMITS = {
   analysis: {
-    authenticated: 10,
+    authenticated: 15,
     anonymous: 3,
   },
   guides: {
-    authenticated: 5,
+    authenticated: 8,
     anonymous: 1,
   },
 };

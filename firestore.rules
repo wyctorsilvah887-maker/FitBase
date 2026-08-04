@@ -3,13 +3,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * CORE PHILOSOPHY:
-     * This ruleset enforces a strict User-Ownership model. All data is organized hierarchically 
-     * under individual user document paths. Access is strictly limited to the authenticated 
-     * user whose UID matches the path parameter.
+     * CORE PHILOSOPHY: Clima IA - WS Studios Company
+     * Proteção rigorosa de dados técnicos e diagnósticos por UID de usuário.
      */
-
-    // --- Helper Functions ---
 
     function isSignedIn() {
       return request.auth != null;
@@ -23,17 +19,15 @@ service cloud.firestore {
       return resource != null && isOwner(userId);
     }
 
-    // --- Collection Rules ---
-
     match /users/{userId} {
       allow get, list: if isOwner(userId);
       allow create: if isOwner(userId);
       allow update, delete: if isExistingOwner(userId);
 
       /**
-       * @description Stores individual AI-powered textual analyses.
+       * @description Armazena diagnósticos técnicos de IA.
        */
-      match /textAnalyses/{textAnalysisId} {
+      match /acAnalyses/{analysisId} {
         allow get, list: if isOwner(userId);
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
@@ -41,19 +35,9 @@ service cloud.firestore {
       }
 
       /**
-       * @description Stores personalized care guides.
+       * @description Armazena protocolos e guias de manutenção inteligente.
        */
-      match /careGuides/{guideId} {
-        allow get, list: if isOwner(userId);
-        allow create: if isOwner(userId) && request.resource.data.userId == userId;
-        allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-        allow delete: if isExistingOwner(userId);
-      }
-
-      /**
-       * @description Stores individual AI-powered image analyses.
-       */
-      match /imageAnalyses/{imageAnalysisId} {
+      match /maintenanceGuides/{guideId} {
         allow get, list: if isOwner(userId);
         allow create: if isOwner(userId) && request.resource.data.userId == userId;
         allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
