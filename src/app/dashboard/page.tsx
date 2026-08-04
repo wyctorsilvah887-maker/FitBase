@@ -15,7 +15,8 @@ import {
   CheckCircle2, 
   AlertCircle,
   BarChart3,
-  CalendarCheck
+  CalendarCheck,
+  Users
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ import Link from "next/link";
 const MOCK_FINANCIAL_DATA = [
   { month: "Jan", receita: 4500, despesa: 2100 },
   { month: "Fev", receita: 5200, despesa: 2400 },
-  { month: "Mar", receita: 4800, despesa: 2200 },
+  { month: "Mar", receita: 4800, ecespa: 2200 },
   { month: "Abr", receita: 6100, despesa: 2800 },
   { month: "Mai", receita: 5900, despesa: 2600 },
   { month: "Jun", receita: 7200, despesa: 3100 },
@@ -66,6 +67,14 @@ export default function DashboardPage() {
   }, [user, db]);
 
   const { data: allOS, isLoading: loadingStats } = useCollection(allOSQuery);
+
+  // Busca técnicos
+  const techsQuery = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return collection(db, "users", user.uid, "technicians");
+  }, [user, db]);
+
+  const { data: technicians } = useCollection(techsQuery);
 
   // Cálculos dinâmicos baseados no Firestore
   const activeOS = allOS?.filter(os => os.status !== "concluido" && os.status !== "cancelado") || [];
@@ -104,6 +113,11 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-2">
+            <Link href="/technicians">
+              <Button variant="outline" className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 border-2">
+                Gerenciar Equipe <Users className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
             <Link href="/service-orders">
               <Button className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 shadow-lg shadow-primary/20">
                 Nova Ordem de Serviço +
@@ -131,13 +145,16 @@ export default function DashboardPage() {
               isClickable
             />
           </Link>
-          <StatsCard 
-            title="Manutenções Pendentes" 
-            value={pendingOS.length.toString()} 
-            trend={pendingOS.length > 0 ? "⚠️" : "✓"} 
-            icon={<Wrench className="w-5 h-5" />} 
-            color="text-amber-500" 
-          />
+          <Link href="/technicians" className="block">
+            <StatsCard 
+              title="Equipe Técnica" 
+              value={technicians?.length.toString() || "0"} 
+              trend={technicians?.filter(t => t.status === 'ativo').length + " ativos" || "0"} 
+              icon={<Users className="w-5 h-5" />} 
+              color="text-primary" 
+              isClickable
+            />
+          </Link>
           <StatsCard 
             title="Satisfação" 
             value="98%" 
@@ -266,7 +283,7 @@ export default function DashboardPage() {
             <CardContent className="space-y-6">
               <GoalItem label="Higienizações (Mês)" current={completedOS.length} total={20} color="bg-primary" />
               <GoalItem label="Instalações" current={inProgressOS.length} total={10} color="bg-blue-500" />
-              <GoalItem label="Faturamento OS" current={totalRevenue} total={15000} color="bg-emerald-500" isCurrency />
+              <GoalItem label="Técnicos em Campo" current={technicians?.filter(t => t.status === 'ativo').length || 0} total={technicians?.length || 5} color="bg-emerald-500" />
             </CardContent>
           </Card>
         </div>

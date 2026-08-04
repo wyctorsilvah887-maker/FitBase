@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Wind, User, LogOut, LayoutDashboard, UserPlus } from "lucide-react";
+import { Wind, User, LogOut, LayoutDashboard, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 import { useUser, useAuth } from "@/firebase";
 import { Button } from "@/components/ui/button";
@@ -74,6 +74,12 @@ export default function Header() {
                   <Link href="/dashboard" className="flex items-center gap-3 w-full">
                     <LayoutDashboard className="w-4 h-4 text-primary" />
                     <span className="text-[10px] font-black uppercase tracking-widest">Painel Técnico</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild className="rounded-xl px-4 py-3 focus:bg-accent cursor-pointer">
+                  <Link href="/technicians" className="flex items-center gap-3 w-full">
+                    <Users className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Gestão de Técnicos</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl px-4 py-3 focus:bg-accent cursor-pointer">

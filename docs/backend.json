@@ -43,9 +43,27 @@
         "btus": { "type": "string" },
         "status": { "type": "string", "enum": ["pendente", "em_andamento", "concluido", "cancelado"] },
         "value": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" }
+        "date": { "type": "string", "format": "date-time" },
+        "technicianId": { "type": "string" }
       },
       "required": ["userId", "customerName", "equipment", "status", "value", "date"]
+    },
+    "Technician": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Technician",
+      "type": "object",
+      "description": "Cadastro de técnico da equipe.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "status": { "type": "string", "enum": ["ativo", "inativo"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "status", "createdAt"]
     },
     "Transaction": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -75,6 +93,9 @@
     },
     "/users/{userId}/serviceOrders/{osId}": {
       "schema": { "$ref": "#/entities/ServiceOrder" }
+    },
+    "/users/{userId}/technicians/{techId}": {
+      "schema": { "$ref": "#/entities/Technician" }
     },
     "/users/{userId}/transactions/{txId}": {
       "schema": { "$ref": "#/entities/Transaction" }
