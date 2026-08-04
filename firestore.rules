@@ -3,8 +3,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Permite que o usuário autenticado acesse recursivamente todos os seus dados em qualquer profundidade
-    match /users/{userId}/{document=**} {
+    match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /{allPaths=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }
