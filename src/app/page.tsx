@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -35,7 +36,6 @@ export default function HomePage() {
   const [isAnalysisOpen, setIsAnalysisOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
-  // Seleção segura das imagens de placeholder para o tema de climatização
   const heroImg = PlaceHolderImages?.find(img => img.id === 'hero-hvac');
   const serviceInstall = PlaceHolderImages?.find(img => img.id === 'service-install');
   const serviceClean = PlaceHolderImages?.find(img => img.id === 'service-clean');
@@ -179,12 +179,13 @@ export default function HomePage() {
                 />
               </div>
 
-              <Button 
-                onClick={() => setIsGuideOpen(true)}
-                className="h-14 px-8 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] hover:scale-105 transition-all"
-              >
-                Começar agora <Zap className="ml-2 w-4 h-4 text-primary" />
-              </Button>
+              <Link href="/register">
+                <Button 
+                  className="h-14 px-8 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] hover:scale-105 transition-all w-full sm:w-auto"
+                >
+                  Começar agora <Zap className="ml-2 w-4 h-4 text-primary" />
+                </Button>
+              </Link>
             </div>
 
             <div className="flex-1 grid grid-cols-2 gap-4">
