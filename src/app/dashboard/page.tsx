@@ -35,6 +35,7 @@ import {
   PieChart,
   Pie
 } from "recharts";
+import Link from "next/link";
 
 const MOCK_FINANCIAL_DATA = [
   { month: "Jan", receita: 4500, despesa: 2100 },
@@ -94,9 +95,11 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 shadow-lg shadow-primary/20">
-              Nova Ordem de Serviço +
-            </Button>
+            <Link href="/service-orders">
+              <Button className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 shadow-lg shadow-primary/20">
+                Nova Ordem de Serviço +
+              </Button>
+            </Link>
           </div>
         </div>
 
@@ -109,13 +112,16 @@ export default function DashboardPage() {
             icon={<DollarSign className="w-5 h-5" />} 
             color="text-emerald-500" 
           />
-          <StatsCard 
-            title="OS Ativas" 
-            value="12" 
-            trend="+2" 
-            icon={<ClipboardList className="w-5 h-5" />} 
-            color="text-blue-500" 
-          />
+          <Link href="/service-orders" className="block">
+            <StatsCard 
+              title="OS Ativas" 
+              value="12" 
+              trend="+2" 
+              icon={<ClipboardList className="w-5 h-5" />} 
+              color="text-blue-500" 
+              isClickable
+            />
+          </Link>
           <StatsCard 
             title="Manutenções Pendentes" 
             value="05" 
@@ -207,7 +213,9 @@ export default function DashboardPage() {
                 </CardTitle>
                 <CardDescription className="text-[9px] font-bold uppercase tracking-widest mt-1">Últimos atendimentos técnicos</CardDescription>
               </div>
-              <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest">Ver Tudo</Button>
+              <Link href="/service-orders">
+                <Button variant="ghost" className="text-[9px] font-black uppercase tracking-widest">Ver Tudo</Button>
+              </Link>
             </CardHeader>
             <CardContent>
               <Table>
@@ -259,9 +267,9 @@ export default function DashboardPage() {
   );
 }
 
-function StatsCard({ title, value, trend, icon, color }: { title: string, value: string, trend: string, icon: any, color: string }) {
+function StatsCard({ title, value, trend, icon, color, isClickable }: { title: string, value: string, trend: string, icon: any, color: string, isClickable?: boolean }) {
   return (
-    <Card className="rounded-[1.5rem] border-2 border-border bg-card/50 hover:border-primary/30 transition-all group">
+    <Card className={`rounded-[1.5rem] border-2 border-border bg-card/50 hover:border-primary/30 transition-all group ${isClickable ? 'cursor-pointer hover:shadow-lg hover:shadow-primary/5' : ''}`}>
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="p-2 rounded-xl bg-primary/5 text-primary group-hover:scale-110 transition-transform">{icon}</div>
