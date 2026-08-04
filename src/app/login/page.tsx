@@ -20,10 +20,10 @@ export default function LoginPage() {
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a home assim que o estado do usuário for detectado
+  // Redireciona para o Dashboard assim que o estado do usuário for detectado
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [user, router]);
 
@@ -33,7 +33,6 @@ export default function LoginPage() {
     try {
       initiateEmailSignIn(auth, email, password);
     } finally {
-      // O redirecionamento é tratado pelo useEffect acima
       setIsSubmitting(false);
     }
   };

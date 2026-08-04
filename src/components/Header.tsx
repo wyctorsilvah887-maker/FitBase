@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Wind, User, LogOut, LogIn, LayoutDashboard, UserPlus } from "lucide-react";
+import { Wind, User, LogOut, LayoutDashboard, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { useUser, useAuth } from "@/firebase";
 import { Button } from "@/components/ui/button";
@@ -36,10 +36,10 @@ export default function Header() {
   const isRegisterPage = pathname === '/register';
 
   return (
-    <header className="relative z-50 max-w-7xl mx-auto px-6 py-10 flex items-center justify-between">
+    <header className="relative z-50 max-w-7xl mx-auto px-6 py-6 md:py-10 flex items-center justify-between">
       {/* Lado Esquerdo - Logo */}
       <div className="flex items-center gap-2">
-        <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group cursor-pointer">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
              <Wind className="w-6 h-6 text-primary" />
           </div>
@@ -54,7 +54,7 @@ export default function Header() {
         <ThemeToggle />
         
         {!isUserLoading && (
-          user && !user.isAnonymous ? (
+          user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="rounded-2xl h-11 w-11 p-0 hover:bg-accent/50 border-2 border-border/50 transition-all overflow-hidden relative group">
@@ -64,20 +64,22 @@ export default function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-popover border-2 border-border text-popover-foreground rounded-[2rem] w-64 p-3 shadow-2xl animate-in fade-in zoom-in duration-300">
                 <DropdownMenuLabel className="px-4 py-4 space-y-1">
-                  <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground">Especialista Clima IA</p>
-                  <p className="text-[11px] font-bold truncate opacity-80">{user.email}</p>
+                  <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                    {user.isAnonymous ? "Modo Teste" : "Especialista Clima IA"}
+                  </p>
+                  <p className="text-[11px] font-bold truncate opacity-80">{user.email || "Usuário Anônimo"}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-border mx-1" />
                 <DropdownMenuItem asChild className="rounded-xl px-4 py-3 focus:bg-accent cursor-pointer mt-1">
-                  <Link href="/profile" className="flex items-center gap-3 w-full">
-                    <User className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Meu Perfil</span>
+                  <Link href="/dashboard" className="flex items-center gap-3 w-full">
+                    <LayoutDashboard className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Painel Técnico</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-xl px-4 py-3 focus:bg-accent cursor-pointer">
-                  <Link href="/" className="flex items-center gap-3 w-full">
-                    <LayoutDashboard className="w-4 h-4 text-primary" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Painel Técnico</span>
+                  <Link href="/profile" className="flex items-center gap-3 w-full">
+                    <User className="w-4 h-4 text-primary" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Meu Perfil</span>
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-border mx-1" />

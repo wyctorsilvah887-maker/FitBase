@@ -20,10 +20,10 @@ export default function RegisterPage() {
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a home assim que o cadastro for detectado
+  // Redireciona para o Dashboard assim que o cadastro for detectado
   useEffect(() => {
     if (user) {
-      router.push("/");
+      router.push("/dashboard");
     }
   }, [user, router]);
 
@@ -33,7 +33,6 @@ export default function RegisterPage() {
     try {
       initiateEmailSignUp(auth, email, password);
     } finally {
-      // O redirecionamento é tratado pelo useEffect acima
       setIsSubmitting(false);
     }
   };

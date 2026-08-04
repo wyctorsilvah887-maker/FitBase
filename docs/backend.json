@@ -29,6 +29,38 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "unitData", "guide", "createdAt"]
+    },
+    "ServiceOrder": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ServiceOrder",
+      "type": "object",
+      "description": "Ordem de serviço para manutenção ou instalação.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "equipment": { "type": "string" },
+        "btus": { "type": "string" },
+        "status": { "type": "string", "enum": ["pendente", "em_andamento", "concluido", "cancelado"] },
+        "value": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "customerName", "equipment", "status", "value", "date"]
+    },
+    "Transaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Transaction",
+      "type": "object",
+      "description": "Registro financeiro de entrada ou saída.",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["receita", "despesa"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "createdAt"]
     }
   },
   "auth": {
@@ -40,6 +72,12 @@
     },
     "/users/{userId}/maintenanceGuides/{guideId}": {
       "schema": { "$ref": "#/entities/MaintenanceGuide" }
+    },
+    "/users/{userId}/serviceOrders/{osId}": {
+      "schema": { "$ref": "#/entities/ServiceOrder" }
+    },
+    "/users/{userId}/transactions/{txId}": {
+      "schema": { "$ref": "#/entities/Transaction" }
     }
   }
 }
