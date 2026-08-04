@@ -46,12 +46,6 @@ const MOCK_FINANCIAL_DATA = [
   { month: "Jun", receita: 7200, despesa: 3100 },
 ];
 
-const MOCK_OS_STATUS = [
-  { name: "Pendente", value: 4, color: "#f59e0b" },
-  { name: "Em Andamento", value: 8, color: "#3b82f6" },
-  { name: "Concluído", value: 15, color: "#10b981" },
-];
-
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
@@ -65,23 +59,38 @@ export default function DashboardPage() {
     }
   }, [user, isUserLoading, router]);
 
-  const osQuery = useMemoFirebase(() => {
+  // Busca todas as OS para estatísticas
+  const allOSQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
-    return query(collection(db, "users", user.uid, "serviceOrders"), orderBy("date", "desc"), limit(5));
+    return query(collection(db, "users", user.uid, "serviceOrders"), orderBy("date", "desc"));
   }, [user, db]);
 
-  const { data: recentOS, isLoading: loadingOS } = useCollection(osQuery);
+  const { data: allOS, isLoading: loadingStats } = useCollection(allOSQuery);
+
+  // Cálculos dinâmicos baseados no Firestore
+  const activeOS = allOS?.filter(os => os.status !== "concluido" && os.status !== "cancelado") || [];
+  const pendingOS = allOS?.filter(os => os.status === "pendente") || [];
+  const inProgressOS = allOS?.filter(os => os.status === "em_andamento") || [];
+  const completedOS = allOS?.filter(os => os.status === "concluido") || [];
+  
+  const totalRevenue = allOS?.reduce((acc, os) => acc + (os.value || 0), 0) || 0;
+
+  const osStatusData = [
+    { name: "Pendente", value: pendingOS.length, color: "#f59e0b" },
+    { name: "Em Andamento", value: inProgressOS.length, color: "#3b82f6" },
+    { name: "Concluído", value: completedOS.length, color: "#10b981" },
+  ];
 
   if (!mounted || isUserLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <Clock className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-body">
+    <div className="min-h-screen bg-black text-foreground font-body">
       <Header />
 
       <main className="relative z-10 max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
@@ -106,17 +115,17 @@ export default function DashboardPage() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
-            title="Receita Mensal" 
-            value="R$ 7.200,00" 
-            trend="+12%" 
+            title="Receita Total" 
+            value={`R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+            trend="+0%" 
             icon={<DollarSign className="w-5 h-5" />} 
             color="text-emerald-500" 
           />
           <Link href="/service-orders" className="block">
             <StatsCard 
               title="OS Ativas" 
-              value="12" 
-              trend="+2" 
+              value={activeOS.length.toString()} 
+              trend={loadingStats ? "..." : `+${activeOS.length}`} 
               icon={<ClipboardList className="w-5 h-5" />} 
               color="text-blue-500" 
               isClickable
@@ -124,8 +133,8 @@ export default function DashboardPage() {
           </Link>
           <StatsCard 
             title="Manutenções Pendentes" 
-            value="05" 
-            trend="-1" 
+            value={pendingOS.length.toString()} 
+            trend={pendingOS.length > 0 ? "⚠️" : "✓"} 
             icon={<Wrench className="w-5 h-5" />} 
             color="text-amber-500" 
           />
@@ -166,14 +175,14 @@ export default function DashboardPage() {
           <Card className="rounded-[2rem] border-2 border-border bg-card/50 overflow-hidden">
             <CardHeader>
               <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <PieChart className="w-4 h-4 text-primary" /> Status das OS
+                <BarChart3 className="w-4 h-4 text-primary" /> Status das OS
               </CardTitle>
             </CardHeader>
             <CardContent className="h-[250px] w-full flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={MOCK_OS_STATUS}
+                    data={osStatusData}
                     cx="50%"
                     cy="50%"
                     innerRadius={60}
@@ -181,7 +190,7 @@ export default function DashboardPage() {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {MOCK_OS_STATUS.map((entry, index) => (
+                    {osStatusData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -190,7 +199,7 @@ export default function DashboardPage() {
               </ResponsiveContainer>
             </CardContent>
             <div className="px-6 pb-6 space-y-2">
-              {MOCK_OS_STATUS.map((item) => (
+              {osStatusData.map((item) => (
                 <div key={item.name} className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
@@ -228,24 +237,23 @@ export default function DashboardPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <DashboardTableRow 
-                    client="Condomínio Alpha" 
-                    equip="MultiSplit LG 24k" 
-                    status="em_andamento" 
-                    value="R$ 850,00" 
-                  />
-                  <DashboardTableRow 
-                    client="Maria Silva" 
-                    equip="Hi-Wall Samsung 9k" 
-                    status="concluido" 
-                    value="R$ 320,00" 
-                  />
-                  <DashboardTableRow 
-                    client="Mercado Central" 
-                    equip="Caminha K-18k" 
-                    status="pendente" 
-                    value="R$ 1.200,00" 
-                  />
+                  {allOS && allOS.length > 0 ? (
+                    allOS.slice(0, 5).map((os) => (
+                      <DashboardTableRow 
+                        key={os.id}
+                        client={os.customerName} 
+                        equip={`${os.equipment} ${os.btus}`} 
+                        status={os.status} 
+                        value={`R$ ${os.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+                      />
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-10 text-[10px] font-bold text-muted-foreground uppercase">
+                        {loadingStats ? "Carregando Ordens..." : "Nenhuma ordem encontrada"}
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
@@ -256,9 +264,9 @@ export default function DashboardPage() {
               <CardTitle className="text-sm font-black uppercase tracking-widest">Metas da Equipe</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <GoalItem label="Higienizações (Mês)" current={45} total={60} color="bg-primary" />
-              <GoalItem label="Instalações" current={12} total={20} color="bg-blue-500" />
-              <GoalItem label="Faturamento OS" current={7200} total={10000} color="bg-emerald-500" isCurrency />
+              <GoalItem label="Higienizações (Mês)" current={completedOS.length} total={20} color="bg-primary" />
+              <GoalItem label="Instalações" current={inProgressOS.length} total={10} color="bg-blue-500" />
+              <GoalItem label="Faturamento OS" current={totalRevenue} total={15000} color="bg-emerald-500" isCurrency />
             </CardContent>
           </Card>
         </div>
@@ -289,15 +297,18 @@ function DashboardTableRow({ client, equip, status, value }: { client: string, e
     pendente: { label: "Pendente", color: "bg-amber-500/10 text-amber-600 border-amber-600/20" },
     em_andamento: { label: "Em Andamento", color: "bg-blue-500/10 text-blue-600 border-blue-600/20" },
     concluido: { label: "Concluído", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
+    cancelado: { label: "Cancelado", color: "bg-red-500/10 text-red-600 border-red-600/20" },
   };
+
+  const config = statusConfig[status] || statusConfig.pendente;
 
   return (
     <TableRow className="border-border hover:bg-accent/20">
       <TableCell className="text-[10px] font-bold">{client}</TableCell>
       <TableCell className="text-[10px] text-muted-foreground">{equip}</TableCell>
       <TableCell>
-        <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest border-2 ${statusConfig[status].color}`}>
-          {statusConfig[status].label}
+        <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest border-2 ${config.color}`}>
+          {config.label}
         </Badge>
       </TableCell>
       <TableCell className="text-[10px] font-black text-right">{value}</TableCell>
@@ -306,14 +317,14 @@ function DashboardTableRow({ client, equip, status, value }: { client: string, e
 }
 
 function GoalItem({ label, current, total, color, isCurrency }: { label: string, current: number, total: number, color: string, isCurrency?: boolean }) {
-  const progress = (current / total) * 100;
+  const progress = Math.min((current / total) * 100, 100);
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-[9px] font-black uppercase tracking-widest">
         <span>{label}</span>
-        <span>{isCurrency ? `R$ ${current}` : current} / {isCurrency ? `R$ ${total}` : total}</span>
+        <span>{isCurrency ? `R$ ${current.toLocaleString('pt-BR')}` : current} / {isCurrency ? `R$ ${total.toLocaleString('pt-BR')}` : total}</span>
       </div>
-      <Progress value={progress} className="h-2 rounded-full bg-accent" />
+      <Progress value={progress} className={`h-2 rounded-full bg-accent ${color}`} />
     </div>
   );
 }
