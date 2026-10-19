@@ -12,7 +12,6 @@ import {
   AlertCircle,
   Plus,
   ArrowRight,
-  UserPlus,
   DollarSign
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -73,7 +72,7 @@ export default function DashboardPage() {
           <div className="flex gap-2">
             <Link href="/members">
               <Button size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest bg-primary hover:bg-primary/90">
-                <UserPlus className="w-4 h-4 mr-2" /> Novo Aluno
+                <Users className="w-4 h-4 mr-2" /> Alunos
               </Button>
             </Link>
             <Link href="/payments">
