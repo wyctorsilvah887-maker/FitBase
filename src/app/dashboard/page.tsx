@@ -15,6 +15,7 @@ import {
   ArrowUpRight
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import Link from "next/link";
 
@@ -106,7 +107,7 @@ export default function DashboardPage() {
                  {payments?.slice(0, 5).map(p => (
                    <div key={p.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border group hover:border-primary/30 transition-all">
                       <div className="flex items-center gap-4">
-                         <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-bold text-xs uppercase">{p.memberName.slice(0, 2)}</div>
+                         <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-bold text-xs uppercase">{(p.memberName || "AL").slice(0, 2)}</div>
                          <div>
                             <p className="text-sm font-bold uppercase">{p.memberName}</p>
                             <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{new Date(p.dueDate).toLocaleDateString('pt-BR')}</p>
