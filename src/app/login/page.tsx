@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Wind, LogIn, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
+import { Dumbbell, LogIn, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -20,10 +20,10 @@ export default function LoginPage() {
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para o Dashboard assim que o estado do usuário for detectado
+  // Redireciona para a página de Alunos assim que o estado do usuário for detectado
   useEffect(() => {
     if (user) {
-      router.push("/dashboard");
+      router.push("/members");
     }
   }, [user, router]);
 
@@ -50,22 +50,22 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="text-center space-y-4">
             <div className="mx-auto w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center animate-icon-flash border-2 border-primary/20">
-              <Wind className="w-8 h-8 text-primary" />
+              <Dumbbell className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-              Acesso do <span className="text-primary italic">Especialista</span>
+              Acesso do <span className="text-primary italic">Gestor</span>
             </h1>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">WS Studios Company</p>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitFlow • WS Studios</p>
           </div>
 
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">
             <CardContent className="p-8 md:p-10 space-y-6">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">E-mail Corporativo</Label>
+                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">E-mail Cadastrado</Label>
                   <Input 
                     type="email" 
-                    placeholder="tecnico@exemplo.com" 
+                    placeholder="exemplo@fitflow.com" 
                     className="h-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -74,7 +74,7 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Sua Senha</Label>
+                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Senha</Label>
                   <Input 
                     type="password" 
                     placeholder="••••••••" 
@@ -90,13 +90,13 @@ export default function LoginPage() {
                   disabled={isSubmitting}
                   className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-xl shadow-primary/10 hover:scale-[1.02] transition-all"
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Entrar no Painel <LogIn className="ml-2 w-4 h-4" /></>}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Entrar no Sistema <LogIn className="ml-2 w-4 h-4" /></>}
                 </Button>
               </form>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
-                <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest"><span className="bg-card px-4 text-muted-foreground">Ou continue como</span></div>
+                <div className="relative flex justify-center text-[8px] uppercase font-black tracking-widest"><span className="bg-card px-4 text-muted-foreground">Ou continue com</span></div>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
@@ -106,19 +106,19 @@ export default function LoginPage() {
                   onClick={handleGuestLogin}
                   disabled={isSubmitting}
                 >
-                  <span className="animate-text-flash italic inline-block pr-2">Modo Teste</span> <Sparkles className="ml-2 w-4 h-4 text-primary" />
+                  <span className="italic inline-block pr-2">Modo Demonstração</span> <Sparkles className="ml-2 w-4 h-4 text-primary" />
                 </Button>
               </div>
 
               <p className="text-center text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                Não possui conta? <Link href="/register" className="text-primary hover:underline italic">Cadastrar Especialista</Link>
+                Não possui conta? <Link href="/register" className="text-primary hover:underline italic">Cadastrar Academia</Link>
               </p>
             </CardContent>
           </Card>
 
           <div className="text-center flex items-center justify-center gap-4 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
             <ShieldCheck className="w-4 h-4 text-primary" />
-            <span className="text-[8px] font-black uppercase tracking-widest text-foreground">Acesso Criptografado WS Security</span>
+            <span className="text-[8px] font-black uppercase tracking-widest text-foreground">Acesso Seguro FitFlow</span>
           </div>
         </div>
       </main>
