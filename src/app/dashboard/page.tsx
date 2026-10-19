@@ -9,10 +9,12 @@ import {
   CreditCard, 
   Users, 
   TrendingUp,
-  Clock,
   Dumbbell,
   AlertCircle,
-  ArrowUpRight
+  Plus,
+  ArrowRight,
+  UserPlus,
+  DollarSign
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,7 +41,7 @@ export default function DashboardPage() {
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
-    return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"), limit(50));
+    return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"), limit(10));
   }, [user, db]);
 
   const { data: members } = useCollection(membersQuery);
@@ -51,94 +53,120 @@ export default function DashboardPage() {
 
   if (!mounted || isUserLoading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Dumbbell className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-foreground font-body">
+    <div className="min-h-screen bg-background text-foreground font-body">
       <Header />
-      <main className="max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
-        <div className="space-y-1">
-          <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-            Painel de <span className="text-primary italic">Gestão</span>
-          </h1>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">WS Studios • FitFlow IA Control</p>
+      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8 animate-in fade-in duration-700">
+        
+        {/* Top Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">
+              Painel <span className="text-primary italic">FitFlow</span>
+            </h1>
+            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">Controle Geral • Digital Smart Gym</p>
+          </div>
+          <div className="flex gap-2">
+            <Link href="/members">
+              <Button size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest bg-primary hover:bg-primary/90">
+                <UserPlus className="w-4 h-4 mr-2" /> Novo Aluno
+              </Button>
+            </Link>
+            <Link href="/payments">
+              <Button size="sm" variant="outline" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest border-2">
+                <DollarSign className="w-4 h-4 mr-2" /> Novo Recebimento
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
-            title="Receita Total" 
+            title="Receita Acumulada" 
             value={`R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
-            icon={<CreditCard className="w-5 h-5" />} 
+            icon={<CreditCard className="w-4 h-4" />} 
             color="text-emerald-500" 
           />
           <StatCard 
             title="Alunos Ativos" 
             value={activeMembers.toString()} 
-            icon={<Users className="w-5 h-5" />} 
+            icon={<Users className="w-4 h-4" />} 
             color="text-blue-500" 
-            link="/members"
           />
           <StatCard 
             title="Pendências" 
             value={pendingPayments.toString()} 
-            icon={<AlertCircle className="w-5 h-5" />} 
+            icon={<AlertCircle className="w-4 h-4" />} 
             color="text-amber-500" 
-            link="/payments"
           />
           <StatCard 
-            title="Taxa Retenção" 
-            value="94%" 
-            icon={<TrendingUp className="w-5 h-5" />} 
+            title="Crescimento" 
+            value="12%" 
+            icon={<TrendingUp className="w-4 h-4" />} 
             color="text-primary" 
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-           <Card className="lg:col-span-2 rounded-[3rem] border-2 border-border bg-card/30 p-8 space-y-6">
-              <div className="flex justify-between items-center">
-                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Últimos Pagamentos</h3>
-                 <Link href="/payments" className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline">Ver Todos</Link>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+           {/* Recent Payments Section */}
+           <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card p-6 space-y-6">
+              <div className="flex justify-between items-center px-2">
+                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Movimentações Recentes</h3>
+                 <Link href="/payments" className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline">Ver Histórico</Link>
               </div>
-              <div className="space-y-4">
-                 {payments?.slice(0, 5).map(p => (
-                   <div key={p.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border group hover:border-primary/30 transition-all">
-                      <div className="flex items-center gap-4">
-                         <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center font-bold text-xs uppercase">{(p.memberName || "AL").slice(0, 2)}</div>
-                         <div>
-                            <p className="text-sm font-bold uppercase">{p.memberName}</p>
-                            <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{new Date(p.dueDate).toLocaleDateString('pt-BR')}</p>
-                         </div>
-                      </div>
-                      <div className="text-right">
-                         <p className="text-sm font-black tracking-tighter">R$ {p.amount.toFixed(2)}</p>
-                         <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
-                      </div>
-                   </div>
-                 ))}
-                 {(!payments || payments.length === 0) && (
-                   <div className="py-20 text-center text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground border-2 border-dashed border-border rounded-[2rem]">
-                      Aguardando novos registros digitais
+              <div className="space-y-2">
+                 {payments && payments.length > 0 ? (
+                   payments.map(p => (
+                     <div key={p.id} className="flex items-center justify-between p-4 rounded-xl bg-accent/30 border border-border group hover:border-primary/30 transition-all">
+                        <div className="flex items-center gap-4">
+                           <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center font-bold text-xs text-primary">{(p.memberName || "AL").slice(0, 2).toUpperCase()}</div>
+                           <div>
+                              <p className="text-sm font-bold uppercase">{p.memberName}</p>
+                              <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{new Date(p.dueDate).toLocaleDateString('pt-BR')}</p>
+                           </div>
+                        </div>
+                        <div className="text-right">
+                           <p className="text-sm font-black tracking-tighter">R$ {p.amount.toFixed(2)}</p>
+                           <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
+                        </div>
+                     </div>
+                   ))
+                 ) : (
+                   <div className="py-20 text-center flex flex-col items-center gap-3 bg-accent/20 border-2 border-dashed border-border rounded-2xl">
+                      <div className="p-3 bg-card rounded-full"><Plus className="w-6 h-6 text-muted-foreground/50" /></div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Sem registros para exibir</p>
                    </div>
                  )}
               </div>
            </Card>
 
-           <Card className="rounded-[3rem] border-2 border-border bg-primary p-8 text-white flex flex-col justify-between">
-              <div className="space-y-2">
-                 <h3 className="text-[10px] font-black uppercase tracking-widest opacity-70">IA Insights</h3>
-                 <p className="text-2xl font-headline font-bold leading-none tracking-tighter uppercase">Potencial de Crescimento</p>
+           {/* Quick Tools Section */}
+           <Card className="rounded-[2rem] border-2 border-border bg-card p-6 flex flex-col justify-between space-y-6">
+              <div className="space-y-4">
+                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Análise IA</h3>
+                 <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-3">
+                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Status Financeiro</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                       {pendingPayments > 0 
+                        ? `Você possui ${pendingPayments} pendências. Regularizar esses pagamentos pode injetar novos recursos na academia.`
+                        : "Sua saúde financeira está excelente! Todos os pagamentos processados estão em dia."
+                       }
+                    </p>
+                 </div>
               </div>
-              <div className="space-y-6">
-                 <p className="text-sm font-medium opacity-90 leading-relaxed">
-                    Com base nos dados digitalizados, sua academia pode crescer 15% nos próximos 3 meses apenas otimizando as cobranças atrasadas.
-                 </p>
-                 <Button className="w-full h-14 rounded-2xl bg-white text-primary font-black uppercase tracking-widest text-[10px] hover:bg-white/90">
-                    Gerar Relatório Completo <ArrowUpRight className="ml-2 w-4 h-4" />
+              
+              <div className="space-y-2">
+                 <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
+                    Relatório Mensal IA <ArrowRight className="ml-2 w-3 h-3 text-primary" />
                  </Button>
+                 <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Powered by FitFlow Genkit</p>
               </div>
            </Card>
         </div>
@@ -147,19 +175,14 @@ export default function DashboardPage() {
   );
 }
 
-function StatCard({ title, value, icon, color, link }: { title: string, value: string, icon: any, color: string, link?: string }) {
-  const content = (
-    <Card className={`rounded-[2rem] border-2 border-border bg-card/50 transition-all ${link ? 'hover:border-primary/50' : ''}`}>
-      <CardContent className="p-8 space-y-4">
-        <div className={`p-3 rounded-2xl bg-card border border-border w-fit ${color}`}>{icon}</div>
-        <div>
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground">{title}</p>
-          <h3 className="text-3xl font-headline font-bold tracking-tighter">{value}</h3>
-        </div>
-      </CardContent>
+function StatCard({ title, value, icon, color }: { title: string, value: string, icon: any, color: string }) {
+  return (
+    <Card className="rounded-[1.5rem] border-2 border-border bg-card p-6 space-y-3 transition-all hover:border-primary/20">
+      <div className={`p-2 rounded-lg bg-accent border border-border w-fit ${color}`}>{icon}</div>
+      <div>
+        <p className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground">{title}</p>
+        <h3 className="text-2xl font-headline font-bold tracking-tighter">{value}</h3>
+      </div>
     </Card>
   );
-
-  if (link) return <Link href={link}>{content}</Link>;
-  return content;
 }
