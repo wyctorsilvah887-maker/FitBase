@@ -1,7 +1,6 @@
-
 "use client";
 
-import { Dumbbell, User, LogOut, LayoutDashboard, UserPlus, Users } from "lucide-react";
+import { Dumbbell, User, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useUser, useAuth } from "@/firebase";
 import { Button } from "@/components/ui/button";
@@ -43,7 +42,7 @@ export default function Header() {
              <Dumbbell className="w-6 h-6 text-primary" />
           </div>
           <h1 className="text-xl md:text-2xl font-headline font-bold tracking-tighter text-foreground uppercase">
-            FitFlow <span className="text-primary italic">IA</span>
+            FitFlow
           </h1>
         </Link>
       </div>

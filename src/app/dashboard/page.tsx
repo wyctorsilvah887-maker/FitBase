@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -16,7 +15,7 @@ import {
   UserPlus,
   DollarSign
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { collection, query, orderBy, limit } from "firebase/firestore";
 import Link from "next/link";
@@ -64,7 +63,6 @@ export default function DashboardPage() {
       <Header />
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8 animate-in fade-in duration-700">
         
-        {/* Top Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">
@@ -86,7 +84,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
             title="Receita Acumulada" 
@@ -115,7 +112,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-           {/* Recent Payments Section */}
            <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card p-6 space-y-6">
               <div className="flex justify-between items-center px-2">
                  <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Movimentações Recentes</h3>
@@ -147,16 +143,15 @@ export default function DashboardPage() {
               </div>
            </Card>
 
-           {/* Quick Tools Section */}
            <Card className="rounded-[2rem] border-2 border-border bg-card p-6 flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Análise IA</h3>
+                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Status do Negócio</h3>
                  <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-3">
-                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Status Financeiro</p>
+                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Saúde Financeira</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                        {pendingPayments > 0 
-                        ? `Você possui ${pendingPayments} pendências. Regularizar esses pagamentos pode injetar novos recursos na academia.`
-                        : "Sua saúde financeira está excelente! Todos os pagamentos processados estão em dia."
+                        ? `Você possui ${pendingPayments} pendências de pagamento. Regularizar esses alunos pode aumentar seu faturamento mensal.`
+                        : "Excelente! Todos os alunos processados estão com os pagamentos em dia."
                        }
                     </p>
                  </div>
@@ -164,9 +159,9 @@ export default function DashboardPage() {
               
               <div className="space-y-2">
                  <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
-                    Relatório Mensal IA <ArrowRight className="ml-2 w-3 h-3 text-primary" />
+                    Gerar Relatório de Performance <ArrowRight className="ml-2 w-3 h-3 text-primary" />
                  </Button>
-                 <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Powered by FitFlow Genkit</p>
+                 <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitFlow</p>
               </div>
            </Card>
         </div>

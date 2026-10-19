@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "GymMember": {
@@ -29,17 +28,6 @@
         "paidAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "memberId", "amount", "status", "dueDate"]
-    },
-    "GymPerformanceAnalysis": {
-      "title": "GymPerformanceAnalysis",
-      "type": "object",
-      "description": "Análise da IA sobre a saúde financeira da academia.",
-      "properties": {
-        "userId": { "type": "string" },
-        "analysisResult": { "type": "object" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "analysisResult", "createdAt"]
     }
   },
   "auth": {
@@ -47,7 +35,6 @@
   },
   "firestore": {
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
-    "/users/{userId}/analyses/{id}": { "schema": "GymPerformanceAnalysis", "description": "Insights da IA sobre o negócio." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." }
   }
 }

@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -6,8 +5,8 @@ import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "FitFlow IA - WS Studios Company",
-  description: "Aposente seu caderno. Gestão inteligente para donos de academia.",
+  title: "FitFlow - Gestão Inteligente",
+  description: "Aposente seu caderno. Gestão digital completa para donos de academia.",
 };
 
 export default function RootLayout({

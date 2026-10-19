@@ -1,4 +1,3 @@
-
 "use client";
 
 import Header from "@/components/Header";
@@ -8,15 +7,11 @@ import {
   Users, 
   Zap, 
   TrendingUp, 
-  Smartphone, 
   ArrowRight,
-  CheckCircle2,
   BookOpen,
-  ArrowUpRight,
   Play
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
@@ -30,10 +25,8 @@ export default function GymLandingPage() {
       <Header />
       
       <main className="relative">
-        {/* Decorative Background */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.07)_0%,transparent_70%)] pointer-events-none -z-10" />
 
-        {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-24 md:pt-24 md:pb-32 text-center space-y-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-in fade-in duration-1000">
             <Zap className="w-3 h-3 animate-pulse" />
@@ -45,7 +38,7 @@ export default function GymLandingPage() {
           </h1>
           
           <p className="text-muted-foreground text-lg md:text-2xl font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-            Digitalize sua academia com inteligência artificial. Controle pagamentos, alunos e crescimento sem perder uma única folha.
+            Digitalize sua academia com eficiência. Controle pagamentos, alunos e crescimento sem perder uma única folha.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
@@ -87,7 +80,6 @@ export default function GymLandingPage() {
           </div>
         </section>
 
-        {/* Comparison Section */}
         <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden">
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
             <div className="space-y-12">
@@ -99,9 +91,9 @@ export default function GymLandingPage() {
               </div>
               
               <div className="grid gap-8">
-                <FeatureItem icon={<BookOpen className="text-red-500" />} title="Adeus aos Rasuras" text="Chega de nomes ilegíveis, folhas soltas e borrões de suor no seu controle." />
+                <FeatureItem icon={<BookOpen className="text-red-500" />} title="Adeus às Rasuras" text="Chega de nomes ilegíveis, folhas soltas e borrões de suor no seu controle." />
                 <FeatureItem icon={<Zap className="text-amber-500" />} title="Velocidade Instantânea" text="Localize qualquer aluno ou pagamento em 2 segundos, não em 2 minutos." />
-                <FeatureItem icon={<TrendingUp className="text-emerald-500" />} title="Análise IA" text="O caderno não te avisa quem vai sair. Nossa IA sim." />
+                <FeatureItem icon={<TrendingUp className="text-emerald-500" />} title="Gestão Profissional" text="Saiba quem são seus melhores alunos e quem precisa de atenção para não sair." />
               </div>
             </div>
 
@@ -115,13 +107,12 @@ export default function GymLandingPage() {
               <div className="absolute -bottom-8 -left-8 bg-card border-2 border-border p-8 rounded-[2rem] shadow-2xl max-w-[280px] animate-bounce-slow">
                  <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Relatório do Mês</p>
                  <p className="text-2xl font-headline font-bold">+28% Retenção</p>
-                 <p className="text-xs text-muted-foreground mt-2">Calculado via FitFlow IA</p>
+                 <p className="text-xs text-muted-foreground mt-2">Calculado via FitFlow</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
         <section className="py-24 md:py-48 px-6 text-center">
           <div className="max-w-4xl mx-auto space-y-12 bg-foreground text-background p-16 md:p-32 rounded-[4rem] relative overflow-hidden group">
             <div className="absolute inset-0 bg-primary/20 blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
@@ -141,12 +132,11 @@ export default function GymLandingPage() {
           </div>
         </section>
 
-        {/* Footer */}
         <footer className="py-20 border-t border-border bg-card/50">
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
                  <Dumbbell className="w-8 h-8 text-primary" />
-                 <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitFlow <span className="text-primary italic">IA</span></span>
+                 <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitFlow</span>
               </div>
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
                  © 2026 WS Studios Company • Digital Smart Gym
