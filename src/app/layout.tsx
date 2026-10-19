@@ -6,8 +6,8 @@ import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "Clima IA - WS Studios Company",
-  description: "Inteligência Artificial para Diagnóstico e Manutenção de Ar Condicionado",
+  title: "FitFlow IA - WS Studios Company",
+  description: "Aposente seu caderno. Gestão inteligente para donos de academia.",
 };
 
 export default function RootLayout({

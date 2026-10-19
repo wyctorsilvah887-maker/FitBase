@@ -1,54 +1,53 @@
 
 {
   "entities": {
-    "ACAnalysis": {
-      "title": "ACAnalysis",
+    "GymMember": {
+      "title": "GymMember",
       "type": "object",
-      "description": "Análise de problemas de ar condicionado via IA.",
-      "properties": {
-        "userId": { "type": "string" },
-        "inputText": { "type": "string" },
-        "aiResponse": { "type": "object" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "aiResponse", "createdAt"]
-    },
-    "ServiceOrder": {
-      "title": "ServiceOrder",
-      "type": "object",
-      "description": "Ordem de serviço técnica.",
-      "properties": {
-        "userId": { "type": "string" },
-        "customerName": { "type": "string" },
-        "equipment": { "type": "string" },
-        "btus": { "type": "string" },
-        "status": { "type": "string", "enum": ["pendente", "em_andamento", "concluido", "cancelado"] },
-        "value": { "type": "number" },
-        "technicianId": { "type": "string" },
-        "date": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "customerName", "status", "value"]
-    },
-    "Technician": {
-      "title": "Technician",
-      "type": "object",
-      "description": "Técnico da equipe.",
+      "description": "Dados cadastrais do aluno da academia.",
       "properties": {
         "userId": { "type": "string" },
         "name": { "type": "string" },
-        "specialty": { "type": "string" },
         "phone": { "type": "string" },
-        "status": { "type": "string", "enum": ["ativo", "inativo"] }
+        "plan": { "type": "string", "enum": ["mensal", "trimestral", "anual"] },
+        "status": { "type": "string", "enum": ["ativo", "inativo", "pendente"] },
+        "joinedAt": { "type": "string", "format": "date-time" }
       },
-      "required": ["userId", "name", "status"]
+      "required": ["userId", "name", "plan", "status"]
+    },
+    "Payment": {
+      "title": "Payment",
+      "type": "object",
+      "description": "Registro de mensalidade ou venda.",
+      "properties": {
+        "userId": { "type": "string" },
+        "memberId": { "type": "string" },
+        "memberName": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pago", "pendente", "atrasado"] },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "paidAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "memberId", "amount", "status", "dueDate"]
+    },
+    "GymPerformanceAnalysis": {
+      "title": "GymPerformanceAnalysis",
+      "type": "object",
+      "description": "Análise da IA sobre a saúde financeira da academia.",
+      "properties": {
+        "userId": { "type": "string" },
+        "analysisResult": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "analysisResult", "createdAt"]
     }
   },
   "auth": {
     "providers": ["password", "anonymous"]
   },
   "firestore": {
-    "/users/{userId}/acAnalyses/{id}": { "schema": "ACAnalysis", "description": "Histórico de diagnósticos." },
-    "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Gestão de OS." },
-    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." }
+    "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
+    "/users/{userId}/analyses/{id}": { "schema": "GymPerformanceAnalysis", "description": "Insights da IA sobre o negócio." }
   }
 }

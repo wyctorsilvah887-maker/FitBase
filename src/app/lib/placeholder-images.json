@@ -2,28 +2,28 @@
 {
   "placeholderImages": [
     {
-      "id": "hero-hvac",
-      "description": "Unidade condensadora de ar condicionado moderna em um ambiente tecnológico",
-      "imageUrl": "https://picsum.photos/seed/clima1/1200/800",
-      "imageHint": "hvac technology"
+      "id": "gym-hero",
+      "description": "Academia moderna e tecnológica com iluminação neon",
+      "imageUrl": "https://picsum.photos/seed/gym1/1200/800",
+      "imageHint": "modern gym"
     },
     {
-      "id": "service-install",
-      "description": "Técnico instalando unidade evaporadora split",
-      "imageUrl": "https://picsum.photos/seed/clima2/600/400",
-      "imageHint": "air conditioner installation"
+      "id": "notebook-comparison",
+      "description": "Comparação entre caderno antigo e tablet moderno",
+      "imageUrl": "https://picsum.photos/seed/gym2/600/400",
+      "imageHint": "digital tablet"
     },
     {
-      "id": "service-clean",
-      "description": "Limpeza de filtros e higienização química",
-      "imageUrl": "https://picsum.photos/seed/clima3/600/400",
-      "imageHint": "hvac cleaning"
+      "id": "gym-owner",
+      "description": "Dono de academia satisfeito usando smartphone",
+      "imageUrl": "https://picsum.photos/seed/gym3/600/400",
+      "imageHint": "happy owner"
     },
     {
-      "id": "service-repair",
-      "description": "Manutenção corretiva em placa eletrônica",
-      "imageUrl": "https://picsum.photos/seed/clima4/600/400",
-      "imageHint": "hvac repair"
+      "id": "member-checkin",
+      "description": "Aluno fazendo check-in digital",
+      "imageUrl": "https://picsum.photos/seed/gym4/600/400",
+      "imageHint": "gym checkin"
     }
   ]
 }
