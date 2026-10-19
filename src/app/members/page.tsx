@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,13 +6,11 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
   Plus, 
-  ArrowLeft, 
   Search, 
   UserPlus, 
   Phone, 
   Calendar,
-  MoreVertical,
-  Filter
+  MoreVertical
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -62,13 +59,6 @@ export default function MembersPage() {
       <main className="max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <Button 
-              variant="ghost" 
-              onClick={() => router.push("/dashboard")} 
-              className="mb-2 -ml-2 h-8 text-[9px] font-black uppercase tracking-widest gap-2 hover:bg-accent"
-            >
-              <ArrowLeft className="w-3 h-3" /> Dashboard
-            </Button>
             <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">
               Alunos <span className="text-primary italic">Matriculados</span>
             </h1>
