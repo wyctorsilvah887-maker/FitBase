@@ -2,108 +2,53 @@
 {
   "entities": {
     "ACAnalysis": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ACAnalysis",
       "type": "object",
-      "description": "Registro de análise de problemas ou sintomas de aparelhos de ar condicionado via IA.",
+      "description": "Análise de problemas de ar condicionado via IA.",
       "properties": {
-        "id": { "type": "string" },
         "userId": { "type": "string" },
         "inputText": { "type": "string" },
-        "photoUrl": { "type": "string" },
         "aiResponse": { "type": "object" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "aiResponse", "createdAt"]
     },
-    "MaintenanceGuide": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "MaintenanceGuide",
-      "type": "object",
-      "description": "Guia personalizado de manutenção ou instalação de ar condicionado.",
-      "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "unitData": { "type": "object" },
-        "guide": { "type": "object" },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "unitData", "guide", "createdAt"]
-    },
     "ServiceOrder": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ServiceOrder",
       "type": "object",
-      "description": "Ordem de serviço para manutenção ou instalação.",
+      "description": "Ordem de serviço técnica.",
       "properties": {
-        "id": { "type": "string" },
         "userId": { "type": "string" },
         "customerName": { "type": "string" },
         "equipment": { "type": "string" },
         "btus": { "type": "string" },
         "status": { "type": "string", "enum": ["pendente", "em_andamento", "concluido", "cancelado"] },
         "value": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" },
-        "technicianId": { "type": "string" }
+        "technicianId": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" }
       },
-      "required": ["userId", "customerName", "equipment", "status", "value", "date"]
+      "required": ["userId", "customerName", "status", "value"]
     },
     "Technician": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Technician",
       "type": "object",
-      "description": "Cadastro de técnico da equipe.",
+      "description": "Técnico da equipe.",
       "properties": {
-        "id": { "type": "string" },
         "userId": { "type": "string" },
         "name": { "type": "string" },
         "specialty": { "type": "string" },
         "phone": { "type": "string" },
-        "email": { "type": "string" },
-        "status": { "type": "string", "enum": ["ativo", "inativo"] },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "status": { "type": "string", "enum": ["ativo", "inativo"] }
       },
-      "required": ["userId", "name", "status", "createdAt"]
-    },
-    "Transaction": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Transaction",
-      "type": "object",
-      "description": "Registro financeiro de entrada ou saída.",
-      "properties": {
-        "id": { "type": "string" },
-        "userId": { "type": "string" },
-        "description": { "type": "string" },
-        "amount": { "type": "number" },
-        "type": { "type": "string", "enum": ["receita", "despesa"] },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["userId", "amount", "type", "createdAt"]
+      "required": ["userId", "name", "status"]
     }
   },
   "auth": {
     "providers": ["password", "anonymous"]
   },
   "firestore": {
-    "/users/{userId}/acAnalyses/{analysisId}": {
-      "schema": { "$ref": "#/entities/ACAnalysis" },
-      "description": "Análises técnicas de ar condicionado do usuário."
-    },
-    "/users/{userId}/maintenanceGuides/{guideId}": {
-      "schema": { "$ref": "#/entities/MaintenanceGuide" },
-      "description": "Guias e protocolos de manutenção gerados."
-    },
-    "/users/{userId}/serviceOrders/{osId}": {
-      "schema": { "$ref": "#/entities/ServiceOrder" },
-      "description": "Ordens de serviço gerenciadas pelo especialista."
-    },
-    "/users/{userId}/technicians/{techId}": {
-      "schema": { "$ref": "#/entities/Technician" },
-      "description": "Técnicos da equipe do especialista."
-    },
-    "/users/{userId}/transactions/{txId}": {
-      "schema": { "$ref": "#/entities/Transaction" },
-      "description": "Registros financeiros da operação."
-    }
+    "/users/{userId}/acAnalyses/{id}": { "schema": "ACAnalysis", "description": "Histórico de diagnósticos." },
+    "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Gestão de OS." },
+    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." }
   }
 }

@@ -2,10 +2,8 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // REGRA MESTRA: Permite acesso total recursivo ao dono do diretório /users/{userId}
-    // O seletor {document=**} garante que consultas de listagem em sub-coleções 
-    // (ex: serviceOrders, technicians) sejam autorizadas automaticamente para o dono.
+    // REGRA DE OURO: O dono do ID {userId} tem acesso total e irrestrito 
+    // a todos os seus documentos e QUALQUER sub-coleção em qualquer profundidade.
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
