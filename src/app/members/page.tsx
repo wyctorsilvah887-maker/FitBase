@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
@@ -10,14 +10,28 @@ import {
   UserPlus, 
   Phone, 
   Calendar,
-  MoreVertical
+  MoreVertical,
+  RefreshCcw,
+  CreditCard,
+  Edit2,
+  Trash2,
+  UserCircle
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { collection, query, orderBy } from "firebase/firestore";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { collection, query, orderBy, doc } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
+import { useToast } from "@/hooks/use-toast";
 
 export default function MembersPage() {
   const { user, isUserLoading } = useUser();
@@ -93,7 +107,7 @@ export default function MembersPage() {
             ))
           ) : filteredMembers.length > 0 ? (
             filteredMembers.map((member) => (
-              <MemberCard key={member.id} member={member} />
+              <MemberCard key={member.id} member={member} userId={user.uid} />
             ))
           ) : (
             <div className="col-span-full py-20 flex flex-col items-center justify-center space-y-4 bg-accent/20 rounded-[3rem] border-2 border-dashed border-border">
@@ -118,7 +132,10 @@ export default function MembersPage() {
   );
 }
 
-function MemberCard({ member }: { member: any }) {
+function MemberCard({ member, userId }: { member: any, userId: string }) {
+  const db = useFirestore();
+  const { toast } = useToast();
+  
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
     inativo: { label: "Inativo", color: "bg-red-500/10 text-red-600 border-red-600/20" },
@@ -127,21 +144,63 @@ function MemberCard({ member }: { member: any }) {
 
   const config = statusConfig[member.status] || statusConfig.pendente;
 
+  const handleDelete = () => {
+    if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
+      const memberRef = doc(db, "users", userId, "members", member.id);
+      deleteDocumentNonBlocking(memberRef);
+      toast({
+        title: "Aluno removido",
+        description: "Os dados do aluno foram excluídos com sucesso.",
+      });
+    }
+  };
+
   return (
     <Card className="rounded-[2.5rem] border-2 border-border bg-card hover:border-primary/30 transition-all group overflow-hidden relative">
-      <div className="absolute top-6 right-6 flex gap-2">
+      <div className="absolute top-6 right-6 flex gap-2 items-center">
          <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest border-2 px-3 py-1 ${config.color}`}>
             {config.label}
           </Badge>
-          <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent -mr-2">
-            <MoreVertical className="w-4 h-4" />
-          </Button>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent -mr-2">
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] border-2 border-border p-2">
+              <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-muted-foreground px-3 py-2">
+                Gestão do Aluno
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
+                <RefreshCcw className="w-4 h-4 text-primary group-hover:animate-spin" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação de Plano</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
+                <CreditCard className="w-4 h-4 text-emerald-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
+                <Edit2 className="w-4 h-4 text-blue-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Editar Cadastro</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
       </div>
 
       <CardContent className="p-8 space-y-6">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-primary/5 border-2 border-primary/20 flex items-center justify-center text-primary font-bold text-xl">
-             {member.name.slice(0, 1).toUpperCase()}
+             <UserCircle className="w-8 h-8" />
           </div>
           <div className="space-y-1">
             <h3 className="text-lg font-headline font-bold uppercase tracking-tight truncate max-w-[150px]">{member.name}</h3>
@@ -166,7 +225,7 @@ function MemberCard({ member }: { member: any }) {
             variant="ghost" 
             className="text-[9px] font-black uppercase tracking-widest h-10 w-full hover:text-primary gap-2 bg-accent/30 rounded-xl"
           >
-            Ver Detalhes
+            Ficha de Treino
           </Button>
         </div>
       </CardContent>
