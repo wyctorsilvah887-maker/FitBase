@@ -12,7 +12,7 @@ import {
   Dumbbell,
   AlertCircle,
   Plus,
-  ArrowRight,
+  ArrowLeft,
   DollarSign
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -72,8 +72,8 @@ export default function DashboardPage() {
           </div>
           <div className="flex gap-2">
             <Link href="/members">
-              <Button size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest bg-primary hover:bg-primary/90">
-                <Users className="w-4 h-4 mr-2" /> Alunos
+              <Button variant="ghost" size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest border border-border hover:bg-accent">
+                <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
               </Button>
             </Link>
           </div>
@@ -139,13 +139,13 @@ export default function DashboardPage() {
 
            <Card className="rounded-[2rem] border-2 border-border bg-card p-6 flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Status do Negócio</h3>
+                 <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Resumo da Digitalização</h3>
                  <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-3">
-                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Gestão Digital</p>
+                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Controle Financeiro</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                        {pendingPayments > 0 
-                        ? `Você possui ${pendingPayments} pendências. Utilize a lista de alunos para organizar as cobranças.`
-                        : "Excelente! Todos os pagamentos registrados estão em dia."
+                        ? `Você possui ${pendingPayments} pendências registradas. Mantenha sua lista de alunos atualizada.`
+                        : "Excelente! Não há pendências registradas para o período."
                        }
                     </p>
                  </div>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
               <div className="space-y-2">
                  <Link href="/members" className="w-full">
                    <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
-                      Gerenciar Matrículas <ArrowRight className="ml-2 w-3 h-3 text-primary" />
+                      Gerenciar Matrículas <ArrowLeft className="ml-2 w-3 h-3 text-primary rotate-180" />
                    </Button>
                  </Link>
                  <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitFlow</p>
