@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
 
@@ -17,6 +18,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [monthlyFeeInput, setMonthlyFeeInput] = useState("0,00");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [justSignedUp, setJustSignedUp] = useState(false);
@@ -40,10 +42,13 @@ export default function RegisterPage() {
   useEffect(() => {
     if (user && justSignedUp) {
       const fee = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
-      const settingsRef = doc(db, "users", user.uid, "settings", "config");
+      const userRef = doc(db, "users", user.uid);
       
-      setDocumentNonBlocking(settingsRef, {
+      setDocumentNonBlocking(userRef, {
+        email: user.email,
         monthlyFee: isNaN(fee) ? 0 : fee,
+        acceptedTerms: true,
+        acceptedAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       }, { merge: true });
 
@@ -55,6 +60,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!acceptedTerms) return;
     setIsSubmitting(true);
     setJustSignedUp(true);
     initiateEmailSignUp(auth, email, password);
@@ -128,10 +134,23 @@ export default function RegisterPage() {
                     />
                   </div>
                 </div>
+
+                <div className="flex items-start space-x-3 pt-4 px-2">
+                  <Checkbox 
+                    id="terms" 
+                    checked={acceptedTerms}
+                    onCheckedChange={(checked) => setAcceptedTerms(checked as boolean)}
+                    className="mt-1 border-2 border-border data-[state=checked]:bg-primary"
+                  />
+                  <Label htmlFor="terms" className="text-[10px] leading-tight text-muted-foreground font-medium cursor-pointer">
+                    Eu li e concordo com os <Link href="/terms" className="text-primary hover:underline italic">Termos de Uso</Link> e políticas de privacidade do FitFlow.
+                  </Label>
+                </div>
+
                 <Button 
                   type="submit" 
-                  disabled={isSubmitting}
-                  className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all"
+                  disabled={isSubmitting || !acceptedTerms}
+                  className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all disabled:opacity-30"
                 >
                   {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitFlow</>}
                 </Button>
@@ -151,12 +170,6 @@ export default function RegisterPage() {
               </p>
             </CardContent>
           </Card>
-
-          <div className="text-center opacity-50">
-             <p className="text-[8px] font-bold uppercase tracking-widest">
-                Ao se cadastrar, você concorda com nossos <Link href="/terms" className="underline">Termos de Uso</Link>
-             </p>
-          </div>
         </div>
       </main>
     </div>

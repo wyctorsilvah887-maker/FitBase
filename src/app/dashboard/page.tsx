@@ -19,7 +19,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { collection, query, orderBy, doc } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,25 +46,24 @@ export default function DashboardPage() {
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
-    // Removendo o limite para que o cálculo da receita acumulada seja real e total
     return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"));
   }, [user, db]);
 
-  const settingsRef = useMemoFirebase(() => {
+  const userRef = useMemoFirebase(() => {
     if (!user || !db) return null;
-    return doc(db, "users", user.uid, "settings", "config");
+    return doc(db, "users", user.uid);
   }, [user, db]);
 
   const { data: members } = useCollection(membersQuery);
   const { data: payments } = useCollection(paymentsQuery);
-  const { data: settings } = useDoc(settingsRef);
+  const { data: userDoc } = useDoc(userRef);
 
   useEffect(() => {
-    if (settings?.monthlyFee !== undefined) {
-      const value = Number(settings.monthlyFee);
+    if (userDoc?.monthlyFee !== undefined) {
+      const value = Number(userDoc.monthlyFee);
       setMonthlyFeeInput(value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
-  }, [settings]);
+  }, [userDoc]);
 
   const formatCurrency = (value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -78,15 +77,14 @@ export default function DashboardPage() {
   };
 
   const handleSaveSettings = () => {
-    if (!user || !settingsRef || isSaving) return;
+    if (!user || !userRef || isSaving) return;
     setIsSaving(true);
     
-    // Converte a máscara BRL para número puro para salvar no Firestore
     const value = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
     
-    setDocumentNonBlocking(settingsRef, {
+    setDocumentNonBlocking(userRef, {
       monthlyFee: isNaN(value) ? 0 : value,
-      updatedAt: new Date().toISOString()
+      updatedAt: serverTimestamp()
     }, { merge: true });
 
     toast({
@@ -97,7 +95,6 @@ export default function DashboardPage() {
     setTimeout(() => setIsSaving(false), 1000);
   };
 
-  // Cálculo da Receita Acumulada somando apenas os valores numéricos dos pagamentos pagos
   const totalRevenue = payments
     ?.filter(p => p.status === "pago")
     .reduce((acc, p) => {

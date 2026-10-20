@@ -54,18 +54,12 @@ export default function MembersPage() {
     return query(collection(db, "users", user.uid, "members"), orderBy("name", "asc"));
   }, [user, db]);
 
-  const settingsRef = useMemoFirebase(() => {
-    if (!user || !db) return null;
-    return doc(db, "users", user.uid, "settings", "config");
-  }, [user, db]);
-
   const userRef = useMemoFirebase(() => {
     if (!user || !db) return null;
     return doc(db, "users", user.uid);
   }, [user, db]);
 
   const { data: members, isLoading } = useCollection(membersQuery);
-  const { data: settings } = useDoc(settingsRef);
   const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
 
   const filteredMembers = members?.filter(member => 
@@ -81,7 +75,7 @@ export default function MembersPage() {
     );
   }
 
-  // Verifica se o usuário aceitou os termos e se o documento existe
+  // Verifica se o usuário aceitou os termos (os novos cadastros já aceitam no registro)
   const showTermsModal = !userDoc || !userDoc.acceptedTerms;
 
   return (
@@ -129,7 +123,7 @@ export default function MembersPage() {
                 key={member.id} 
                 member={member} 
                 userId={user.uid} 
-                monthlyFee={settings?.monthlyFee || 0}
+                monthlyFee={userDoc?.monthlyFee || 0}
               />
             ))
           ) : (
@@ -153,10 +147,9 @@ export default function MembersPage() {
       <NewMemberModal 
         isOpen={isNewMemberModalOpen} 
         onClose={() => setIsNewMemberModalOpen(false)} 
-        monthlyFee={settings?.monthlyFee || 0}
+        monthlyFee={userDoc?.monthlyFee || 0}
       />
 
-      {/* Modal de ativação do protocolo (termos e criação do documento de usuário) */}
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>
   );

@@ -30,14 +30,6 @@
       },
       "required": ["userId", "memberId", "amount", "status", "dueDate"]
     },
-    "Settings": {
-      "title": "Settings",
-      "type": "object",
-      "description": "Configurações globais da academia.",
-      "properties": {
-        "monthlyFee": { "type": "number" }
-      }
-    },
     "User": {
       "title": "User",
       "type": "object",
@@ -46,6 +38,7 @@
         "acceptedTerms": { "type": "boolean" },
         "acceptedAt": { "type": "string", "format": "date-time" },
         "email": { "type": "string" },
+        "monthlyFee": { "type": "number" },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
     }
@@ -54,9 +47,8 @@
     "providers": ["password", "anonymous"]
   },
   "firestore": {
-    "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor." },
+    "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor e configurações globais." },
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
-    "/users/{userId}/settings/config": { "schema": "Settings", "description": "Configurações de planos e valores." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." }
   }
 }
