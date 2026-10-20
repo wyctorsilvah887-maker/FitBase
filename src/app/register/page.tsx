@@ -2,38 +2,66 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth, useUser, initiateEmailSignUp } from "@/firebase";
+import { useAuth, useUser, initiateEmailSignUp, useFirestore, setDocumentNonBlocking } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Sparkles, CheckCircle2, Loader2, Dumbbell } from "lucide-react";
+import { Card, CardContent } from "@/components/Card";
+import { UserPlus, Sparkles, CheckCircle2, Loader2, Dumbbell, DollarSign } from "lucide-react";
 import Link from "next/link";
+import { doc, serverTimestamp } from "firebase/firestore";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [monthlyFeeInput, setMonthlyFeeInput] = useState("0,00");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [justSignedUp, setJustSignedUp] = useState(false);
+  
   const auth = useAuth();
+  const db = useFirestore();
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a página de Alunos assim que o cadastro for detectado
+  const formatCurrency = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    const cents = parseInt(digits || "0") / 100;
+    return cents.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const handleFeeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(e.target.value);
+    setMonthlyFeeInput(formatted);
+  };
+
+  // Redireciona e salva configurações após o cadastro
   useEffect(() => {
-    if (user) {
+    if (user && justSignedUp) {
+      const fee = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
+      const settingsRef = doc(db, "users", user.uid, "settings", "config");
+      
+      setDocumentNonBlocking(settingsRef, {
+        monthlyFee: isNaN(fee) ? 0 : fee,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+
+      router.push("/members");
+    } else if (user) {
       router.push("/members");
     }
-  }, [user, router]);
+  }, [user, justSignedUp, router, db, monthlyFeeInput]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setJustSignedUp(true);
     try {
       initiateEmailSignUp(auth, email, password);
     } finally {
-      setIsSubmitting(false);
+      // O redirecionamento e salvamento ocorrem no useEffect acima ao detectar o usuário
+      setTimeout(() => setIsSubmitting(false), 2000);
     }
   };
 
@@ -80,6 +108,21 @@ export default function RegisterPage() {
                     minLength={6}
                     disabled={isSubmitting}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Valor da Mensalidade (R$)</Label>
+                  <div className="relative">
+                    <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                    <Input 
+                      type="text"
+                      placeholder="0,00" 
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all font-bold"
+                      value={monthlyFeeInput}
+                      onChange={handleFeeChange}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
                 <Button 
                   type="submit" 
