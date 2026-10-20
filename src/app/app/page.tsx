@@ -15,8 +15,6 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function GymLandingPage() {
-  const notebookImg = PlaceHolderImages?.find(img => img.id === 'notebook-comparison');
-
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden">
       <Header />
@@ -48,33 +46,19 @@ export default function GymLandingPage() {
         </section>
 
         <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden">
-          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-            <div className="space-y-12">
-              <div className="space-y-4">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+            <div className="max-w-4xl space-y-16">
+              <div className="space-y-6">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">A Transformação Digital</h2>
-                <h3 className="text-5xl md:text-7xl font-headline font-bold uppercase leading-tight tracking-tight">
-                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitFlow</span> ?
+                <h3 className="text-5xl md:text-7xl font-headline font-bold uppercase leading-tight tracking-normal">
+                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitFlow</span>?
                 </h3>
               </div>
               
-              <div className="grid gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left">
                 <FeatureItem icon={<BookOpen className="text-red-500" />} title="Adeus às Rasuras" text="Chega de nomes ilegíveis, folhas soltas e borrões de suor no seu controle." />
                 <FeatureItem icon={<Zap className="text-amber-500" />} title="Velocidade Instantânea" text="Localize qualquer aluno ou pagamento em 2 segundos, não em 2 minutos." />
                 <FeatureItem icon={<TrendingUp className="text-emerald-500" />} title="Gestão Profissional" text="Saiba quem são seus melhores alunos e quem precisa de atenção para não sair." />
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="relative rounded-[3rem] overflow-hidden border-2 border-border shadow-2xl aspect-[4/5] lg:aspect-square">
-                {notebookImg && (
-                  <Image src={notebookImg.imageUrl} alt="Comparison" fill className="object-cover" data-ai-hint={notebookImg.imageHint} />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-transparent" />
-              </div>
-              <div className="absolute -bottom-8 -left-8 bg-card border-2 border-border p-8 rounded-[2rem] shadow-2xl max-w-[280px] animate-bounce-slow">
-                 <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Relatório do Mês</p>
-                 <p className="text-2xl font-headline font-bold">+28% Retenção</p>
-                 <p className="text-xs text-muted-foreground mt-2">Calculado via FitFlow</p>
               </div>
             </div>
           </div>
@@ -122,7 +106,7 @@ export default function GymLandingPage() {
 
 function FeatureItem({ icon, title, text }: { icon: any, title: string, text: string }) {
   return (
-    <div className="flex gap-6 items-start group">
+    <div className="flex flex-col gap-6 items-start group">
       <div className="w-14 h-14 rounded-2xl bg-card border-2 border-border flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform shadow-lg">
         {icon}
       </div>
