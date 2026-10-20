@@ -37,12 +37,24 @@
       "properties": {
         "monthlyFee": { "type": "number" }
       }
+    },
+    "User": {
+      "title": "User",
+      "type": "object",
+      "description": "Perfil do gestor da academia e aceitação de termos.",
+      "properties": {
+        "acceptedTerms": { "type": "boolean" },
+        "acceptedAt": { "type": "string", "format": "date-time" },
+        "email": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      }
     }
   },
   "auth": {
     "providers": ["password", "anonymous"]
   },
   "firestore": {
+    "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor." },
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
     "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
     "/users/{userId}/settings/config": { "schema": "Settings", "description": "Configurações de planos e valores." }

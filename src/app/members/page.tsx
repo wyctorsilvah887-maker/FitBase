@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking, useDoc, addDocumentNonBlocking } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
@@ -14,7 +14,6 @@ import {
   MoreVertical,
   RefreshCcw,
   CreditCard,
-  Edit2,
   Trash2,
   UserCircle
 } from "lucide-react";
@@ -33,6 +32,8 @@ import {
 import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
+import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 
 export default function MembersPage() {
   const { user, isUserLoading } = useUser();
@@ -58,21 +59,30 @@ export default function MembersPage() {
     return doc(db, "users", user.uid, "settings", "config");
   }, [user, db]);
 
+  const userRef = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return doc(db, "users", user.uid);
+  }, [user, db]);
+
   const { data: members, isLoading } = useCollection(membersQuery);
   const { data: settings } = useDoc(settingsRef);
+  const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
 
   const filteredMembers = members?.filter(member => 
     member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.phone?.includes(searchTerm)
   ) || [];
 
-  if (isUserLoading || !user) {
+  if (isUserLoading || !user || isUserDocLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <UserPlus className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
+
+  // Verifica se o usuário aceitou os termos e se o documento existe
+  const showTermsModal = !userDoc || !userDoc.acceptedTerms;
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">
@@ -145,6 +155,9 @@ export default function MembersPage() {
         onClose={() => setIsNewMemberModalOpen(false)} 
         monthlyFee={settings?.monthlyFee || 0}
       />
+
+      {/* Modal de ativação do protocolo (termos e criação do documento de usuário) */}
+      <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>
   );
 }
@@ -172,7 +185,7 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
     }
   };
 
-  const handleQuickPayment = (type: 'renovacao' | 'adiantado') => {
+  const handleQuickAction = (type: 'renovacao' | 'adiantado') => {
     if (monthlyFee <= 0) {
       toast({
         variant: "destructive",
@@ -220,14 +233,14 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={() => handleQuickPayment('renovacao')}
+                onClick={() => handleQuickAction('renovacao')}
                 className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group"
               >
                 <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                onClick={() => handleQuickPayment('adiantado')}
+                onClick={() => handleQuickAction('adiantado')}
                 className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10"
               >
                 <CreditCard className="w-4 h-4 text-emerald-500" />
