@@ -2,29 +2,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc, setDocumentNonBlocking } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
   CreditCard, 
   Users, 
-  TrendingUp,
   Dumbbell,
   AlertCircle,
   Plus,
   ArrowLeft,
-  DollarSign
+  DollarSign,
+  Save,
+  Check
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { collection, query, orderBy, limit } from "firebase/firestore";
+import { Input } from "@/components/ui/input";
+import { collection, query, orderBy, limit, doc } from "firebase/firestore";
 import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
+  const [monthlyFeeInput, setMonthlyFeeInput] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -43,8 +49,39 @@ export default function DashboardPage() {
     return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"), limit(10));
   }, [user, db]);
 
+  const settingsRef = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return doc(db, "users", user.uid, "settings", "config");
+  }, [user, db]);
+
   const { data: members } = useCollection(membersQuery);
   const { data: payments } = useCollection(paymentsQuery);
+  const { data: settings } = useDoc(settingsRef);
+
+  useEffect(() => {
+    if (settings?.monthlyFee) {
+      setMonthlyFeeInput(settings.monthlyFee.toString());
+    }
+  }, [settings]);
+
+  const handleSaveSettings = () => {
+    if (!user || !settingsRef || isSaving) return;
+    setIsSaving(true);
+    
+    const value = parseFloat(monthlyFeeInput.replace(',', '.'));
+    
+    setDocumentNonBlocking(settingsRef, {
+      monthlyFee: value || 0,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+
+    toast({
+      title: "Configurações Salvas",
+      description: "O valor da mensalidade foi atualizado com sucesso.",
+    });
+
+    setTimeout(() => setIsSaving(false), 1000);
+  };
 
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
   const pendingPayments = payments?.filter(p => p.status === "pendente").length || 0;
@@ -98,12 +135,37 @@ export default function DashboardPage() {
             icon={<AlertCircle className="w-4 h-4" />} 
             color="text-amber-500" 
           />
-          <StatCard 
-            title="Crescimento" 
-            value="12%" 
-            icon={<TrendingUp className="w-4 h-4" />} 
-            color="text-primary" 
-          />
+          
+          <Card className="rounded-[1.5rem] border-2 border-border bg-card p-6 space-y-3 transition-all hover:border-primary/20">
+            <div className="flex items-center justify-between">
+              <div className="p-2 rounded-lg bg-accent border border-border w-fit text-primary">
+                <DollarSign className="w-4 h-4" />
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleSaveSettings}
+                disabled={isSaving}
+                className="h-7 px-2 rounded-lg text-[8px] font-black uppercase tracking-widest bg-primary/5 hover:bg-primary/10 text-primary border border-primary/20"
+              >
+                {isSaving ? <Check className="w-3 h-3" /> : <Save className="w-3 h-3 mr-1" />}
+                {isSaving ? "OK" : "Salvar"}
+              </Button>
+            </div>
+            <div>
+              <p className="text-[8px] font-black uppercase tracking-[0.3em] text-muted-foreground">Valor Mensalidade</p>
+              <div className="flex items-center gap-1 mt-1">
+                <span className="text-xl font-headline font-bold tracking-tighter">R$</span>
+                <Input 
+                  type="text"
+                  value={monthlyFeeInput}
+                  onChange={(e) => setMonthlyFeeInput(e.target.value)}
+                  className="h-8 bg-transparent border-none p-0 text-2xl font-headline font-bold tracking-tighter focus-visible:ring-0 w-24"
+                  placeholder="0,00"
+                />
+              </div>
+            </div>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "GymMember": {
@@ -28,6 +29,14 @@
         "paidAt": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "memberId", "amount", "status", "dueDate"]
+    },
+    "Settings": {
+      "title": "Settings",
+      "type": "object",
+      "description": "Configurações globais da academia.",
+      "properties": {
+        "monthlyFee": { "type": "number" }
+      }
     }
   },
   "auth": {
@@ -35,6 +44,7 @@
   },
   "firestore": {
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
+    "/users/{userId}/settings/config": { "schema": "Settings", "description": "Configurações de planos e valores." }
   }
 }
