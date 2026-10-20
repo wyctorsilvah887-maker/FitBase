@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Dumbbell, User, LogOut, LayoutDashboard } from "lucide-react";
@@ -35,8 +36,8 @@ export default function Header() {
   const isRegisterPage = pathname === '/register';
 
   return (
-    <header className="relative z-50 max-w-7xl mx-auto px-6 py-6 md:py-10 flex items-center justify-between">
-      <div className="flex items-center gap-2">
+    <header className="relative z-50 max-w-7xl mx-auto px-6 py-6 md:py-10 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-2 shrink-0">
         <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group cursor-pointer">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
              <Dumbbell className="w-6 h-6 text-primary" />
@@ -78,14 +79,14 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             !isLoginPage && !isRegisterPage && (
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest hover:bg-accent">
+                  <Button variant="ghost" size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest hover:bg-accent whitespace-nowrap">
                     Entrar
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="rounded-xl h-10 px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
+                  <Button size="sm" className="rounded-xl h-10 px-5 md:px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">
                     Cadastrar Acesso
                   </Button>
                 </Link>
