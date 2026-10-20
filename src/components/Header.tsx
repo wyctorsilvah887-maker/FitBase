@@ -86,7 +86,7 @@ export default function Header() {
                 </Link>
                 <Link href="/register">
                   <Button size="sm" className="rounded-xl h-10 px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all">
-                    Criar Academia
+                    Cadastrar Acesso
                   </Button>
                 </Link>
               </div>

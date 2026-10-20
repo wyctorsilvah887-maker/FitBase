@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -121,7 +120,7 @@ export default function LoginPage() {
               </div>
 
               <p className="text-center text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                Não possui conta? <Link href="/register" className="text-primary hover:underline italic">Cadastrar Academia</Link>
+                Não possui acesso? <Link href="/register" className="text-primary hover:underline italic">Cadastrar Novo Acesso</Link>
               </p>
             </CardContent>
           </Card>
