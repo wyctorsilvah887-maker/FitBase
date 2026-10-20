@@ -30,7 +30,7 @@ export default function GymLandingPage() {
             O fim da era dos cadernos chegou
           </div>
           
-          <h1 className="text-6xl md:text-9xl font-headline font-black tracking-tighter uppercase leading-[0.85] max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <h1 className="text-6xl md:text-9xl font-headline font-black tracking-tight uppercase leading-[0.85] max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
             Aposente o <br /><span className="text-primary italic">Caderno</span> Hoje
           </h1>
           
@@ -52,8 +52,8 @@ export default function GymLandingPage() {
             <div className="space-y-12">
               <div className="space-y-4">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">A Transformação Digital</h2>
-                <h3 className="text-5xl md:text-7xl font-headline font-bold uppercase tracking-tighter leading-none">
-                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitFlow</span>?
+                <h3 className="text-5xl md:text-7xl font-headline font-bold uppercase leading-tight tracking-tight">
+                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitFlow</span> ?
                 </h3>
               </div>
               
