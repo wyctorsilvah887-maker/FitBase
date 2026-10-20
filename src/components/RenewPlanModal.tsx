@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -21,11 +22,17 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
   const db = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState("0,00");
+
+  const formatCurrency = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    const cents = parseInt(digits || "0") / 100;
+    return cents.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9,]/g, ""); // Permite apenas números e vírgula
-    setAmount(value);
+    const formatted = formatCurrency(e.target.value);
+    setAmount(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,14 +43,14 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
 
     try {
       const paymentsRef = collection(db, "users", user.uid, "payments");
-      // Converte vírgula para ponto para salvar corretamente como número
-      const paymentAmount = parseFloat(amount.replace(',', '.'));
+      // Remove pontos de milhar e troca vírgula por ponto para salvar como número
+      const paymentAmount = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
 
-      if (isNaN(paymentAmount)) {
+      if (isNaN(paymentAmount) || paymentAmount <= 0) {
         toast({
           variant: "destructive",
           title: "Valor inválido",
-          description: "Por favor, insira um valor numérico válido.",
+          description: "Por favor, insira um valor maior que zero.",
         });
         setIsSubmitting(false);
         return;
@@ -65,7 +72,7 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
         description: `O plano de ${member.name} foi renovado com sucesso.`,
       });
 
-      setAmount("");
+      setAmount("0,00");
       onClose();
     } catch (error) {
       console.error("Erro ao renovar plano:", error);
@@ -128,7 +135,7 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
               <Button 
                 type="submit" 
                 className="rounded-2xl h-14 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 sm:flex-1"
-                disabled={isSubmitting || !amount}
+                disabled={isSubmitting || amount === "0,00"}
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Renovação</>}
               </Button>

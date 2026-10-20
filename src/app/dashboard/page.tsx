@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [mounted, setMounted] = useState(false);
-  const [monthlyFeeInput, setMonthlyFeeInput] = useState("");
+  const [monthlyFeeInput, setMonthlyFeeInput] = useState("0,00");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -59,16 +60,27 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (settings?.monthlyFee !== undefined) {
-      setMonthlyFeeInput(settings.monthlyFee.toString().replace('.', ','));
+      const value = Number(settings.monthlyFee);
+      setMonthlyFeeInput(value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
   }, [settings]);
+
+  const formatCurrency = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    const cents = parseInt(digits || "0") / 100;
+    return cents.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(e.target.value);
+    setMonthlyFeeInput(formatted);
+  };
 
   const handleSaveSettings = () => {
     if (!user || !settingsRef || isSaving) return;
     setIsSaving(true);
     
-    // Converte vírgula para ponto para salvar como número no Firestore
-    const value = parseFloat(monthlyFeeInput.replace(',', '.'));
+    const value = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
     
     setDocumentNonBlocking(settingsRef, {
       monthlyFee: isNaN(value) ? 0 : value,
@@ -81,11 +93,6 @@ export default function DashboardPage() {
     });
 
     setTimeout(() => setIsSaving(false), 1000);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9,]/g, ""); // Permite apenas números e vírgula
-    setMonthlyFeeInput(value);
   };
 
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
@@ -165,7 +172,7 @@ export default function DashboardPage() {
                   type="text"
                   value={monthlyFeeInput}
                   onChange={handleInputChange}
-                  className="h-8 bg-transparent border-none p-0 text-2xl font-headline font-bold tracking-tighter focus-visible:ring-0 w-24"
+                  className="h-8 bg-transparent border-none p-0 text-2xl font-headline font-bold tracking-tighter focus-visible:ring-0 w-32"
                   placeholder="0,00"
                 />
               </div>
