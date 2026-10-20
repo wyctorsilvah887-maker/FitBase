@@ -1,15 +1,13 @@
+
 "use client";
 
 import Header from "@/components/Header";
 import { 
   Dumbbell, 
-  CreditCard, 
-  Users, 
   Zap, 
   TrendingUp, 
   ArrowRight,
-  BookOpen,
-  Play
+  BookOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -17,7 +15,6 @@ import Image from "next/image";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function GymLandingPage() {
-  const heroImg = PlaceHolderImages?.find(img => img.id === 'gym-hero');
   const notebookImg = PlaceHolderImages?.find(img => img.id === 'notebook-comparison');
 
   return (
@@ -41,42 +38,12 @@ export default function GymLandingPage() {
             Digitalize sua academia com eficiência. Controle pagamentos, alunos e crescimento sem perder uma única folha.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
+          <div className="flex justify-center pt-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
             <Link href="/register">
               <Button size="lg" className="h-16 px-12 rounded-3xl bg-primary text-primary-foreground font-black uppercase text-[12px] tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all w-full sm:w-auto">
                 Começar Grátis <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
             </Link>
-            <Link href="/login">
-              <Button variant="outline" size="lg" className="h-16 px-12 rounded-3xl border-2 border-border bg-card/50 font-black uppercase text-[12px] tracking-[0.2em] hover:bg-accent transition-all w-full sm:w-auto">
-                Ver Demonstração
-              </Button>
-            </Link>
-          </div>
-
-          <div className="mt-24 relative group max-w-6xl mx-auto animate-in fade-in zoom-in duration-1000 delay-500">
-             <div className="absolute -inset-4 bg-primary/10 rounded-[4rem] blur-3xl opacity-20 pointer-events-none" />
-             <div className="relative rounded-[4rem] overflow-hidden border-2 border-border shadow-2xl aspect-[21/9]">
-                {heroImg && (
-                  <Image 
-                    src={heroImg.imageUrl} 
-                    alt={heroImg.description} 
-                    fill 
-                    className="object-cover" 
-                    data-ai-hint={heroImg.imageHint}
-                  />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute bottom-12 left-12 flex items-center gap-6">
-                  <div className="p-6 rounded-[2rem] bg-white/10 backdrop-blur-2xl border border-white/20">
-                     <Play className="w-8 h-8 text-white fill-white" />
-                  </div>
-                  <div className="text-left text-white">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60">Digitalização FitFlow</p>
-                    <p className="text-2xl font-headline font-bold uppercase tracking-tight">O Poder da Gestão na Palma da Mão</p>
-                  </div>
-                </div>
-             </div>
           </div>
         </section>
 
