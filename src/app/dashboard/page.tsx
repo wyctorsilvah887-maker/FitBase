@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -59,8 +58,8 @@ export default function DashboardPage() {
   const { data: settings } = useDoc(settingsRef);
 
   useEffect(() => {
-    if (settings?.monthlyFee) {
-      setMonthlyFeeInput(settings.monthlyFee.toString());
+    if (settings?.monthlyFee !== undefined) {
+      setMonthlyFeeInput(settings.monthlyFee.toString().replace('.', ','));
     }
   }, [settings]);
 
@@ -68,10 +67,11 @@ export default function DashboardPage() {
     if (!user || !settingsRef || isSaving) return;
     setIsSaving(true);
     
+    // Converte vírgula para ponto para salvar como número no Firestore
     const value = parseFloat(monthlyFeeInput.replace(',', '.'));
     
     setDocumentNonBlocking(settingsRef, {
-      monthlyFee: value || 0,
+      monthlyFee: isNaN(value) ? 0 : value,
       updatedAt: new Date().toISOString()
     }, { merge: true });
 
@@ -81,6 +81,11 @@ export default function DashboardPage() {
     });
 
     setTimeout(() => setIsSaving(false), 1000);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9,]/g, ""); // Permite apenas números e vírgula
+    setMonthlyFeeInput(value);
   };
 
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
@@ -159,7 +164,7 @@ export default function DashboardPage() {
                 <Input 
                   type="text"
                   value={monthlyFeeInput}
-                  onChange={(e) => setMonthlyFeeInput(e.target.value)}
+                  onChange={handleInputChange}
                   className="h-8 bg-transparent border-none p-0 text-2xl font-headline font-bold tracking-tighter focus-visible:ring-0 w-24"
                   placeholder="0,00"
                 />
@@ -185,7 +190,7 @@ export default function DashboardPage() {
                            </div>
                         </div>
                         <div className="text-right">
-                           <p className="text-sm font-black tracking-tighter">R$ {p.amount.toFixed(2)}</p>
+                           <p className="text-sm font-black tracking-tighter">R$ {p.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                            <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
                         </div>
                      </div>

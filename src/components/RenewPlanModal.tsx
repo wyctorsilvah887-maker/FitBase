@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -24,6 +23,11 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [amount, setAmount] = useState("");
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^0-9,]/g, ""); // Permite apenas números e vírgula
+    setAmount(value);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !db || !member || !amount || isSubmitting) return;
@@ -32,9 +36,19 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
 
     try {
       const paymentsRef = collection(db, "users", user.uid, "payments");
+      // Converte vírgula para ponto para salvar corretamente como número
       const paymentAmount = parseFloat(amount.replace(',', '.'));
 
-      // Chamada não bloqueante para evitar que o UI trave em caso de latência
+      if (isNaN(paymentAmount)) {
+        toast({
+          variant: "destructive",
+          title: "Valor inválido",
+          description: "Por favor, insira um valor numérico válido.",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
         memberId: member.id,
@@ -61,7 +75,6 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
         description: "Não foi possível registrar o pagamento.",
       });
     } finally {
-      // Pequeno delay para garantir que o estado do botão resete apenas após o fechamento
       setTimeout(() => setIsSubmitting(false), 500);
     }
   };
@@ -90,7 +103,7 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
                     placeholder="0,00" 
                     className="h-14 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all font-bold text-lg"
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={handleInputChange}
                     required
                     disabled={isSubmitting}
                     autoFocus
