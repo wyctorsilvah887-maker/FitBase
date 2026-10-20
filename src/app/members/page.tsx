@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, deleteDocumentNonBlocking, useDoc, addDocumentNonBlocking } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
@@ -29,18 +29,17 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { collection, query, orderBy, doc } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
-import { RenewPlanModal } from "@/components/RenewPlanModal";
 import { useToast } from "@/hooks/use-toast";
 
 export default function MembersPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   const router = useRouter();
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
-  const [renewingMember, setRenewingMember] = useState<any | null>(null);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -53,7 +52,13 @@ export default function MembersPage() {
     return query(collection(db, "users", user.uid, "members"), orderBy("name", "asc"));
   }, [user, db]);
 
+  const settingsRef = useMemoFirebase(() => {
+    if (!user || !db) return null;
+    return doc(db, "users", user.uid, "settings", "config");
+  }, [user, db]);
+
   const { data: members, isLoading } = useCollection(membersQuery);
+  const { data: settings } = useDoc(settingsRef);
 
   const filteredMembers = members?.filter(member => 
     member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -113,7 +118,7 @@ export default function MembersPage() {
                 key={member.id} 
                 member={member} 
                 userId={user.uid} 
-                onRenew={() => setRenewingMember(member)}
+                monthlyFee={settings?.monthlyFee || 0}
               />
             ))
           ) : (
@@ -135,16 +140,11 @@ export default function MembersPage() {
       </main>
 
       <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} />
-      <RenewPlanModal 
-        isOpen={!!renewingMember} 
-        onClose={() => setRenewingMember(null)} 
-        member={renewingMember}
-      />
     </div>
   );
 }
 
-function MemberCard({ member, userId, onRenew }: { member: any, userId: string, onRenew: () => void }) {
+function MemberCard({ member, userId, monthlyFee }: { member: any, userId: string, monthlyFee: number }) {
   const db = useFirestore();
   const { toast } = useToast();
   
@@ -167,6 +167,34 @@ function MemberCard({ member, userId, onRenew }: { member: any, userId: string, 
     }
   };
 
+  const handleQuickRenew = () => {
+    if (monthlyFee <= 0) {
+      toast({
+        variant: "destructive",
+        title: "Mensalidade não configurada",
+        description: "Defina o valor da mensalidade no Dashboard para usar a renovação rápida.",
+      });
+      return;
+    }
+
+    const paymentsRef = collection(db, "users", userId, "payments");
+    addDocumentNonBlocking(paymentsRef, {
+      userId,
+      memberId: member.id,
+      memberName: member.name,
+      amount: monthlyFee,
+      status: "pago",
+      dueDate: new Date().toISOString(),
+      paidAt: new Date().toISOString(),
+      createdAt: serverTimestamp(),
+    });
+
+    toast({
+      title: "Plano Renovado",
+      description: `Renovação de ${member.name} registrada (R$ ${monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`,
+    });
+  };
+
   return (
     <Card className="rounded-[2.5rem] border-2 border-border bg-card hover:border-primary/30 transition-all group overflow-hidden relative">
       <div className="absolute top-6 right-6 flex gap-2 items-center">
@@ -186,11 +214,11 @@ function MemberCard({ member, userId, onRenew }: { member: any, userId: string, 
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={onRenew}
+                onClick={handleQuickRenew}
                 className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group"
               >
                 <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação de Plano</span>
+                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
                 <CreditCard className="w-4 h-4 text-emerald-500" />
