@@ -15,10 +15,11 @@ import { useToast } from "@/hooks/use-toast";
 interface NewMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
+  monthlyFee: number;
 }
 
-export function NewMemberModal({ isOpen, onClose }: NewMemberModalProps) {
-  const { user } = useUser();
+export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalProps) {
+  const { user } = user();
   const db = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,8 +73,9 @@ export function NewMemberModal({ isOpen, onClose }: NewMemberModalProps) {
 
     try {
       const memberRef = collection(db, "users", user.uid, "members");
+      const paymentsRef = collection(db, "users", user.uid, "payments");
       
-      addDocumentNonBlocking(memberRef, {
+      const memberPromise = addDocumentNonBlocking(memberRef, {
         userId: user.uid,
         name: formData.name,
         phone: formData.phone,
@@ -84,9 +86,26 @@ export function NewMemberModal({ isOpen, onClose }: NewMemberModalProps) {
         createdAt: serverTimestamp(),
       });
 
+      // Registra automaticamente a primeira mensalidade vinculada ao novo aluno
+      memberPromise?.then((docRef) => {
+        if (docRef && monthlyFee > 0) {
+          addDocumentNonBlocking(paymentsRef, {
+            userId: user.uid,
+            memberId: docRef.id,
+            memberName: formData.name,
+            amount: monthlyFee,
+            status: "pago",
+            dueDate: new Date().toISOString(),
+            paidAt: new Date().toISOString(),
+            createdAt: serverTimestamp(),
+            type: 'adesao'
+          });
+        }
+      });
+
       toast({
         title: "Aluno Matriculado",
-        description: `${formData.name} agora faz parte da sua academia.`,
+        description: `${formData.name} matriculado e primeira mensalidade registrada.`,
       });
 
       setFormData({

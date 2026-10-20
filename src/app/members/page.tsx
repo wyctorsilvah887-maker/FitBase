@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -139,7 +140,11 @@ export default function MembersPage() {
         </div>
       </main>
 
-      <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} />
+      <NewMemberModal 
+        isOpen={isNewMemberModalOpen} 
+        onClose={() => setIsNewMemberModalOpen(false)} 
+        monthlyFee={settings?.monthlyFee || 0}
+      />
     </div>
   );
 }
@@ -227,10 +232,6 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
               >
                 <CreditCard className="w-4 h-4 text-emerald-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
-                <Edit2 className="w-4 h-4 text-blue-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Editar Cadastro</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
