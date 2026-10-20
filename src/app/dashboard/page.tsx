@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc, setDocumentNonBlocking } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -95,8 +96,15 @@ export default function DashboardPage() {
     setTimeout(() => setIsSaving(false), 1000);
   };
 
-  const totalRevenue = payments
-    ?.filter(p => p.status === "pago")
+  // Cálculo da Receita Mensal
+  const monthlyRevenue = payments
+    ?.filter(p => {
+      if (p.status !== "pago") return false;
+      const paymentDate = new Date(p.paidAt || p.dueDate);
+      const now = new Date();
+      return paymentDate.getMonth() === now.getMonth() && 
+             paymentDate.getFullYear() === now.getFullYear();
+    })
     .reduce((acc, p) => {
       const val = typeof p.amount === 'number' ? p.amount : parseFloat(p.amount);
       return acc + (isNaN(val) ? 0 : val);
@@ -136,8 +144,8 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard 
-            title="Receita Acumulada" 
-            value={`R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
+            title="Receita Total Mensal" 
+            value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} 
             icon={<CreditCard className="w-4 h-4" />} 
             color="text-emerald-500" 
           />
