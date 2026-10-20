@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
 
@@ -77,7 +77,7 @@ export default function RegisterPage() {
               <Dumbbell className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-              Nova <span className="text-primary italic">Academia</span>
+              Novo <span className="text-primary italic">Acesso</span>
             </h1>
           </div>
 

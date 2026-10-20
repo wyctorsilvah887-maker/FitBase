@@ -86,7 +86,6 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
         createdAt: serverTimestamp(),
       });
 
-      // Registra automaticamente a primeira mensalidade vinculada ao novo aluno
       memberPromise?.then((docRef) => {
         if (docRef && monthlyFee > 0) {
           addDocumentNonBlocking(paymentsRef, {
@@ -189,7 +188,7 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
                       onValueChange={(value) => setFormData({...formData, plan: value})}
                       disabled={isSubmitting}
                     >
-                      <SelectTrigger className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all">
+                      <SelectTrigger className="h-12 pl-12 bg-background border-border rounded-2xl pr-6 focus:ring-primary border-2 transition-all">
                         <SelectValue placeholder="Selecione o plano" />
                       </SelectTrigger>
                       <SelectContent className="bg-popover border-border rounded-xl">
