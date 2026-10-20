@@ -36,26 +36,26 @@ export default function Header() {
   const isRegisterPage = pathname === '/register';
 
   return (
-    <header className="relative z-50 max-w-7xl mx-auto px-6 py-6 md:py-10 flex items-center justify-between gap-4">
+    <header className="relative z-50 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-10 flex items-center justify-between gap-2 md:gap-4">
       <div className="flex items-center gap-2 shrink-0">
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 group cursor-pointer">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-             <Dumbbell className="w-6 h-6 text-primary" />
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-1 md:gap-2 group cursor-pointer">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+             <Dumbbell className="w-5 h-5 md:w-6 md:h-6 text-primary" />
           </div>
-          <h1 className="text-xl md:text-2xl font-headline font-bold tracking-tighter text-foreground uppercase">
+          <h1 className="text-lg md:text-2xl font-headline font-bold tracking-tighter text-foreground uppercase">
             FitFlow
           </h1>
         </Link>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1 md:gap-3">
         <ThemeToggle />
         
         {!isUserLoading && (
           user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="rounded-2xl h-11 w-11 p-0 hover:bg-accent/50 border-2 border-border/50 transition-all overflow-hidden relative group">
+                <Button variant="ghost" className="rounded-2xl h-10 w-10 md:h-11 md:w-11 p-0 hover:bg-accent/50 border-2 border-border/50 transition-all overflow-hidden relative group">
                   <User className="w-5 h-5 text-muted-foreground group-hover:text-primary relative z-10" />
                 </Button>
               </DropdownMenuTrigger>
@@ -79,15 +79,16 @@ export default function Header() {
             </DropdownMenu>
           ) : (
             !isLoginPage && !isRegisterPage && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 md:gap-2">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest hover:bg-accent whitespace-nowrap">
+                  <Button variant="ghost" size="sm" className="rounded-xl h-9 md:h-10 px-2 md:px-4 text-[9px] md:text-[10px] font-black uppercase tracking-widest hover:bg-accent whitespace-nowrap">
                     Entrar
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm" className="rounded-xl h-10 px-5 md:px-6 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">
-                    Cadastrar Acesso
+                  <Button size="sm" className="rounded-xl h-9 md:h-10 px-3 md:px-6 bg-primary text-primary-foreground text-[9px] md:text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20 hover:scale-105 transition-all whitespace-nowrap">
+                    <span className="hidden sm:inline">Cadastrar Acesso</span>
+                    <span className="sm:hidden">Cadastrar</span>
                   </Button>
                 </Link>
               </div>
