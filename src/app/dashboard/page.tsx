@@ -19,7 +19,7 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { collection, query, orderBy, limit, doc } from "firebase/firestore";
+import { collection, query, orderBy, doc } from "firebase/firestore";
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 
@@ -46,7 +46,8 @@ export default function DashboardPage() {
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
-    return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"), limit(10));
+    // Removendo o limite para que o cálculo da receita acumulada seja real e total
+    return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"));
   }, [user, db]);
 
   const settingsRef = useMemoFirebase(() => {
@@ -80,6 +81,7 @@ export default function DashboardPage() {
     if (!user || !settingsRef || isSaving) return;
     setIsSaving(true);
     
+    // Converte a máscara BRL para número puro para salvar no Firestore
     const value = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
     
     setDocumentNonBlocking(settingsRef, {
@@ -95,9 +97,16 @@ export default function DashboardPage() {
     setTimeout(() => setIsSaving(false), 1000);
   };
 
+  // Cálculo da Receita Acumulada somando apenas os valores numéricos dos pagamentos pagos
+  const totalRevenue = payments
+    ?.filter(p => p.status === "pago")
+    .reduce((acc, p) => {
+      const val = typeof p.amount === 'number' ? p.amount : parseFloat(p.amount);
+      return acc + (isNaN(val) ? 0 : val);
+    }, 0) || 0;
+
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
   const pendingPayments = payments?.filter(p => p.status === "pendente").length || 0;
-  const totalRevenue = payments?.filter(p => p.status === "pago").reduce((acc, p) => acc + (Number(p.amount) || 0), 0) || 0;
 
   if (!mounted || isUserLoading) {
     return (
@@ -187,7 +196,7 @@ export default function DashboardPage() {
               </div>
               <div className="space-y-2">
                  {payments && payments.length > 0 ? (
-                   payments.map(p => (
+                   payments.slice(0, 10).map(p => (
                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl bg-accent/30 border border-border group hover:border-primary/30 transition-all">
                         <div className="flex items-center gap-4">
                            <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center font-bold text-xs text-primary">{(p.memberName || "AL").slice(0, 2).toUpperCase()}</div>
@@ -197,7 +206,7 @@ export default function DashboardPage() {
                            </div>
                         </div>
                         <div className="text-right">
-                           <p className="text-sm font-black tracking-tighter">R$ {p.amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                           <p className="text-sm font-black tracking-tighter">R$ {(Number(p.amount) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                            <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
                         </div>
                      </div>
