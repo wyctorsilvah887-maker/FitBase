@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -75,11 +76,6 @@ export default function DashboardPage() {
                 <Users className="w-4 h-4 mr-2" /> Alunos
               </Button>
             </Link>
-            <Link href="/payments">
-              <Button size="sm" variant="outline" className="rounded-xl h-10 px-4 text-[10px] font-black uppercase tracking-widest border-2">
-                <DollarSign className="w-4 h-4 mr-2" /> Novo Recebimento
-              </Button>
-            </Link>
           </div>
         </div>
 
@@ -114,7 +110,6 @@ export default function DashboardPage() {
            <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card p-6 space-y-6">
               <div className="flex justify-between items-center px-2">
                  <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Movimentações Recentes</h3>
-                 <Link href="/payments" className="text-[9px] font-black uppercase tracking-widest text-primary hover:underline">Ver Histórico</Link>
               </div>
               <div className="space-y-2">
                  {payments && payments.length > 0 ? (
@@ -146,20 +141,22 @@ export default function DashboardPage() {
               <div className="space-y-4">
                  <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-2">Status do Negócio</h3>
                  <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-3">
-                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Saúde Financeira</p>
+                    <p className="text-sm font-bold uppercase tracking-tight text-primary">Gestão Digital</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                        {pendingPayments > 0 
-                        ? `Você possui ${pendingPayments} pendências de pagamento. Regularizar esses alunos pode aumentar seu faturamento mensal.`
-                        : "Excelente! Todos os alunos processados estão com os pagamentos em dia."
+                        ? `Você possui ${pendingPayments} pendências. Utilize a lista de alunos para organizar as cobranças.`
+                        : "Excelente! Todos os pagamentos registrados estão em dia."
                        }
                     </p>
                  </div>
               </div>
               
               <div className="space-y-2">
-                 <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
-                    Gerar Relatório de Performance <ArrowRight className="ml-2 w-3 h-3 text-primary" />
-                 </Button>
+                 <Link href="/members" className="w-full">
+                   <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
+                      Gerenciar Matrículas <ArrowRight className="ml-2 w-3 h-3 text-primary" />
+                   </Button>
+                 </Link>
                  <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitFlow</p>
               </div>
            </Card>

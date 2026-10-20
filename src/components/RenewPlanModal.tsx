@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -25,15 +26,15 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !db || !member || !amount) return;
+    if (!user || !db || !member || !amount || isSubmitting) return;
 
     setIsSubmitting(true);
 
     try {
       const paymentsRef = collection(db, "users", user.uid, "payments");
-      
       const paymentAmount = parseFloat(amount.replace(',', '.'));
 
+      // Chamada não bloqueante para evitar que o UI trave em caso de latência
       addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
         memberId: member.id,
@@ -54,8 +55,14 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
       onClose();
     } catch (error) {
       console.error("Erro ao renovar plano:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro na renovação",
+        description: "Não foi possível registrar o pagamento.",
+      });
     } finally {
-      setIsSubmitting(false);
+      // Pequeno delay para garantir que o estado do botão resete apenas após o fechamento
+      setTimeout(() => setIsSubmitting(false), 500);
     }
   };
 
