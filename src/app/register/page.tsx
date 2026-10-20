@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, Sparkles, CheckCircle2, Loader2, Dumbbell, DollarSign } from "lucide-react";
+import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
 
@@ -36,7 +36,6 @@ export default function RegisterPage() {
     setMonthlyFeeInput(formatted);
   };
 
-  // Redireciona e salva configurações após o cadastro
   useEffect(() => {
     if (user && justSignedUp) {
       const fee = parseFloat(monthlyFeeInput.replace(/\./g, '').replace(',', '.'));
@@ -58,7 +57,6 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     setJustSignedUp(true);
     initiateEmailSignUp(auth, email, password);
-    // O redirecionamento e salvamento ocorrem no useEffect acima ao detectar o usuário
   };
 
   return (
@@ -72,9 +70,8 @@ export default function RegisterPage() {
               <Dumbbell className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-              Nova <span className="text-primary italic">Academia</span>
+              Criar <span className="text-primary italic">Conta</span>
             </h1>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitFlow • WS Studios</p>
           </div>
 
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">
@@ -125,7 +122,7 @@ export default function RegisterPage() {
                   disabled={isSubmitting}
                   className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all"
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitFlow <Sparkles className="ml-2 w-4 h-4 text-primary" /></>}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitFlow</>}
                 </Button>
               </form>
 
