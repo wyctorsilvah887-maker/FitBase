@@ -19,7 +19,7 @@ interface NewMemberModalProps {
 }
 
 export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalProps) {
-  const { user } = user();
+  const { user } = useUser();
   const db = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
