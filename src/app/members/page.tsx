@@ -167,12 +167,12 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
     }
   };
 
-  const handleQuickRenew = () => {
+  const handleQuickPayment = (type: 'renovacao' | 'adiantado') => {
     if (monthlyFee <= 0) {
       toast({
         variant: "destructive",
         title: "Mensalidade não configurada",
-        description: "Defina o valor da mensalidade no Dashboard para usar a renovação rápida.",
+        description: "Defina o valor da mensalidade no Dashboard para usar esta função.",
       });
       return;
     }
@@ -187,11 +187,12 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
       dueDate: new Date().toISOString(),
       paidAt: new Date().toISOString(),
       createdAt: serverTimestamp(),
+      type: type
     });
 
     toast({
-      title: "Plano Renovado",
-      description: `Renovação de ${member.name} registrada (R$ ${monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`,
+      title: type === 'renovacao' ? "Plano Renovado" : "Pagamento Confirmado",
+      description: `${type === 'renovacao' ? 'Renovação' : 'Pagamento adiantado'} de ${member.name} registrado (R$ ${monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`,
     });
   };
 
@@ -214,13 +215,16 @@ function MemberCard({ member, userId, monthlyFee }: { member: any, userId: strin
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={handleQuickRenew}
+                onClick={() => handleQuickPayment('renovacao')}
                 className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group"
               >
                 <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
               </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
+              <DropdownMenuItem 
+                onClick={() => handleQuickPayment('adiantado')}
+                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10"
+              >
                 <CreditCard className="w-4 h-4 text-emerald-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
               </DropdownMenuItem>
