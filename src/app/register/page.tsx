@@ -92,7 +92,7 @@ export default function RegisterPage() {
                     <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                     <Input 
                       placeholder="Ex: FitFlow Academy" 
-                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                       value={gymName}
                       onChange={(e) => setGymName(e.target.value)}
                       required
