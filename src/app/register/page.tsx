@@ -57,12 +57,8 @@ export default function RegisterPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setJustSignedUp(true);
-    try {
-      initiateEmailSignUp(auth, email, password);
-    } finally {
-      // O redirecionamento e salvamento ocorrem no useEffect acima ao detectar o usuário
-      setTimeout(() => setIsSubmitting(false), 2000);
-    }
+    initiateEmailSignUp(auth, email, password);
+    // O redirecionamento e salvamento ocorrem no useEffect acima ao detectar o usuário
   };
 
   return (
@@ -116,7 +112,7 @@ export default function RegisterPage() {
                     <Input 
                       type="text"
                       placeholder="0,00" 
-                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all font-bold"
+                      className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all font-bold"
                       value={monthlyFeeInput}
                       onChange={handleFeeChange}
                       required
@@ -129,7 +125,7 @@ export default function RegisterPage() {
                   disabled={isSubmitting}
                   className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all"
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Criar Minha Academia <Sparkles className="ml-2 w-4 h-4 text-primary" /></>}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitFlow <Sparkles className="ml-2 w-4 h-4 text-primary" /></>}
                 </Button>
               </form>
 
