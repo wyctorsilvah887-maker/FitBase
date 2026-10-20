@@ -9,13 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign } from "lucide-react";
+import { UserPlus, CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [monthlyFeeInput, setMonthlyFeeInput] = useState("0,00");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [justSignedUp, setJustSignedUp] = useState(false);
@@ -70,7 +71,7 @@ export default function RegisterPage() {
               <Dumbbell className="w-8 h-8 text-primary" />
             </div>
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-              Criar <span className="text-primary italic">Conta</span>
+              Nova <span className="text-primary italic">Academia</span>
             </h1>
           </div>
 
@@ -91,16 +92,26 @@ export default function RegisterPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Crie sua Senha</Label>
-                  <Input 
-                    type="password" 
-                    placeholder="No mínimo 6 caracteres" 
-                    className="h-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    disabled={isSubmitting}
-                  />
+                  <div className="relative">
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="No mínimo 6 caracteres" 
+                      className="h-12 bg-background border-border rounded-2xl px-6 pr-12 focus:ring-primary border-2 transition-all"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      disabled={isSubmitting}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Valor da Mensalidade (R$)</Label>

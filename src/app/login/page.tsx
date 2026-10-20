@@ -9,18 +9,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, LogIn, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
+import { Dumbbell, LogIn, Sparkles, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const auth = useAuth();
   const { user } = useUser();
   const router = useRouter();
 
-  // Redireciona para a página de Alunos assim que o estado do usuário for detectado
   useEffect(() => {
     if (user) {
       router.push("/members");
@@ -75,15 +75,25 @@ export default function LoginPage() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Senha</Label>
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    className="h-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    disabled={isSubmitting}
-                  />
+                  <div className="relative">
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="h-12 bg-background border-border rounded-2xl px-6 pr-12 focus:ring-primary border-2 transition-all"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      disabled={isSubmitting}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      disabled={isSubmitting}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
                 </div>
                 <Button 
                   type="submit" 
