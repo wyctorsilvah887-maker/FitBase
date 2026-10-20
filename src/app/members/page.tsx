@@ -37,12 +37,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { collection, query, orderBy, doc } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
-import { serverTimestamp } from "firebase/firestore";
 
 // Ícone personalizado do WhatsApp para maior profissionalismo
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -159,6 +158,7 @@ export default function MembersPage() {
                       member={member} 
                       userId={user.uid} 
                       monthlyFee={userDoc?.monthlyFee || 0}
+                      gymName={userDoc?.gymName || "academia"}
                     />
                   ))
                 ) : (
@@ -197,7 +197,7 @@ export default function MembersPage() {
   );
 }
 
-function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string, monthlyFee: number }) {
+function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
   const db = useFirestore();
   const { toast } = useToast();
   
@@ -260,7 +260,7 @@ function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string
     }
 
     const cleanPhone = member.phone.replace(/\D/g, "");
-    const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano no FitFlow está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
+    const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano na ${gymName} está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
     const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`;
     
     window.open(url, '_blank');
