@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/Card";
+import { Card, CardContent } from "@/components/ui/card";
 import { UserPlus, Sparkles, CheckCircle2, Loader2, Dumbbell, DollarSign } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
