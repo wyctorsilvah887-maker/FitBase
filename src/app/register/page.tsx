@@ -10,11 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff } from "lucide-react";
+import { CheckCircle2, Loader2, Dumbbell, DollarSign, Eye, EyeOff, Building2 } from "lucide-react";
 import Link from "next/link";
 import { doc, serverTimestamp } from "firebase/firestore";
 
 export default function RegisterPage() {
+  const [gymName, setGymName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,6 +46,7 @@ export default function RegisterPage() {
       const userRef = doc(db, "users", user.uid);
       
       setDocumentNonBlocking(userRef, {
+        gymName: gymName,
         email: user.email,
         monthlyFee: isNaN(fee) ? 0 : fee,
         acceptedTerms: true,
@@ -56,7 +58,7 @@ export default function RegisterPage() {
     } else if (user) {
       router.push("/members");
     }
-  }, [user, justSignedUp, router, db, monthlyFeeInput]);
+  }, [user, justSignedUp, router, db, monthlyFeeInput, gymName]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +86,20 @@ export default function RegisterPage() {
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">
             <CardContent className="p-8 md:p-10 space-y-6">
               <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">Nome da Academia</Label>
+                  <div className="relative">
+                    <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
+                    <Input 
+                      placeholder="Ex: FitFlow Academy" 
+                      className="h-12 pl-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
+                      value={gymName}
+                      onChange={(e) => setGymName(e.target.value)}
+                      required
+                      disabled={isSubmitting}
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">E-mail do Gestor</Label>
                   <Input 

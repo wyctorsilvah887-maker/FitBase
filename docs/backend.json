@@ -35,6 +35,7 @@
       "type": "object",
       "description": "Perfil do gestor da academia e aceitação de termos.",
       "properties": {
+        "gymName": { "type": "string" },
         "acceptedTerms": { "type": "boolean" },
         "acceptedAt": { "type": "string", "format": "date-time" },
         "email": { "type": "string" },
