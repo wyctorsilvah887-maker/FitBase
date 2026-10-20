@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { collection, query, orderBy, doc } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
+import { RenewPlanModal } from "@/components/RenewPlanModal";
 import { useToast } from "@/hooks/use-toast";
 
 export default function MembersPage() {
@@ -39,6 +40,7 @@ export default function MembersPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
+  const [renewingMember, setRenewingMember] = useState<any | null>(null);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -107,7 +109,12 @@ export default function MembersPage() {
             ))
           ) : filteredMembers.length > 0 ? (
             filteredMembers.map((member) => (
-              <MemberCard key={member.id} member={member} userId={user.uid} />
+              <MemberCard 
+                key={member.id} 
+                member={member} 
+                userId={user.uid} 
+                onRenew={() => setRenewingMember(member)}
+              />
             ))
           ) : (
             <div className="col-span-full py-20 flex flex-col items-center justify-center space-y-4 bg-accent/20 rounded-[3rem] border-2 border-dashed border-border">
@@ -128,11 +135,16 @@ export default function MembersPage() {
       </main>
 
       <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} />
+      <RenewPlanModal 
+        isOpen={!!renewingMember} 
+        onClose={() => setRenewingMember(null)} 
+        member={renewingMember}
+      />
     </div>
   );
 }
 
-function MemberCard({ member, userId }: { member: any, userId: string }) {
+function MemberCard({ member, userId, onRenew }: { member: any, userId: string, onRenew: () => void }) {
   const db = useFirestore();
   const { toast } = useToast();
   
@@ -173,8 +185,11 @@ function MemberCard({ member, userId }: { member: any, userId: string }) {
                 Gestão do Aluno
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
-                <RefreshCcw className="w-4 h-4 text-primary group-hover:animate-spin" />
+              <DropdownMenuItem 
+                onClick={onRenew}
+                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group"
+              >
+                <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Renovação de Plano</span>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
