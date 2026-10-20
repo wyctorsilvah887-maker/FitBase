@@ -15,10 +15,9 @@ import {
   RefreshCcw,
   CreditCard,
   Trash2,
-  UserCircle,
-  Mail
+  UserCircle
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -38,11 +37,12 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, doc } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
+import { serverTimestamp } from "firebase/firestore";
 
 export default function MembersPage() {
   const { user, isUserLoading } = useUser();
@@ -90,10 +90,10 @@ export default function MembersPage() {
     <div className="min-h-screen bg-background text-foreground font-body">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 py-10 space-y-8 animate-in fade-in duration-700">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-6 md:space-y-8 animate-in fade-in duration-700">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">
+            <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter">
               Lista de <span className="text-primary italic">Alunos</span>
             </h1>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
@@ -102,73 +102,75 @@ export default function MembersPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
-             <div className="relative group">
+             <div className="relative group w-full sm:w-auto">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
                   placeholder="Pesquisar aluno..." 
-                  className="pl-11 h-11 w-full sm:w-64 bg-card border-border rounded-2xl border-2 focus-visible:ring-primary transition-all"
+                  className="pl-11 h-11 w-full sm:w-64 bg-card border-border rounded-2xl border-2 focus-visible:ring-primary transition-all text-sm"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
              </div>
              <Button 
                 onClick={() => setIsNewMemberModalOpen(true)}
-                className="h-11 px-6 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/10 hover:scale-105 transition-all"
+                className="h-11 w-full sm:w-auto px-6 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/10 hover:scale-105 transition-all"
               >
                 <Plus className="w-4 h-4 mr-2" /> Novo Aluno
              </Button>
           </div>
         </div>
 
-        <Card className="rounded-[2rem] border-2 border-border bg-card overflow-hidden">
-          <Table>
-            <TableHeader className="bg-accent/50">
-              <TableRow className="border-b-2 border-border hover:bg-transparent">
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Aluno</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Status</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Contato</TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Matrícula</TableHead>
-                <TableHead className="text-right py-6 pr-8"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                Array(5).fill(0).map((_, i) => (
-                  <TableRow key={i} className="animate-pulse">
-                    <TableCell colSpan={6} className="h-16 bg-accent/10"></TableCell>
-                  </TableRow>
-                ))
-              ) : filteredMembers.length > 0 ? (
-                filteredMembers.map((member) => (
-                  <MemberRow 
-                    key={member.id} 
-                    member={member} 
-                    userId={user.uid} 
-                    monthlyFee={userDoc?.monthlyFee || 0}
-                  />
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} className="py-20 text-center">
-                    <div className="flex flex-col items-center justify-center space-y-4">
-                      <div className="w-16 h-16 rounded-3xl bg-primary/5 flex items-center justify-center">
-                        <UserPlus className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                      <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Nenhum aluno cadastrado</p>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setIsNewMemberModalOpen(true)}
-                        className="rounded-xl text-[9px] font-black uppercase tracking-widest h-10 px-6 border-2"
-                      >
-                        Cadastrar Primeiro Aluno
-                      </Button>
-                    </div>
-                  </TableCell>
+        <Card className="rounded-[1.5rem] md:rounded-[2rem] border-2 border-border bg-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-accent/50">
+                <TableRow className="border-b-2 border-border hover:bg-transparent">
+                  <TableHead className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6 pl-4 md:pl-8">Aluno</TableHead>
+                  <TableHead className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Status</TableHead>
+                  <TableHead className="hidden sm:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Plano</TableHead>
+                  <TableHead className="hidden md:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Contato</TableHead>
+                  <TableHead className="hidden lg:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Matrícula</TableHead>
+                  <TableHead className="text-right py-4 md:py-6 pr-4 md:pr-8"></TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  Array(5).fill(0).map((_, i) => (
+                    <TableRow key={i} className="animate-pulse">
+                      <TableCell colSpan={6} className="h-16 bg-accent/10"></TableCell>
+                    </TableRow>
+                  ))
+                ) : filteredMembers.length > 0 ? (
+                  filteredMembers.map((member) => (
+                    <MemberRow 
+                      key={member.id} 
+                      member={member} 
+                      userId={user.uid} 
+                      monthlyFee={userDoc?.monthlyFee || 0}
+                    />
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="py-16 md:py-20 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-4">
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl bg-primary/5 flex items-center justify-center">
+                          <UserPlus className="w-6 h-6 md:w-8 md:h-8 text-muted-foreground" />
+                        </div>
+                        <p className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest">Nenhum aluno cadastrado</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setIsNewMemberModalOpen(true)}
+                          className="rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest h-9 md:h-10 px-4 md:px-6 border-2"
+                        >
+                          Cadastrar Primeiro Aluno
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </Card>
       </main>
 
@@ -237,40 +239,40 @@ function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string
 
   return (
     <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group">
-      <TableCell className="py-5 pl-8">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary">
-            <UserCircle className="w-6 h-6" />
+      <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+            <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <div>
-            <p className="text-sm font-bold uppercase tracking-tight text-foreground">{member.name}</p>
-            <p className="text-[9px] text-muted-foreground uppercase font-medium">{member.email || "Sem e-mail"}</p>
+          <div className="min-w-0">
+            <p className="text-xs md:text-sm font-bold uppercase tracking-tight text-foreground truncate">{member.name}</p>
+            <p className="text-[8px] md:text-[9px] text-muted-foreground uppercase font-medium truncate sm:block hidden">{member.email || "Sem e-mail"}</p>
           </div>
         </div>
       </TableCell>
-      <TableCell className="py-5">
-        <Badge variant="outline" className={`text-[8px] font-black uppercase tracking-widest border-2 px-3 py-0.5 ${config.color}`}>
+      <TableCell className="py-4 md:py-5">
+        <Badge variant="outline" className={`text-[7px] md:text-[8px] font-black uppercase tracking-widest border-2 px-2 md:px-3 py-0.5 ${config.color} whitespace-nowrap`}>
           {config.label}
         </Badge>
       </TableCell>
-      <TableCell className="py-5">
-        <span className="text-[10px] font-black text-primary uppercase tracking-widest">
+      <TableCell className="hidden sm:table-cell py-4 md:py-5">
+        <span className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-widest">
           {member.plan}
         </span>
       </TableCell>
-      <TableCell className="py-5">
-        <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-          <Phone className="w-3.5 h-3.5 text-primary" />
+      <TableCell className="hidden md:table-cell py-4 md:py-5">
+        <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
+          <Phone className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
           <span>{member.phone || "---"}</span>
         </div>
       </TableCell>
-      <TableCell className="py-5">
-        <div className="flex items-center gap-2 text-[11px] font-medium text-muted-foreground">
-          <Calendar className="w-3.5 h-3.5 text-primary" />
+      <TableCell className="hidden lg:table-cell py-4 md:py-5">
+        <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
+          <Calendar className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
           <span>{member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}</span>
         </div>
       </TableCell>
-      <TableCell className="py-5 pr-8 text-right">
+      <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
@@ -296,6 +298,16 @@ function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string
               <CreditCard className="w-4 h-4 text-emerald-500" />
               <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
             </DropdownMenuItem>
+            
+            {/* Ações mobile-only que ficam escondidas na tabela desktop */}
+            <div className="sm:hidden">
+               <DropdownMenuSeparator />
+               <div className="px-3 py-2 space-y-1">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Plano: {member.plan}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Tel: {member.phone || "---"}</p>
+               </div>
+            </div>
+
             <DropdownMenuSeparator />
             <DropdownMenuItem 
               onClick={handleDelete}
