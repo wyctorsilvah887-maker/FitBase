@@ -15,7 +15,8 @@ import {
   RefreshCcw,
   CreditCard,
   Trash2,
-  UserCircle
+  UserCircle,
+  MessageSquare
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -237,6 +238,23 @@ function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string
     });
   };
 
+  const handleWhatsAppReminder = () => {
+    if (!member.phone) {
+      toast({
+        variant: "destructive",
+        title: "Telefone não cadastrado",
+        description: "Adicione um número de telefone para enviar o lembrete.",
+      });
+      return;
+    }
+
+    const cleanPhone = member.phone.replace(/\D/g, "");
+    const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano no FitFlow está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
+    const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, '_blank');
+  };
+
   return (
     <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group">
       <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
@@ -299,6 +317,14 @@ function MemberRow({ member, userId, monthlyFee }: { member: any, userId: string
               <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
             </DropdownMenuItem>
             
+            <DropdownMenuItem 
+              onClick={handleWhatsAppReminder}
+              className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
+            >
+              <MessageSquare className="w-4 h-4" />
+              <span className="text-[11px] font-bold uppercase tracking-tight">Lembrete WhatsApp</span>
+            </DropdownMenuItem>
+
             {/* Ações mobile-only que ficam escondidas na tabela desktop */}
             <div className="sm:hidden">
                <DropdownMenuSeparator />
