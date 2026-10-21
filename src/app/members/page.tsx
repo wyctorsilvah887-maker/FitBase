@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,7 +17,6 @@ import {
   UserCircle,
   Banknote,
   QrCode,
-  ChevronRight,
   Clock
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -207,7 +205,6 @@ export default function MembersPage() {
 function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
   const db = useFirestore();
   const { toast } = useToast();
-  const router = useRouter();
   
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
@@ -278,11 +275,8 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
   return (
     <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group">
       <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
-        <div 
-          className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors cursor-pointer"
-          onClick={() => router.push(`/members/${member.id}`)}
-        >
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
+        <div className="flex items-center gap-2 md:gap-3 cursor-default">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0">
             <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
@@ -315,14 +309,6 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       </TableCell>
       <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
         <div className="flex items-center justify-end gap-1">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={() => router.push(`/members/${member.id}`)}
-            className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
