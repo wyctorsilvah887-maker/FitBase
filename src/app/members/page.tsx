@@ -325,11 +325,14 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
                 <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="rounded-2xl border-2 border-border p-2 min-w-[150px]">
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+              <DropdownMenuSubContent 
+                side="left" 
+                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl"
+              >
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
                   <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
                   <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
@@ -340,11 +343,14 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
                 <CreditCard className="w-4 h-4 text-emerald-500" />
                 <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="rounded-2xl border-2 border-border p-2 min-w-[150px]">
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+              <DropdownMenuSubContent 
+                side="left" 
+                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl"
+              >
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
                   <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
                   <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
