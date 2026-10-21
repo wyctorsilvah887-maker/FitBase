@@ -45,32 +45,6 @@
         "monthlyFee": { "type": "number" },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
-    },
-    "ServiceOrder": {
-      "title": "ServiceOrder",
-      "type": "object",
-      "description": "Ordem de serviço técnica.",
-      "properties": {
-        "userId": { "type": "string" },
-        "customerName": { "type": "string" },
-        "equipment": { "type": "string" },
-        "btus": { "type": "string" },
-        "status": { "type": "string", "enum": ["pendente", "em_andamento", "concluido", "cancelado"] },
-        "value": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Technician": {
-      "title": "Technician",
-      "type": "object",
-      "description": "Dados do técnico colaborador.",
-      "properties": {
-        "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "specialty": { "type": "string" },
-        "phone": { "type": "string" },
-        "status": { "type": "string", "enum": ["ativo", "inativo"] }
-      }
     }
   },
   "auth": {
@@ -79,10 +53,6 @@
   "firestore": {
     "/users/{userId}": { "schema": "User", "description": "Perfil do gestor." },
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." },
-    "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Ordens de serviço." },
-    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." },
-    "/users/{userId}/acAnalyses/{id}": { "schema": "object", "description": "Análises de climatização." },
-    "/users/{userId}/careGuides/{id}": { "schema": "object", "description": "Guias de cuidados pet." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." }
   }
 }

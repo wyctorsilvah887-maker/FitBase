@@ -207,6 +207,7 @@ export default function MembersPage() {
 function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
   const db = useFirestore();
   const { toast } = useToast();
+  const router = useRouter();
   
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
@@ -276,8 +277,8 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
 
   return (
     <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group cursor-pointer">
-      <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
-        <Link href={`/members/${member.id}/anamnese`} className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors">
+      <TableCell className="py-4 md:py-5 pl-4 md:pl-8" onClick={() => router.push(`/members/${member.id}/anamnese`)}>
+        <div className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
             <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
           </div>
@@ -285,25 +286,25 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
             <p className="text-xs md:text-sm font-bold uppercase tracking-tight truncate">{member.name}</p>
             <p className="text-[8px] md:text-[9px] text-muted-foreground uppercase font-medium truncate sm:block hidden">{member.email || "Sem e-mail"}</p>
           </div>
-        </Link>
+        </div>
       </TableCell>
-      <TableCell className="py-4 md:py-5">
+      <TableCell className="py-4 md:py-5" onClick={() => router.push(`/members/${member.id}/anamnese`)}>
         <Badge variant="outline" className={`text-[7px] md:text-[8px] font-black uppercase tracking-widest border-2 px-2 md:px-3 py-0.5 ${config.color} whitespace-nowrap`}>
           {config.label}
         </Badge>
       </TableCell>
-      <TableCell className="hidden sm:table-cell py-4 md:py-5">
+      <TableCell className="hidden sm:table-cell py-4 md:py-5" onClick={() => router.push(`/members/${member.id}/anamnese`)}>
         <span className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-widest">
           {member.plan}
         </span>
       </TableCell>
-      <TableCell className="hidden md:table-cell py-4 md:py-5">
+      <TableCell className="hidden md:table-cell py-4 md:py-5" onClick={() => router.push(`/members/${member.id}/anamnese`)}>
         <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
           <Phone className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
           <span>{member.phone || "---"}</span>
         </div>
       </TableCell>
-      <TableCell className="hidden lg:table-cell py-4 md:py-5">
+      <TableCell className="hidden lg:table-cell py-4 md:py-5" onClick={() => router.push(`/members/${member.id}/anamnese`)}>
         <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
           <Calendar className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
           <span>{member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}</span>
@@ -311,11 +312,14 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       </TableCell>
       <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
         <div className="flex items-center justify-end gap-1">
-          <Link href={`/members/${member.id}/anamnese`}>
-            <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex">
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </Link>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => router.push(`/members/${member.id}/anamnese`)}
+            className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
