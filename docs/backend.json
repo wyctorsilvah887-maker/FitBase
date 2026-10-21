@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "GymMember": {
@@ -45,34 +44,6 @@
         "monthlyFee": { "type": "number" },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
-    },
-    "ServiceOrder": {
-      "title": "ServiceOrder",
-      "type": "object",
-      "description": "Ordem de serviço técnica.",
-      "properties": {
-        "userId": { "type": "string" },
-        "customerName": { "type": "string" },
-        "equipment": { "type": "string" },
-        "btus": { "type": "string" },
-        "status": { "type": "string" },
-        "technicianId": { "type": "string" },
-        "value": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" }
-      }
-    },
-    "Technician": {
-      "title": "Technician",
-      "type": "object",
-      "description": "Dados do colaborador técnico.",
-      "properties": {
-        "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "specialty": { "type": "string" },
-        "phone": { "type": "string" },
-        "email": { "type": "string" },
-        "status": { "type": "string", "enum": ["ativo", "inativo"] }
-      }
     }
   },
   "auth": {
@@ -81,8 +52,6 @@
   "firestore": {
     "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor e configurações globais." },
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
-    "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Ordens de serviço registradas." },
-    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica cadastrada." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." }
   }
 }
