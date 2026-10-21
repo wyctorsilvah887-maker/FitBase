@@ -1,12 +1,14 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Regra absoluta para o FitBase:
-    // O gestor tem acesso total ao seu documento de perfil e a QUALQUER subcoleção abaixo dele (recursivo).
-    match /users/{userId}/{allPaths=**} {
+    // Permite que o usuário autenticado tenha controle total sobre seu próprio nó 
+    // e QUALQUER profundidade de subcoleções (document=**)
+    match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // Regra explícita para o documento de perfil (raiz do usuário)
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
