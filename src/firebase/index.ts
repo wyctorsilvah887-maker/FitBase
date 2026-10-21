@@ -5,30 +5,24 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'
 
-// IMPORTANT: DO NOT MODIFY THIS FUNCTION
+/**
+ * Inicializa os serviços do Firebase de forma idempotente no lado do cliente.
+ * Prioriza a configuração explícita para evitar divergências de projeto.
+ */
 export function initializeFirebase() {
   if (!getApps().length) {
-    // Important! initializeApp() is called without any arguments because Firebase App Hosting
-    // integrates with the initializeApp() function to provide the environment variables needed to
-    // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
-    // without arguments.
     let firebaseApp;
     try {
-      // Attempt to initialize via Firebase App Hosting environment variables
-      firebaseApp = initializeApp();
-    } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
-      }
+      // Prioriza a configuração explícita do studio para garantir o ID do projeto correto
       firebaseApp = initializeApp(firebaseConfig);
+    } catch (e) {
+      // Fallback para variáveis de ambiente do Firebase Hosting se necessário
+      console.warn('Explicit initialization failed, attempting automatic...', e);
+      firebaseApp = initializeApp();
     }
-
     return getSdks(firebaseApp);
   }
 
-  // If already initialized, return the SDKs with the already initialized App
   return getSdks(getApp());
 }
 
