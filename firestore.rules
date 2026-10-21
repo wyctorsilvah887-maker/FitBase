@@ -1,15 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // REGRA DEFINITIVA FITBASE:
-    // Permite que o gestor (userId) tenha controle total sobre seu documento raiz 
-    // e SOBRE QUALQUER subcoleção aninhada (members, payments, serviceOrders, etc).
-    // O uso do wildcard recursivo {allPaths=**} é essencial para operações de listagem.
-    
+    // Permite acesso total ao nó do usuário e QUALQUER subcoleção abaixo dele
     match /users/{userId}/{allPaths=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // Regra explícita para o documento de perfil
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -162,14 +161,11 @@ export default function MemberDetailsPage() {
             <Card className="rounded-[2rem] border-2 border-border bg-card p-6 space-y-4 bg-gradient-to-br from-primary/5 to-transparent">
               <div className="flex items-center gap-3">
                 <Activity className="w-5 h-5 text-primary" />
-                <h3 className="text-[10px] font-black uppercase tracking-widest">Resumo de Saúde</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-widest">Controle FitBase</h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Este espaço é reservado para a **Anamnese** e avaliações físicas. Mantenha os dados do aluno atualizados para um melhor acompanhamento técnico.
+                Mantenha os dados do aluno e pagamentos sempre atualizados para garantir a digitalização completa da sua academia.
               </p>
-              <Button variant="outline" className="w-full rounded-xl h-10 text-[9px] font-black uppercase tracking-widest border-2 hover:bg-primary/10">
-                Iniciar Avaliação Física
-              </Button>
             </Card>
           </div>
 

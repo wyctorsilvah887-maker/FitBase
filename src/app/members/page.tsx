@@ -279,7 +279,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
         <div 
           className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors cursor-pointer"
-          onClick={() => router.push(`/members/${member.id}/anamnese`)}
+          onClick={() => router.push(`/members/${member.id}`)}
         >
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
             <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
@@ -317,7 +317,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => router.push(`/members/${member.id}/anamnese`)}
+            onClick={() => router.push(`/members/${member.id}`)}
             className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex"
           >
             <ChevronRight className="w-4 h-4" />
