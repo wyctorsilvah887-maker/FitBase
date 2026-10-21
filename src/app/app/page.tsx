@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useUser } from "@/firebase";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
   Dumbbell, 
@@ -10,10 +13,30 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image";
-import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function GymLandingPage() {
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      router.replace("/members");
+    }
+  }, [user, isUserLoading, router]);
+
+  // Se estiver carregando o usuário ou já estiver logado (e aguardando o redirect), 
+  // mostramos um estado vazio ou loading para evitar flash de conteúdo da landing
+  if (isUserLoading || user) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <Dumbbell className="w-12 h-12 animate-bounce text-primary" />
+        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
+          Sincronizando <span className="text-primary italic">FitBase...</span>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden">
       <Header />
