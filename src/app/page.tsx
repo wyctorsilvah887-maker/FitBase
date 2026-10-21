@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Dumbbell } from "lucide-react";
+import Image from "next/image";
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,7 +13,9 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-      <Dumbbell className="w-12 h-12 animate-bounce text-primary" />
+      <div className="w-20 h-20 relative animate-bounce">
+        <Image src="/fitbase.png" alt="FitBase Logo" fill className="object-contain" />
+      </div>
       <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
         Carregando <span className="text-primary italic">FitBase...</span>
       </p>

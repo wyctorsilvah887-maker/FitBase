@@ -5,7 +5,6 @@ import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import { 
-  Dumbbell, 
   Zap, 
   TrendingUp, 
   ArrowRight,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function GymLandingPage() {
   const { user, isUserLoading } = useUser();
@@ -24,12 +24,12 @@ export default function GymLandingPage() {
     }
   }, [user, isUserLoading, router]);
 
-  // Se estiver carregando o usuário ou já estiver logado (e aguardando o redirect), 
-  // mostramos um estado vazio ou loading para evitar flash de conteúdo da landing
   if (isUserLoading || user) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <Dumbbell className="w-12 h-12 animate-bounce text-primary" />
+        <div className="w-16 h-16 relative animate-bounce">
+          <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+        </div>
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
           Sincronizando <span className="text-primary italic">FitBase...</span>
         </p>
@@ -108,7 +108,9 @@ export default function GymLandingPage() {
         <footer className="py-20 border-t border-border bg-card/50">
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
-                 <Dumbbell className="w-8 h-8 text-primary" />
+                 <div className="w-8 h-8 relative">
+                   <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+                 </div>
                  <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>
               </div>
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">

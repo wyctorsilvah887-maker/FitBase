@@ -7,7 +7,6 @@ import Header from "@/components/Header";
 import { 
   CreditCard, 
   Users, 
-  Dumbbell,
   AlertCircle,
   Plus,
   ArrowLeft,
@@ -22,6 +21,7 @@ import { collection, query, orderBy, doc, serverTimestamp } from "firebase/fires
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import Image from "next/image";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -114,8 +114,10 @@ export default function DashboardPage() {
 
   if (!mounted || isUserLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Dumbbell className="w-8 h-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <div className="w-12 h-12 relative animate-spin">
+          <Image src="/fitbase.png" alt="Carregando" fill className="object-contain" />
+        </div>
       </div>
     );
   }

@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Dumbbell, LogIn, Sparkles, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
+import { LogIn, Sparkles, ShieldCheck, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,13 +49,13 @@ export default function LoginPage() {
       <main className="relative z-10 flex items-center justify-center px-6 py-12 md:py-24">
         <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 rounded-3xl bg-primary/10 flex items-center justify-center animate-icon-flash border-2 border-primary/20">
-              <Dumbbell className="w-8 h-8 text-primary" />
+            <div className="mx-auto w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center animate-icon-flash border-2 border-primary/20 overflow-hidden p-3">
+              <Image src="/fitbase.png" alt="FitBase" width={60} height={60} className="object-contain" />
             </div>
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
               Acesso do <span className="text-primary italic">Gestor</span>
             </h1>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitBase • WS Studios</p>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitBase • Central de Gestão</p>
           </div>
 
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">

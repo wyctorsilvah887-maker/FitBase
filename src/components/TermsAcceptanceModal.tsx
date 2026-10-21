@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -9,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
 import { ShieldCheck, PawPrint } from 'lucide-react';
+import Image from 'next/image';
 
 interface TermsAcceptanceModalProps {
   isOpen: boolean;
@@ -48,18 +48,20 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
       >
         <div className="p-6 md:p-10 space-y-8">
           <DialogHeader className="text-center space-y-4">
-            {/* Ícone de Escudo com Flash Gradiente Contínuo e Sweep ao Clicar */}
+            {/* Logo FitBase com Flash Gradiente Contínuo e Sweep ao Clicar */}
             <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden shadow-2xl shadow-primary/5 animate-icon-flash group">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
               
-              {/* Sweep Animation Effect no Escudo */}
+              {/* Sweep Animation Effect no Logo */}
               {isAnimating && (
                 <div className="absolute inset-0 z-30 pointer-events-none">
                   <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep -left-1/4" />
                 </div>
               )}
               
-              <ShieldCheck className="h-10 w-10 text-primary relative z-10 transition-transform duration-500 group-hover:scale-110" />
+              <div className="relative z-10 w-12 h-12 transition-transform duration-500 group-hover:scale-110">
+                <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -69,7 +71,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                 <span className="text-zinc-500 block sm:inline"> Privacidade</span>
               </DialogTitle>
               <DialogDescription className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
-                WS Studios • Protocolo Veterinário
+                FitBase • Protocolo de Gestão Digital
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -79,16 +81,16 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
             <ScrollArea className="h-[140px] md:h-[180px] pr-4 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium custom-scrollbar">
               <div className="space-y-6 pb-8">
                 <div className="space-y-2">
-                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">01. Natureza da IA</h4>
-                  <p>A Vet IA é um assistente experimental da WS Studios. As análises são baseadas em processamento de dados e não substituem exames clínicos presenciais.</p>
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">01. Natureza da Plataforma</h4>
+                  <p>O FitBase é um assistente de gestão inteligente. Os dados são armazenados de forma segura em nuvem para facilitar o controle da sua academia.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">02. Uso Responsável</h4>
-                  <p>O tutor é o único responsável pelas ações tomadas com base nas informações recebidas. Em caso de emergência, procure um veterinário imediatamente.</p>
+                  <p>O gestor é o único responsável pelos dados de alunos e pagamentos inseridos na plataforma.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">03. Tratamento de Dados</h4>
-                  <p>Suas interações são processadas para melhorar a precisão da IA. Seus dados são protegidos conforme a LGPD e nunca compartilhados.</p>
+                  <p>Seus dados são protegidos conforme a LGPD. Utilizamos criptografia de ponta para garantir a privacidade das suas informações comerciais.</p>
                 </div>
               </div>
             </ScrollArea>
@@ -133,8 +135,8 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
           </div>
 
           <div className="flex items-center justify-center gap-3 opacity-20 grayscale hover:opacity-40 transition-all duration-700">
-            <PawPrint className="w-3 h-3 text-primary" />
-            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">Vet IA Security Shield</span>
+            <ShieldCheck className="w-3 h-3 text-primary" />
+            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">FitBase Security Shield</span>
           </div>
         </div>
       </DialogContent>

@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import { User, Mail, ShieldCheck, Dumbbell, Calendar, LayoutDashboard } from 'lucide-react';
+import { User, Mail, ShieldCheck, Calendar, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const { user, isUserLoading } = useUser();
@@ -27,7 +28,9 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <Dumbbell className="w-12 h-12 text-primary animate-bounce" />
+          <div className="w-16 h-16 relative animate-bounce">
+            <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+          </div>
           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
             Sincronizando <span className="text-primary italic">Perfil...</span>
           </p>
@@ -46,7 +49,7 @@ export default function ProfilePage() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-[9px] font-black uppercase tracking-widest text-primary backdrop-blur-md mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Central do Gestor WS Studios
+                Central do Gestor FitBase
               </div>
               <h1 className="text-4xl md:text-6xl font-headline font-bold tracking-tighter uppercase leading-none">
                 Olá, <span className="animate-text-flash italic inline-block pr-2">Bem-vindo</span>
@@ -73,8 +76,8 @@ export default function ProfilePage() {
               
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left">
                 <div className="relative">
-                  <div className="w-28 h-28 rounded-[2.5rem] bg-background border-2 border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-700 overflow-hidden">
-                    <User className="w-12 h-12 text-primary relative z-10" />
+                  <div className="w-28 h-28 rounded-[2.5rem] bg-background border-2 border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-700 overflow-hidden p-4">
+                    <Image src="/fitbase.png" alt="FitBase" width={80} height={80} className="object-contain relative z-10" />
                   </div>
                 </div>
 
