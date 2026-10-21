@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -210,7 +209,7 @@ export default function AnamnesisPage() {
                 ) : payments && payments.length > 0 ? (
                   <div className="space-y-1">
                     {payments.map((p) => (
-                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl hover:bg-accent/30 transition-colors border border-transparent hover:border-border group">
+                      <div key={p.id} className="flex items-center justify-between p-4 rounded-xl bg-accent/30 border border-transparent group">
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-lg bg-background border border-border flex items-center justify-center text-primary">
                             <CreditCard className="w-5 h-5" />
