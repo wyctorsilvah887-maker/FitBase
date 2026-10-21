@@ -314,7 +314,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               <MoreVertical className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56 rounded-[1.5rem] border-2 border-border p-2">
+          <DropdownMenuContent align="end" sideOffset={8} collisionPadding={16} className="w-56 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl">
             <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-muted-foreground px-3 py-2">
               Gestão do Aluno
             </DropdownMenuLabel>
@@ -327,7 +327,9 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent 
                 side="left" 
-                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl"
+                align="start"
+                sideOffset={4}
+                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
               >
                 <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
                   <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
@@ -345,7 +347,9 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent 
                 side="left" 
-                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl"
+                align="start"
+                sideOffset={4}
+                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
               >
                 <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
                   <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
