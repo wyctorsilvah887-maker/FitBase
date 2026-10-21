@@ -7,6 +7,10 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: "FitBase - Gestão Inteligente",
   description: "Aposente seu caderno. Gestão digital completa para donos de academia.",
+  manifest: "/manifest.json",
+  icons: {
+    apple: "/logo fitbase.png",
+  },
 };
 
 export default function RootLayout({
