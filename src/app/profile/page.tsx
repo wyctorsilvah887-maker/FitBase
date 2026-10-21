@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import { User, Mail, ShieldCheck, Calendar, LayoutDashboard } from 'lucide-react';
+import { User, Mail, ShieldCheck, Calendar, LayoutDashboard, Dumbbell } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -28,8 +29,8 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="w-16 h-16 relative animate-bounce">
-            <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+          <div className="animate-bounce">
+            <Dumbbell className="w-16 h-16 text-primary" />
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
             Sincronizando <span className="text-primary italic">Perfil...</span>
@@ -77,7 +78,7 @@ export default function ProfilePage() {
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left">
                 <div className="relative">
                   <div className="w-28 h-28 rounded-[2.5rem] bg-background border-2 border-border flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-700 overflow-hidden p-4">
-                    <Image src="/fitbase.png" alt="FitBase" width={80} height={80} className="object-contain relative z-10" />
+                    <Image src="/logo fitbase.png" alt="FitBase" width={80} height={80} className="object-contain relative z-10" />
                   </div>
                 </div>
 

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,7 +13,8 @@ import {
   ArrowLeft,
   DollarSign,
   Save,
-  Check
+  Check,
+  Dumbbell
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -115,8 +117,8 @@ export default function DashboardPage() {
   if (!mounted || isUserLoading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="w-12 h-12 relative animate-spin">
-          <Image src="/fitbase.png" alt="Carregando" fill className="object-contain" />
+        <div className="animate-spin">
+          <Dumbbell className="w-12 h-12 text-primary" />
         </div>
       </div>
     );

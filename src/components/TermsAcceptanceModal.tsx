@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,7 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
-import { ShieldCheck, PawPrint } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 
 interface TermsAcceptanceModalProps {
@@ -60,7 +61,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
               )}
               
               <div className="relative z-10 w-12 h-12 transition-transform duration-500 group-hover:scale-110">
-                <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+                <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
               </div>
             </div>
 

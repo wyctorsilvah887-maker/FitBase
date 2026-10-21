@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -8,7 +9,8 @@ import {
   Zap, 
   TrendingUp, 
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Dumbbell
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -27,8 +29,8 @@ export default function GymLandingPage() {
   if (isUserLoading || user) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="w-16 h-16 relative animate-bounce">
-          <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+        <div className="animate-bounce">
+          <Dumbbell className="w-16 h-16 text-primary" />
         </div>
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
           Sincronizando <span className="text-primary italic">FitBase...</span>
@@ -109,7 +111,7 @@ export default function GymLandingPage() {
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
                  <div className="w-8 h-8 relative">
-                   <Image src="/fitbase.png" alt="FitBase" fill className="object-contain" />
+                   <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
                  </div>
                  <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>
               </div>
