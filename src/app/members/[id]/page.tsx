@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -92,7 +93,6 @@ export default function MemberDetailsPage() {
       <Header />
       <main className="max-w-5xl mx-auto px-6 py-8 space-y-8 animate-in fade-in duration-700">
         
-        {/* Breadcrumbs / Header */}
         <div className="flex flex-col gap-4">
           <Button 
             variant="ghost" 
@@ -121,7 +121,6 @@ export default function MemberDetailsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Info Cards Side */}
           <div className="lg:col-span-1 space-y-6">
             <Card className="rounded-[2rem] border-2 border-border bg-card p-6 space-y-6">
               <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Informações de Contato</h3>
@@ -161,15 +160,14 @@ export default function MemberDetailsPage() {
             <Card className="rounded-[2rem] border-2 border-border bg-card p-6 space-y-4 bg-gradient-to-br from-primary/5 to-transparent">
               <div className="flex items-center gap-3">
                 <Activity className="w-5 h-5 text-primary" />
-                <h3 className="text-[10px] font-black uppercase tracking-widest">Controle FitBase</h3>
+                <h3 className="text-[10px] font-black uppercase tracking-widest">Controle Financeiro</h3>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Mantenha os dados do aluno e pagamentos sempre atualizados para garantir a digitalização completa da sua academia.
+                Acompanhe o histórico de mensalidades do aluno. Verde indica pagamentos em dia via PIX ou Cédula.
               </p>
             </Card>
           </div>
 
-          {/* Main Content Side */}
           <div className="lg:col-span-2 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                <Card className="rounded-[1.5rem] border-2 border-border bg-card p-6 flex flex-col justify-between">
@@ -178,25 +176,25 @@ export default function MemberDetailsPage() {
                      <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Status Financeiro</p>
                   </div>
                   <h4 className="text-xl font-bold uppercase">Pagamentos em Dia</h4>
-                  <p className="text-xs text-muted-foreground mt-2">Última renovação detectada no sistema.</p>
+                  <p className="text-xs text-muted-foreground mt-2">Nenhuma pendência recente detectada.</p>
                </Card>
                <Card className="rounded-[1.5rem] border-2 border-border bg-card p-6 flex flex-col justify-between">
                   <div className="flex items-center gap-3 mb-2">
                      <Clock className="w-4 h-4 text-primary" />
-                     <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Frequência Estimada</p>
+                     <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground">Plano Vigente</p>
                   </div>
-                  <h4 className="text-xl font-bold uppercase">Membro Ativo</h4>
-                  <p className="text-xs text-muted-foreground mt-2">Baseado no status do plano atual.</p>
+                  <h4 className="text-xl font-bold uppercase">{member.plan}</h4>
+                  <p className="text-xs text-muted-foreground mt-2">Membro ativo no sistema FitBase.</p>
                </Card>
             </div>
 
             <Card className="rounded-[2rem] border-2 border-border bg-card overflow-hidden">
-              <div className="p-6 border-b border-border bg-accent/20">
+              <div className="p-6 border-b border-border bg-accent/20 flex justify-between items-center">
                 <h3 className="text-[10px] font-black uppercase tracking-widest">Histórico de Movimentações</h3>
               </div>
               <div className="p-2">
                 {isPaymentsLoading ? (
-                  <div className="p-10 text-center"><Loader2 className="w-6 h-6 animate-spin mx-auto text-primary" /></div>
+                  <div className="p-10 text-center flex justify-center"><Clock className="w-6 h-6 animate-spin text-primary" /></div>
                 ) : payments && payments.length > 0 ? (
                   <div className="space-y-1">
                     {payments.map((p) => (
@@ -206,7 +204,7 @@ export default function MemberDetailsPage() {
                             <CreditCard className="w-5 h-5" />
                           </div>
                           <div>
-                            <p className="text-sm font-bold uppercase">{p.type === 'adesao' ? 'Matrícula' : p.type === 'renovacao' ? 'Renovação' : 'Mensalidade'}</p>
+                            <p className="text-sm font-bold uppercase">{p.type === 'adesao' ? 'Matrícula' : 'Mensalidade'}</p>
                             <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                               {new Date(p.paidAt || p.dueDate).toLocaleDateString('pt-BR')} via {p.paymentMethod?.toUpperCase() || '---'}
                             </p>
@@ -237,8 +235,4 @@ export default function MemberDetailsPage() {
       </main>
     </div>
   );
-}
-
-function Loader2({ className }: { className?: string }) {
-  return <Clock className={className} />;
 }

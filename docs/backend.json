@@ -39,10 +39,10 @@
       "description": "Perfil do gestor da academia.",
       "properties": {
         "gymName": { "type": "string" },
-        "acceptedTerms": { "type": "boolean" },
-        "acceptedAt": { "type": "string", "format": "date-time" },
         "email": { "type": "string" },
         "monthlyFee": { "type": "number" },
+        "acceptedTerms": { "type": "boolean" },
+        "acceptedAt": { "type": "string", "format": "date-time" },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
     }
