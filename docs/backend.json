@@ -56,7 +56,8 @@
         "btus": { "type": "string" },
         "status": { "type": "string" },
         "value": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" }
+        "date": { "type": "string", "format": "date-time" },
+        "technicianId": { "type": "string" }
       }
     },
     "Technician": {
@@ -68,7 +69,19 @@
         "name": { "type": "string" },
         "specialty": { "type": "string" },
         "phone": { "type": "string" },
+        "email": { "type": "string" },
         "status": { "type": "string" }
+      }
+    },
+    "AIAnalysis": {
+      "title": "AIAnalysis",
+      "type": "object",
+      "description": "Registro de análises geradas por IA.",
+      "properties": {
+        "userId": { "type": "string" },
+        "inputText": { "type": "string" },
+        "aiResponse": { "type": "object" },
+        "createdAt": { "type": "string", "format": "date-time" }
       }
     }
   },
@@ -80,6 +93,8 @@
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos." },
     "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." },
     "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Ordens de serviço." },
-    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." }
+    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." },
+    "/users/{userId}/careGuides/{id}": { "schema": "AIAnalysis", "description": "Guias de cuidados pet." },
+    "/users/{userId}/acAnalyses/{id}": { "schema": "AIAnalysis", "description": "Análises técnicas de AC." }
   }
 }
