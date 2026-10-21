@@ -7,8 +7,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useUser, useFirestore, setDocumentNonBlocking } from '@/firebase';
 import { doc, serverTimestamp } from 'firebase/firestore';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Scale } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface TermsAcceptanceModalProps {
   isOpen: boolean;
@@ -25,14 +26,12 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
 
     setIsAnimating(true);
     
-    // Simula a ativação do protocolo com animação antes do commit no banco
     setTimeout(() => {
       const userRef = doc(db, 'users', user.uid);
       
-      // Salvando aceitação com data e hora exatas do servidor
       setDocumentNonBlocking(userRef, {
         acceptedTerms: true,
-        acceptedAt: serverTimestamp(), // Captura Data e Hora simultaneamente
+        acceptedAt: serverTimestamp(),
         email: user.email,
         updatedAt: serverTimestamp(),
       }, { merge: true });
@@ -48,17 +47,15 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
       >
         <div className="p-6 md:p-10 space-y-8">
           <DialogHeader className="text-center space-y-6">
-            {/* Logo FitBase Clean sem Container */}
             <div className="mx-auto flex items-center justify-center relative overflow-hidden animate-icon-flash group">
-              {/* Sweep Animation Effect no Logo */}
               {isAnimating && (
                 <div className="absolute inset-0 z-30 pointer-events-none">
                   <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary/60 to-transparent animate-sweep -left-1/4" />
                 </div>
               )}
               
-              <div className="relative z-10 w-24 h-24 transition-transform duration-500 group-hover:scale-110">
-                <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
+              <div className="relative z-10 w-20 h-20 transition-transform duration-500 group-hover:scale-110 flex items-center justify-center bg-zinc-900 rounded-2xl border border-zinc-800">
+                <Scale className="w-10 h-10 text-primary" />
               </div>
             </div>
 
@@ -66,29 +63,32 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
               <DialogTitle className="text-2xl md:text-3xl font-headline font-black uppercase tracking-tighter">
                 <span className="animate-text-flash italic inline-block pr-2 leading-none">Segurança</span> 
                 <span className="text-white">&</span> 
-                <span className="text-zinc-500 block sm:inline"> Privacidade</span>
+                <span className="text-zinc-500 block sm:inline"> Jurídico</span>
               </DialogTitle>
               <DialogDescription className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.3em]">
-                FitBase • Protocolo de Gestão Digital
+                Acordo de Licenciamento de Uso FitBase
               </DialogDescription>
             </div>
           </DialogHeader>
 
           <div className="relative">
-            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-primary/10 to-transparent pointer-events-none z-10" />
-            <ScrollArea className="h-[140px] md:h-[180px] pr-4 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium custom-scrollbar">
-              <div className="space-y-6 pb-8">
+            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
+            <ScrollArea className="h-[160px] md:h-[200px] pr-4 text-[10px] md:text-[11px] leading-relaxed text-zinc-500 font-medium custom-scrollbar">
+              <div className="space-y-6 pb-8 text-justify">
                 <div className="space-y-2">
-                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">01. Natureza da Plataforma</h4>
-                  <p>O FitBase é um assistente de gestão inteligente. Os dados são armazenados de forma segura em nuvem para facilitar o controle da sua academia.</p>
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">01. Responsabilidade do Controlador</h4>
+                  <p>Ao aceitar estes termos, você declara ser o Gestor (Controlador) dos dados inseridos, assumindo total responsabilidade jurídica pela coleta e tratamento de dados de terceiros (alunos) conforme a LGPD brasileira.</p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">02. Uso Responsável</h4>
-                  <p>O gestor é o único responsável pelos dados de alunos e pagamentos inseridos na plataforma.</p>
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">02. Exclusão de Danos Morais/Físicos</h4>
+                  <p>A WS Studios Company não possui qualquer ingerência na prestação de serviço físico da academia, restando isenta de responsabilidade sobre acidentes, lesões ou intercorrências médicas nas dependências do Usuário.</p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">03. Tratamento de Dados</h4>
-                  <p>Seus dados são protegidos conforme a LGPD. Utilizamos criptografia de ponta para garantir a privacidade das suas informações comerciais.</p>
+                  <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">03. Natureza Probatória</h4>
+                  <p>Este sistema é uma ferramenta de gestão. Registros financeiros aqui contidos servem como histórico administrativo e não possuem fé pública bancária automática sem suporte documental externo.</p>
+                </div>
+                <div className="pt-4 border-t border-zinc-900">
+                  <p className="italic text-[9px]">Leia o documento completo em <Link href="/terms" className="text-primary underline">nossa página legal</Link>.</p>
                 </div>
               </div>
             </ScrollArea>
@@ -107,15 +107,14 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
               />
               <label 
                 htmlFor="terms" 
-                className="text-[10px] font-black text-zinc-600 uppercase tracking-widest leading-none cursor-pointer group-hover:text-zinc-400 transition-colors"
+                className="text-[9px] font-black text-zinc-600 uppercase tracking-widest leading-tight cursor-pointer group-hover:text-zinc-400 transition-colors"
               >
-                Li e concordo com os termos
+                Declaro que li e aceito as condições contratuais e limitações de responsabilidade do FitBase.
               </label>
             </div>
 
             <DialogFooter>
               <div className="relative w-full overflow-hidden rounded-[1.5rem]">
-                {/* Sweep Animation Effect no Botão */}
                 {isAnimating && (
                   <div className="absolute inset-0 z-20 pointer-events-none">
                     <div className="w-[150%] h-full bg-gradient-to-r from-transparent via-primary to-transparent animate-sweep -left-1/4" />
@@ -126,7 +125,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                   disabled={!hasAgreed || isAnimating}
                   onClick={handleAccept}
                 >
-                  {isAnimating ? "Ativando Protocolo..." : "Confirmar e Iniciar"}
+                  {isAnimating ? "Validando Protocolo..." : "Assinar e Ativar Sistema"}
                 </Button>
               </div>
             </DialogFooter>
@@ -134,7 +133,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
 
           <div className="flex items-center justify-center gap-3 opacity-20 grayscale hover:opacity-40 transition-all duration-700">
             <ShieldCheck className="w-3 h-3 text-primary" />
-            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">FitBase Security Shield</span>
+            <span className="text-[8px] font-black uppercase tracking-[0.5em] text-white">Certificado Digital FitBase</span>
           </div>
         </div>
       </DialogContent>
