@@ -89,7 +89,7 @@ export default function GymLandingPage() {
                  <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>
               </div>
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
-                 © 2026 WS Studios Company • Digital Smart Gym
+                 © 2026 FitBase • Digital Smart Gym
               </p>
               <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest">
                  <Link href="/terms" className="hover:text-primary transition-colors">Termos</Link>
