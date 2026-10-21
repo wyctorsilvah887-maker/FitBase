@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,7 +13,9 @@ import {
   DollarSign,
   Save,
   Check,
-  Dumbbell
+  Dumbbell,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ export default function DashboardPage() {
   const [mounted, setMounted] = useState(false);
   const [monthlyFeeInput, setMonthlyFeeInput] = useState("0,00");
   const [isSaving, setIsSaving] = useState(false);
+  const [showAllRecent, setShowAllRecent] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -48,6 +50,7 @@ export default function DashboardPage() {
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
+    // Buscando os últimos registros ordenados por data
     return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"));
   }, [user, db]);
 
@@ -113,6 +116,9 @@ export default function DashboardPage() {
 
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
   const pendingPayments = payments?.filter(p => p.status === "pendente").length || 0;
+
+  // Filtragem dos pagamentos visíveis
+  const visiblePayments = showAllRecent ? payments : payments?.slice(0, 5);
 
   if (!mounted || isUserLoading) {
     return (
@@ -201,24 +207,53 @@ export default function DashboardPage() {
            <Card className="lg:col-span-2 rounded-[2rem] border-2 border-border bg-card p-6 space-y-6">
               <div className="flex justify-between items-center px-2">
                  <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Movimentações Recentes</h3>
+                 {payments && payments.length > 5 && (
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setShowAllRecent(!showAllRecent)}
+                      className="h-6 text-[8px] font-black uppercase tracking-widest text-primary hover:bg-primary/10 px-2 rounded-lg"
+                    >
+                      {showAllRecent ? "Ver Menos" : "Ver Todos"}
+                    </Button>
+                 )}
               </div>
               <div className="space-y-2">
-                 {payments && payments.length > 0 ? (
-                   payments.slice(0, 10).map(p => (
-                     <div key={p.id} className="flex items-center justify-between p-4 rounded-xl bg-accent/30 border border-border group hover:border-primary/30 transition-all">
-                        <div className="flex items-center gap-4">
-                           <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center font-bold text-xs text-primary">{(p.memberName || "AL").slice(0, 2).toUpperCase()}</div>
-                           <div>
-                              <p className="text-sm font-bold uppercase">{p.memberName}</p>
-                              <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{new Date(p.dueDate).toLocaleDateString('pt-BR')}</p>
-                           </div>
-                        </div>
-                        <div className="text-right">
-                           <p className="text-sm font-black tracking-tighter">R$ {(Number(p.amount) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                           <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
-                        </div>
-                     </div>
-                   ))
+                 {visiblePayments && visiblePayments.length > 0 ? (
+                   <>
+                     {visiblePayments.map(p => (
+                       <div key={p.id} className="flex items-center justify-between p-4 rounded-xl bg-accent/30 border border-border group hover:border-primary/30 transition-all">
+                          <div className="flex items-center gap-4">
+                             <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center font-bold text-xs text-primary">{(p.memberName || "AL").slice(0, 2).toUpperCase()}</div>
+                             <div>
+                                <p className="text-sm font-bold uppercase">{p.memberName}</p>
+                                <p className="text-[9px] text-muted-foreground uppercase tracking-widest">{new Date(p.dueDate).toLocaleDateString('pt-BR')}</p>
+                             </div>
+                          </div>
+                          <div className="text-right">
+                             <p className="text-sm font-black tracking-tighter">R$ {(Number(p.amount) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                             <p className={`text-[8px] font-black uppercase tracking-widest ${p.status === 'pago' ? 'text-emerald-500' : 'text-amber-500'}`}>{p.status}</p>
+                          </div>
+                       </div>
+                     ))}
+                     {!showAllRecent && payments && payments.length > 5 && (
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setShowAllRecent(true)}
+                          className="w-full h-12 rounded-xl border-2 border-dashed border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:border-primary/30 transition-all flex items-center justify-center gap-2"
+                        >
+                          <ChevronDown className="w-3 h-3" /> Ver mais movimentações
+                        </Button>
+                     )}
+                     {showAllRecent && (
+                        <Button 
+                          variant="ghost" 
+                          onClick={() => setShowAllRecent(false)}
+                          className="w-full h-12 rounded-xl text-[9px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-all flex items-center justify-center gap-2"
+                        >
+                          <ChevronUp className="w-3 h-3" /> Mostrar menos
+                        </Button>
+                     )}
+                   </>
                  ) : (
                    <div className="py-20 text-center flex flex-col items-center gap-3 bg-accent/20 border-2 border-dashed border-border rounded-2xl">
                       <div className="p-3 bg-card rounded-full"><Plus className="w-6 h-6 text-muted-foreground/50" /></div>
