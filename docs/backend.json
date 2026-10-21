@@ -53,6 +53,8 @@
   "firestore": {
     "/users/{userId}": { "schema": "User", "description": "Perfil do gestor." },
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." }
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." },
+    "/users/{userId}/serviceOrders/{id}": { "schema": "object", "description": "Ordens de serviço." },
+    "/users/{userId}/technicians/{id}": { "schema": "object", "description": "Lista de técnicos." }
   }
 }
