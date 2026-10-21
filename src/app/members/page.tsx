@@ -391,4 +391,3 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
     </TableRow>
   );
 }
-
