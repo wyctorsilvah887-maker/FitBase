@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from "react";
@@ -110,7 +109,7 @@ export default function GymLandingPage() {
         <footer className="py-20 border-t border-border bg-card/50">
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
-                 <div className="w-8 h-8 relative">
+                 <div className="w-12 h-12 relative">
                    <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
                  </div>
                  <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>

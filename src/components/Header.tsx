@@ -1,4 +1,3 @@
-
 "use client";
 
 import { User, LogOut, LayoutDashboard } from "lucide-react";
@@ -40,12 +39,12 @@ export default function Header() {
     <header className="relative z-50 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-10 flex items-center justify-between gap-2 md:gap-4">
       <div className="flex items-center gap-2 shrink-0">
         <Link href={user ? "/dashboard" : "/"} className="flex items-center group cursor-pointer">
-          <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="w-14 h-14 md:w-16 md:h-16 flex items-center justify-center group-hover:scale-110 transition-transform">
              <Image 
                 src="/logo fitbase.png" 
                 alt="FitBase Logo" 
-                width={48} 
-                height={48} 
+                width={64} 
+                height={64} 
                 className="object-contain"
              />
           </div>

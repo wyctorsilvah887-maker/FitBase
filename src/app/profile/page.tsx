@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -77,8 +76,8 @@ export default function ProfilePage() {
               
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center md:items-start text-center md:text-left">
                 <div className="relative">
-                  <div className="w-28 h-28 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-700">
-                    <Image src="/logo fitbase.png" alt="FitBase" width={110} height={110} className="object-contain relative z-10" />
+                  <div className="w-32 h-32 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-700">
+                    <Image src="/logo fitbase.png" alt="FitBase" width={140} height={140} className="object-contain relative z-10" />
                   </div>
                 </div>
 

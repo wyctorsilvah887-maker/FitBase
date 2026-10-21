@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -58,7 +57,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                 </div>
               )}
               
-              <div className="relative z-10 w-20 h-20 transition-transform duration-500 group-hover:scale-110">
+              <div className="relative z-10 w-24 h-24 transition-transform duration-500 group-hover:scale-110">
                 <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
               </div>
             </div>

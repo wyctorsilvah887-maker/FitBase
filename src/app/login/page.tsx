@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -51,7 +50,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
           <div className="text-center space-y-6">
             <div className="mx-auto flex items-center justify-center animate-icon-flash">
-              <Image src="/logo fitbase.png" alt="FitBase" width={80} height={80} className="object-contain" />
+              <Image src="/logo fitbase.png" alt="FitBase" width={110} height={110} className="object-contain" />
             </div>
             <div className="space-y-2">
               <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
