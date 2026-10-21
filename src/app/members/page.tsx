@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,7 +15,10 @@ import {
   RefreshCcw,
   CreditCard,
   Trash2,
-  UserCircle
+  UserCircle,
+  Banknote,
+  QrCode,
+  ChevronRight
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,7 +30,10 @@ import {
   DropdownMenuItem, 
   DropdownMenuLabel, 
   DropdownMenuSeparator, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
 } from "@/components/ui/dropdown-menu";
 import { 
   Table, 
@@ -42,7 +49,6 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 
-// Ícone personalizado do WhatsApp para maior profissionalismo
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg 
     viewBox="0 0 24 24" 
@@ -157,7 +163,7 @@ export default function MembersPage() {
                       member={member} 
                       userId={user.uid} 
                       monthlyFee={userDoc?.monthlyFee || 0}
-                      gymName={userDoc?.gymName || "academia"}
+                      gymName={userDoc?.gymName || "FitBase"}
                     />
                   ))
                 ) : (
@@ -219,7 +225,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
     }
   };
 
-  const handleQuickAction = (type: 'renovacao' | 'adiantado') => {
+  const handleQuickAction = (type: 'renovacao' | 'adiantado', method: 'pix' | 'cedula') => {
     if (monthlyFee <= 0) {
       toast({
         variant: "destructive",
@@ -236,6 +242,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       memberName: member.name,
       amount: monthlyFee,
       status: "pago",
+      paymentMethod: method,
       dueDate: new Date().toISOString(),
       paidAt: new Date().toISOString(),
       createdAt: serverTimestamp(),
@@ -244,7 +251,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
 
     toast({
       title: type === 'renovacao' ? "Plano Renovado" : "Pagamento Confirmado",
-      description: `${type === 'renovacao' ? 'Renovação' : 'Pagamento'} de ${member.name} registrado (R$ ${monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}).`,
+      description: `${type === 'renovacao' ? 'Renovação' : 'Pagamento'} de ${member.name} via ${method.toUpperCase()} registrado.`,
     });
   };
 
@@ -312,20 +319,36 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               Gestão do Aluno
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={() => handleQuickAction('renovacao')}
-              className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group"
-            >
-              <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={() => handleQuickAction('adiantado')}
-              className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10"
-            >
-              <CreditCard className="w-4 h-4 text-emerald-500" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
-            </DropdownMenuItem>
+            
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
+                <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="rounded-2xl border-2 border-border p-2 min-w-[150px]">
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                  <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                  <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
+                <CreditCard className="w-4 h-4 text-emerald-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="rounded-2xl border-2 border-border p-2 min-w-[150px]">
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                  <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer">
+                  <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             
             <DropdownMenuItem 
               onClick={handleWhatsAppReminder}
@@ -334,15 +357,6 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               <WhatsAppIcon className="w-4 h-4" />
               <span className="text-[11px] font-bold uppercase tracking-tight">Lembrete WhatsApp</span>
             </DropdownMenuItem>
-
-            {/* Ações mobile-only que ficam escondidas na tabela desktop */}
-            <div className="sm:hidden">
-               <DropdownMenuSeparator />
-               <div className="px-3 py-2 space-y-1">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Plano: {member.plan}</p>
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Tel: {member.phone || "---"}</p>
-               </div>
-            </div>
 
             <DropdownMenuSeparator />
             <DropdownMenuItem 

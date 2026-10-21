@@ -25,6 +25,7 @@
         "memberName": { "type": "string" },
         "amount": { "type": "number" },
         "status": { "type": "string", "enum": ["pago", "pendente", "atrasado"] },
+        "paymentMethod": { "type": "string", "enum": ["pix", "cedula"] },
         "dueDate": { "type": "string", "format": "date-time" },
         "paidAt": { "type": "string", "format": "date-time" }
       },
