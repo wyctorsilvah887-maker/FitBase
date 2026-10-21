@@ -81,7 +81,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                 </div>
                 <div className="space-y-2">
                   <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">02. Exclusão de Danos Morais/Físicos</h4>
-                  <p>A WS Studios Company não possui qualquer ingerência na prestação de serviço físico da academia, restando isenta de responsabilidade sobre acidentes, lesões ou intercorrências médicas nas dependências do Usuário.</p>
+                  <p>A plataforma não possui qualquer ingerência na prestação de serviço físico da academia, restando isenta de responsabilidade sobre acidentes, lesões ou intercorrências médicas nas dependências do Usuário.</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="text-zinc-300 font-black uppercase tracking-widest text-[9px]">03. Natureza Probatória</h4>

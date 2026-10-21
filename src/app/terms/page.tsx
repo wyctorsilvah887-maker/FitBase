@@ -33,7 +33,7 @@ export default function TermsPage() {
                 Instrumento Particular de <span className="animate-text-flash italic inline-block pr-2">Termos de Uso</span>
               </h1>
               <p className="text-[8px] md:text-[9px] uppercase font-black tracking-[0.3em] text-muted-foreground">
-                WS Studios Company • FitBase • Versão 2026.1.Legal
+                FitBase • Versão 2026.1.Legal
               </p>
             </div>
           </div>
@@ -45,7 +45,7 @@ export default function TermsPage() {
                   <span className="text-primary italic text-xl">01.</span> Natureza do Serviço
                 </h2>
                 <p>
-                  O <strong>FitBase</strong>, desenvolvido e operado pela <strong>WS Studios Company</strong>, é uma plataforma de Software como Serviço (SaaS) destinada exclusivamente à organização administrativa e registro de dados internos de estabelecimentos fitness (academias, estúdios, boxes). A plataforma funciona como um livro de registro digital (ledger), não possuindo funções de instituição bancária, processadora de pagamentos ou consultoria médica/esportiva.
+                  O <strong>FitBase</strong> é uma plataforma de Software como Serviço (SaaS) destinada exclusivamente à organização administrativa e registro de dados internos de estabelecimentos fitness (academias, estúdios, boxes). A plataforma funciona como um livro de registro digital (ledger), não possuindo funções de instituição bancária, processadora de pagamentos ou consultoria médica/esportiva.
                 </p>
 
                 <h2 className="text-foreground font-black uppercase tracking-widest flex items-center gap-2 pt-4">
@@ -59,7 +59,7 @@ export default function TermsPage() {
                   <span className="text-primary italic text-xl">03.</span> Limitação de Responsabilidade Jurídica
                 </h2>
                 <p>
-                  A WS Studios Company não será responsabilizada por: (i) Erros de lançamentos financeiros realizados pelo Usuário; (ii) Eventuais lesões, danos físicos ou óbitos ocorridos nas dependências do estabelecimento do Usuário; (iii) Inadimplência contratual entre o aluno e o Usuário; (iv) Interrupções de serviço decorrentes de falhas técnicas globais da infraestrutura de internet ou serviços de terceiros (Firebase/Google Cloud).
+                  A detentora da plataforma não será responsabilizada por: (i) Erros de lançamentos financeiros realizados pelo Usuário; (ii) Eventuais lesões, danos físicos ou óbitos ocorridos nas dependências do estabelecimento do Usuário; (iii) Inadimplência contratual entre o aluno e o Usuário; (iv) Interrupções de serviço decorrentes de falhas técnicas globais da infraestrutura de internet ou serviços de terceiros (Firebase/Google Cloud).
                 </p>
 
                 <h2 className="text-foreground font-black uppercase tracking-widest flex items-center gap-2 pt-4">
@@ -73,7 +73,7 @@ export default function TermsPage() {
                   <span className="text-primary italic text-xl">05.</span> Propriedade Intelectual e Uso Indevido
                 </h2>
                 <p>
-                  Todo o código-fonte, design, logotipos e algoritmos da plataforma são propriedade intelectual da WS Studios Company. É estritamente proibida a engenharia reversa, cópia ou uso da ferramenta para atividades ilícitas, sob pena de rescisão imediata do acesso e interpelação judicial por danos morais e lucros cessantes.
+                  Todo o código-fonte, design, logotipos e algoritmos da plataforma são propriedade intelectual protegida. É estritamente proibida a engenharia reversa, cópia ou uso da ferramenta para atividades ilícitas, sob pena de rescisão imediata do acesso e interpelação judicial por danos morais e lucros cessantes.
                 </p>
 
                 <h2 className="text-foreground font-black uppercase tracking-widest flex items-center gap-2 pt-4">
@@ -94,7 +94,7 @@ export default function TermsPage() {
               </span>
             </div>
             <p className="text-[8px] font-black uppercase tracking-[0.5em] text-muted-foreground">
-              Proteção Jurídica Ativa • <span className="animate-text-flash italic inline-block">WS Studios Company</span>
+              Proteção Jurídica Ativa • <span className="animate-text-flash italic inline-block">FitBase Smart Management</span>
             </p>
           </div>
         </section>
