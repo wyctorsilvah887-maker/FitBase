@@ -18,7 +18,8 @@ import {
   UserCircle,
   Banknote,
   QrCode,
-  ChevronRight
+  ChevronRight,
+  Clock
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -96,7 +97,7 @@ export default function MembersPage() {
   if (isUserLoading || !user || isUserDocLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <UserPlus className="w-8 h-8 animate-spin text-primary" />
+        <Clock className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -390,3 +391,4 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
     </TableRow>
   );
 }
+
