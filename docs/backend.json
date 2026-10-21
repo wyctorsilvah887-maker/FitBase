@@ -60,6 +60,19 @@
         "value": { "type": "number" },
         "date": { "type": "string", "format": "date-time" }
       }
+    },
+    "Technician": {
+      "title": "Technician",
+      "type": "object",
+      "description": "Dados do colaborador técnico.",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "status": { "type": "string", "enum": ["ativo", "inativo"] }
+      }
     }
   },
   "auth": {
@@ -70,7 +83,6 @@
     "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
     "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." },
     "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Ordens de serviço registradas." },
-    "/users/{userId}/technicians/{id}": { "schema": "object", "description": "Equipe técnica cadastrada." },
-    "/users/{userId}/acAnalyses/{id}": { "schema": "object", "description": "Análises técnicas de IA." }
+    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica cadastrada." }
   }
 }
