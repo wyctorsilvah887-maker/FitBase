@@ -44,14 +44,42 @@
         "monthlyFee": { "type": "number" },
         "updatedAt": { "type": "string", "format": "date-time" }
       }
+    },
+    "ServiceOrder": {
+      "title": "ServiceOrder",
+      "type": "object",
+      "description": "Ordem de serviço técnica.",
+      "properties": {
+        "userId": { "type": "string" },
+        "customerName": { "type": "string" },
+        "equipment": { "type": "string" },
+        "btus": { "type": "string" },
+        "status": { "type": "string" },
+        "value": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Technician": {
+      "title": "Technician",
+      "type": "object",
+      "description": "Cadastro de colaborador técnico.",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "specialty": { "type": "string" },
+        "phone": { "type": "string" },
+        "status": { "type": "string" }
+      }
     }
   },
   "auth": {
     "providers": ["password", "anonymous"]
   },
   "firestore": {
-    "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor e configurações globais." },
-    "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos matriculados." },
-    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico de pagamentos e dívidas." }
+    "/users/{userId}": { "schema": "User", "description": "Dados do perfil do gestor." },
+    "/users/{userId}/members/{id}": { "schema": "GymMember", "description": "Lista de alunos." },
+    "/users/{userId}/payments/{id}": { "schema": "Payment", "description": "Histórico financeiro." },
+    "/users/{userId}/serviceOrders/{id}": { "schema": "ServiceOrder", "description": "Ordens de serviço." },
+    "/users/{userId}/technicians/{id}": { "schema": "Technician", "description": "Equipe técnica." }
   }
 }
