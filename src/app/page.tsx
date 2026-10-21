@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from "react";
@@ -14,7 +13,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-      <div className="animate-bounce">
+      <div className="animate-spin">
         <Dumbbell className="w-20 h-20 text-primary" />
       </div>
       <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">

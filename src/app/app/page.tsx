@@ -28,7 +28,7 @@ export default function GymLandingPage() {
   if (isUserLoading || user) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="animate-bounce">
+        <div className="animate-spin">
           <Dumbbell className="w-16 h-16 text-primary" />
         </div>
         <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
@@ -112,7 +112,6 @@ export default function GymLandingPage() {
                  <div className="w-12 h-12 relative">
                    <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
                  </div>
-                 <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>
               </div>
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
                  © 2026 FitBase • Digital Smart Gym

@@ -27,11 +27,11 @@ export default function ProfilePage() {
   if (isUserLoading || !user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <div className="animate-bounce">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin">
             <Dumbbell className="w-16 h-16 text-primary" />
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
+          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
             Sincronizando <span className="text-primary italic">Perfil...</span>
           </p>
         </div>
