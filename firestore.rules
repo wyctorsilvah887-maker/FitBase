@@ -2,13 +2,13 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Regra recursiva absoluta: O dono do userId tem acesso total a tudo abaixo de sua pasta
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    // Permite acesso ao documento do próprio usuário
+    // Permite que o usuário autenticado acesse seu próprio nó e tudo o que estiver abaixo dele
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      match /{allPaths=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
   }
 }
