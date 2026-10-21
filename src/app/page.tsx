@@ -15,7 +15,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
       <Dumbbell className="w-12 h-12 animate-bounce text-primary" />
       <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
-        Carregando <span className="text-primary italic">FitFlow...</span>
+        Carregando <span className="text-primary italic">FitBase...</span>
       </p>
     </div>
   );

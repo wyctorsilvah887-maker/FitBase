@@ -54,7 +54,7 @@ export default function LoginPage() {
             <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
               Acesso do <span className="text-primary italic">Gestor</span>
             </h1>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitFlow • WS Studios</p>
+            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitBase • WS Studios</p>
           </div>
 
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">
@@ -64,7 +64,7 @@ export default function LoginPage() {
                   <Label className="text-[9px] uppercase font-black tracking-widest text-muted-foreground ml-3">E-mail Cadastrado</Label>
                   <Input 
                     type="email" 
-                    placeholder="exemplo@fitflow.com" 
+                    placeholder="exemplo@fitbase.com" 
                     className="h-12 bg-background border-border rounded-2xl px-6 focus:ring-primary border-2 transition-all"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -127,7 +127,7 @@ export default function LoginPage() {
 
           <div className="text-center flex items-center justify-center gap-4 opacity-50 grayscale hover:opacity-100 hover:grayscale-0 transition-all">
             <ShieldCheck className="w-4 h-4 text-primary" />
-            <span className="text-[8px] font-black uppercase tracking-widest text-foreground">Acesso Seguro FitFlow</span>
+            <span className="text-[8px] font-black uppercase tracking-widest text-foreground">Acesso Seguro FitBase</span>
           </div>
         </div>
       </main>

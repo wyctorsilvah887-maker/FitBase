@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -91,7 +90,7 @@ export default function RegisterPage() {
                   <div className="relative">
                     <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-primary" />
                     <Input 
-                      placeholder="Ex: FitFlow Academy" 
+                      placeholder="Ex: FitBase Academy" 
                       className="h-12 pl-12 pr-6 bg-background border-border rounded-2xl focus:ring-primary border-2 transition-all"
                       value={gymName}
                       onChange={(e) => setGymName(e.target.value)}
@@ -159,7 +158,7 @@ export default function RegisterPage() {
                     className="mt-1 border-2 border-border data-[state=checked]:bg-primary"
                   />
                   <Label htmlFor="terms" className="text-[10px] leading-tight text-muted-foreground font-medium cursor-pointer">
-                    Eu li e concordo com os <Link href="/terms" className="text-primary hover:underline italic">Termos de Uso</Link> e políticas de privacidade do FitFlow.
+                    Eu li e concordo com os <Link href="/terms" className="text-primary hover:underline italic">Termos de Uso</Link> e políticas de privacidade do FitBase.
                   </Label>
                 </div>
 
@@ -168,12 +167,12 @@ export default function RegisterPage() {
                   disabled={isSubmitting || !acceptedTerms}
                   className="w-full h-14 rounded-2xl bg-foreground text-background font-black uppercase text-[10px] tracking-[0.2em] shadow-xl hover:scale-[1.02] transition-all disabled:opacity-30"
                 >
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitFlow</>}
+                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Ativar Sistema FitBase</>}
                 </Button>
               </form>
 
               <div className="space-y-4 pt-4 border-t border-border">
-                <h4 className="text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Vantagens FitFlow:</h4>
+                <h4 className="text-[9px] font-black uppercase tracking-widest text-muted-foreground text-center">Vantagens FitBase:</h4>
                 <div className="grid grid-cols-1 gap-3">
                   <BenefitItem text="Fim dos Cadernos de Papel" />
                   <BenefitItem text="Histórico de Alunos em Nuvem" />

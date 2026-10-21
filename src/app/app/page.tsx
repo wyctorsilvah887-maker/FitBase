@@ -1,4 +1,3 @@
-
 "use client";
 
 import Header from "@/components/Header";
@@ -51,7 +50,7 @@ export default function GymLandingPage() {
               <div className="space-y-6">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">A Transformação Digital</h2>
                 <h3 className="text-5xl md:text-7xl font-headline font-bold uppercase leading-tight tracking-normal">
-                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitFlow</span>?
+                  Por que mudar do <span className="italic">Papel</span> para o <span className="text-primary italic">FitBase</span>?
                 </h3>
               </div>
               
@@ -87,7 +86,7 @@ export default function GymLandingPage() {
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
                  <Dumbbell className="w-8 h-8 text-primary" />
-                 <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitFlow</span>
+                 <span className="text-2xl font-headline font-bold uppercase tracking-tighter">FitBase</span>
               </div>
               <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground">
                  © 2026 WS Studios Company • Digital Smart Gym

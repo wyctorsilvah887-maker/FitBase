@@ -5,7 +5,7 @@ import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: "FitFlow - Gestão Inteligente",
+  title: "FitBase - Gestão Inteligente",
   description: "Aposente seu caderno. Gestão digital completa para donos de academia.",
 };
 

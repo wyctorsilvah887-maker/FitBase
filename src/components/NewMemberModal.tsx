@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -132,7 +131,7 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
                 Matricular <span className="animate-text-flash italic inline-block pr-2">Novo Aluno</span>
               </DialogTitle>
               <DialogDescription className="text-muted-foreground font-bold text-[9px] uppercase tracking-[0.2em]">
-                Cadastro de Membro FitFlow
+                Cadastro de Membro FitBase
               </DialogDescription>
             </DialogHeader>
 

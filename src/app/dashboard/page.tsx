@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -129,7 +128,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h1 className="text-3xl font-headline font-bold uppercase tracking-tighter">
-              Painel <span className="text-primary italic">FitFlow</span>
+              Painel <span className="text-primary italic">FitBase</span>
             </h1>
             <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.4em]">Controle Geral • Digital Smart Gym</p>
           </div>
@@ -245,7 +244,7 @@ export default function DashboardPage() {
                       Gerenciar Matrículas <ArrowLeft className="ml-2 w-3 h-3 text-primary rotate-180" />
                    </Button>
                  </Link>
-                 <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitFlow</p>
+                 <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitBase</p>
               </div>
            </Card>
         </div>

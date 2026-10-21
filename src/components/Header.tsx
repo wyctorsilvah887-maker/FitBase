@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Dumbbell, User, LogOut, LayoutDashboard } from "lucide-react";
@@ -43,7 +42,7 @@ export default function Header() {
              <Dumbbell className="w-5 h-5 md:w-6 md:h-6 text-primary" />
           </div>
           <h1 className="text-lg md:text-2xl font-headline font-bold tracking-tighter text-foreground uppercase">
-            FitFlow
+            FitBase
           </h1>
         </Link>
       </div>

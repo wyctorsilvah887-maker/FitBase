@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -108,7 +107,7 @@ export default function MembersPage() {
               Lista de <span className="text-primary italic">Alunos</span>
             </h1>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              Controle de acesso e planos • FitFlow
+              Controle de acesso e planos • FitBase
             </p>
           </div>
 

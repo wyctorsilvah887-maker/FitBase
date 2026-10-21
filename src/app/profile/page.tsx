@@ -92,7 +92,7 @@ export default function ProfilePage() {
                   <div className="flex flex-wrap justify-center md:justify-start gap-4">
                     <div className="px-5 py-2.5 rounded-2xl bg-background border border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-3 hover:border-primary/30 transition-all cursor-default">
                       <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
-                      Conta Ativa FitFlow
+                      Conta Ativa FitBase
                     </div>
                     <div className="px-5 py-2.5 rounded-2xl bg-background border border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-3 hover:border-primary/30 transition-all cursor-default">
                       <ShieldCheck className="w-4 h-4 text-primary" />

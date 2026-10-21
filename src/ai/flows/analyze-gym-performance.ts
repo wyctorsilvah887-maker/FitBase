@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview Fluxo Genkit para análise estratégica de negócios fitness.
@@ -31,7 +30,7 @@ const analyzeGymPerformancePrompt = ai.definePrompt({
   name: 'analyzeGymPerformancePrompt',
   input: { schema: AnalyzeGymPerformanceInputSchema },
   output: { schema: AnalyzeGymPerformanceOutputSchema },
-  prompt: `Você é o FitFlow IA, um consultor sênior de gestão para academias.
+  prompt: `Você é o FitBase IA, um consultor sênior de gestão para academias.
 Analise os dados fornecidos e gere insights estratégicos para o dono da academia.
 
 DADOS DA ACADEMIA:
@@ -56,7 +55,7 @@ const analyzeGymPerformanceFlow = ai.defineFlow(
   },
   async (input) => {
     const { output } = await analyzeGymPerformancePrompt(input);
-    if (!output) throw new Error('Falha na análise estratégica do FitFlow IA.');
+    if (!output) throw new Error('Falha na análise estratégica do FitBase IA.');
     return output;
   }
 );

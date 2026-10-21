@@ -33,7 +33,7 @@ export default function TermsPage() {
                 Termos de <span className="animate-text-flash italic inline-block pr-2">Uso</span>
               </h1>
               <p className="text-[8px] md:text-[9px] uppercase font-black tracking-[0.3em] text-muted-foreground">
-                WS Studios • FitFlow • v2026.1
+                WS Studios • FitBase • v2026.1
               </p>
             </div>
           </div>
@@ -47,7 +47,7 @@ export default function TermsPage() {
                   <span className="uppercase tracking-tight text-[13px] md:text-base">Plataforma Digital</span>
                 </h2>
                 <p className="text-[11px] md:text-sm leading-relaxed text-muted-foreground font-medium">
-                  O FitFlow é uma ferramenta de gestão digital para academias. O usuário declara estar ciente de que a plataforma visa substituir cadernos físicos por um sistema de nuvem seguro.
+                  O FitBase é uma ferramenta de gestão digital para academias. O usuário declara estar ciente de que a plataforma visa substituir cadernos físicos por um sistema de nuvem seguro.
                 </p>
               </div>
             </div>
@@ -60,7 +60,7 @@ export default function TermsPage() {
                   <span className="uppercase tracking-tight text-[13px] md:text-base">Responsabilidade</span>
                 </h2>
                 <p className="text-[11px] md:text-sm leading-relaxed text-muted-foreground font-medium">
-                  Os dados inseridos são de inteira responsabilidade do gestor da academia. O FitFlow não processa pagamentos bancários diretamente, funcionando como um registro de recebíveis.
+                  Os dados inseridos são de inteira responsabilidade do gestor da academia. O FitBase não processa pagamentos bancários diretamente, funcionando como um registro de recebíveis.
                 </p>
               </div>
             </div>
@@ -73,7 +73,7 @@ export default function TermsPage() {
                   <span className="uppercase tracking-tight text-[13px] md:text-base">Privacidade</span>
                 </h2>
                 <p className="text-[11px] md:text-sm leading-relaxed text-muted-foreground font-medium">
-                  Seus dados e de seus alunos são protegidos conforme a LGPD. O FitFlow utiliza criptografia para garantir que apenas o dono da conta tenha acesso aos registros de alunos e pagamentos.
+                  Seus dados e de seus alunos são protegidos conforme a LGPD. O FitBase utiliza criptografia para garantir que apenas o dono da conta tenha acesso aos registros de alunos e pagamentos.
                 </p>
               </div>
             </div>
@@ -83,7 +83,7 @@ export default function TermsPage() {
             <div className="flex items-center justify-center space-x-2 opacity-30 group cursor-default mb-4">
               <Dumbbell className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
               <span className="font-headline text-base font-bold tracking-tighter">
-                FitFlow
+                FitBase
               </span>
             </div>
             <p className="text-[8px] font-black uppercase tracking-[0.5em] text-muted-foreground">
