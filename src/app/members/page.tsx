@@ -48,6 +48,7 @@ import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
+import Link from "next/link";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg 
@@ -273,17 +274,17 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
   };
 
   return (
-    <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group">
+    <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group cursor-pointer">
       <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+        <Link href={`/members/${member.id}`} className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors">
+          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
             <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs md:text-sm font-bold uppercase tracking-tight text-foreground truncate">{member.name}</p>
+            <p className="text-xs md:text-sm font-bold uppercase tracking-tight truncate">{member.name}</p>
             <p className="text-[8px] md:text-[9px] text-muted-foreground uppercase font-medium truncate sm:block hidden">{member.email || "Sem e-mail"}</p>
           </div>
-        </div>
+        </Link>
       </TableCell>
       <TableCell className="py-4 md:py-5">
         <Badge variant="outline" className={`text-[7px] md:text-[8px] font-black uppercase tracking-widest border-2 px-2 md:px-3 py-0.5 ${config.color} whitespace-nowrap`}>
@@ -308,76 +309,83 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
         </div>
       </TableCell>
       <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
-              <MoreVertical className="w-4 h-4" />
+        <div className="flex items-center justify-end gap-1">
+          <Link href={`/members/${member.id}`}>
+            <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex">
+              <ChevronRight className="w-4 h-4" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={8} collisionPadding={16} className="w-56 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl">
-            <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-muted-foreground px-3 py-2">
-              Gestão do Aluno
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
-                <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent 
-                side="left" 
-                align="start"
-                sideOffset={4}
-                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
-              >
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
-                  <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
-                  <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
+          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
+                <MoreVertical className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={8} collisionPadding={16} className="w-56 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl">
+              <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-muted-foreground px-3 py-2">
+                Gestão do Aluno
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
+                  <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
+                  <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent 
+                  side="left" 
+                  align="start"
+                  sideOffset={4}
+                  className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
+                >
+                  <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
+                    <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
+                    <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
 
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
-                <CreditCard className="w-4 h-4 text-emerald-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent 
-                side="left" 
-                align="start"
-                sideOffset={4}
-                className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
+                  <CreditCard className="w-4 h-4 text-emerald-500" />
+                  <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent 
+                  side="left" 
+                  align="start"
+                  sideOffset={4}
+                  className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
+                >
+                  <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
+                    <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
+                    <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              
+              <DropdownMenuItem 
+                onClick={handleWhatsAppReminder}
+                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
               >
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
-                  <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
-                  <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            
-            <DropdownMenuItem 
-              onClick={handleWhatsAppReminder}
-              className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
-            >
-              <WhatsAppIcon className="w-4 h-4" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Lembrete WhatsApp</span>
-            </DropdownMenuItem>
+                <WhatsAppIcon className="w-4 h-4" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Lembrete WhatsApp</span>
+              </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={handleDelete}
-              className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={handleDelete}
+                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </TableCell>
     </TableRow>
   );
