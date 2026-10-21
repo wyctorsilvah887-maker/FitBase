@@ -49,14 +49,16 @@ export default function LoginPage() {
 
       <main className="relative z-10 flex items-center justify-center px-6 py-12 md:py-24">
         <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          <div className="text-center space-y-4">
-            <div className="mx-auto w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center animate-icon-flash border-2 border-primary/20 overflow-hidden p-3">
-              <Image src="/logo fitbase.png" alt="FitBase" width={60} height={60} className="object-contain" />
+          <div className="text-center space-y-6">
+            <div className="mx-auto flex items-center justify-center animate-icon-flash">
+              <Image src="/logo fitbase.png" alt="FitBase" width={80} height={80} className="object-contain" />
             </div>
-            <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
-              Acesso do <span className="text-primary italic">Gestor</span>
-            </h1>
-            <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitBase • Central de Gestão</p>
+            <div className="space-y-2">
+              <h1 className="text-4xl font-headline font-bold uppercase tracking-tighter">
+                Acesso do <span className="text-primary italic">Gestor</span>
+              </h1>
+              <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">FitBase • Central de Gestão</p>
+            </div>
           </div>
 
           <Card className="bg-card border-2 border-border rounded-[3rem] overflow-hidden shadow-2xl">

@@ -48,11 +48,9 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
         className="w-[92vw] sm:max-w-md bg-black border-zinc-900 text-white rounded-[2.5rem] p-0 outline-none shadow-2xl overflow-hidden [&>button]:hidden"
       >
         <div className="p-6 md:p-10 space-y-8">
-          <DialogHeader className="text-center space-y-4">
-            {/* Logo FitBase com Flash Gradiente Contínuo e Sweep ao Clicar */}
-            <div className="mx-auto w-20 h-20 rounded-[2rem] bg-black border-2 border-primary/30 flex items-center justify-center relative overflow-hidden shadow-2xl shadow-primary/5 animate-icon-flash group">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
-              
+          <DialogHeader className="text-center space-y-6">
+            {/* Logo FitBase Clean sem Container */}
+            <div className="mx-auto flex items-center justify-center relative overflow-hidden animate-icon-flash group">
               {/* Sweep Animation Effect no Logo */}
               {isAnimating && (
                 <div className="absolute inset-0 z-30 pointer-events-none">
@@ -60,7 +58,7 @@ export function TermsAcceptanceModal({ isOpen }: TermsAcceptanceModalProps) {
                 </div>
               )}
               
-              <div className="relative z-10 w-12 h-12 transition-transform duration-500 group-hover:scale-110">
+              <div className="relative z-10 w-20 h-20 transition-transform duration-500 group-hover:scale-110">
                 <Image src="/logo fitbase.png" alt="FitBase" fill className="object-contain" />
               </div>
             </div>

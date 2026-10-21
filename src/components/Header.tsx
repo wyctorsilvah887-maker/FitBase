@@ -40,12 +40,12 @@ export default function Header() {
     <header className="relative z-50 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-10 flex items-center justify-between gap-2 md:gap-4">
       <div className="flex items-center gap-2 shrink-0">
         <Link href={user ? "/dashboard" : "/"} className="flex items-center group cursor-pointer">
-          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden p-1">
+          <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center group-hover:scale-110 transition-transform">
              <Image 
                 src="/logo fitbase.png" 
                 alt="FitBase Logo" 
-                width={40} 
-                height={40} 
+                width={48} 
+                height={48} 
                 className="object-contain"
              />
           </div>
