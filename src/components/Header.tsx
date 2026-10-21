@@ -39,19 +39,16 @@ export default function Header() {
   return (
     <header className="relative z-50 max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-10 flex items-center justify-between gap-2 md:gap-4">
       <div className="flex items-center gap-2 shrink-0">
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-1 md:gap-2 group cursor-pointer">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden p-1">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center group cursor-pointer">
+          <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform overflow-hidden p-1">
              <Image 
                 src="/logo fitbase.png" 
                 alt="FitBase Logo" 
-                width={32} 
-                height={32} 
+                width={40} 
+                height={40} 
                 className="object-contain"
              />
           </div>
-          <h1 className="text-lg md:text-2xl font-headline font-bold tracking-tighter text-foreground uppercase">
-            FitBase
-          </h1>
         </Link>
       </div>
 
