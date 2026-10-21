@@ -117,7 +117,7 @@ export default function DashboardPage() {
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
   const pendingPayments = payments?.filter(p => p.status === "pendente").length || 0;
 
-  // Filtragem dos pagamentos visíveis
+  // Filtragem dos pagamentos visíveis (limite de 5 se não expandido)
   const visiblePayments = showAllRecent ? payments : payments?.slice(0, 5);
 
   if (!mounted || isUserLoading) {
@@ -278,11 +278,6 @@ export default function DashboardPage() {
               </div>
               
               <div className="space-y-2">
-                 <Link href="/members" className="w-full">
-                   <Button className="w-full h-12 rounded-xl bg-foreground text-background font-black uppercase tracking-widest text-[9px] hover:scale-[1.02] transition-transform">
-                      Gerenciar Matrículas <ArrowLeft className="ml-2 w-3 h-3 text-primary rotate-180" />
-                   </Button>
-                 </Link>
                  <p className="text-[8px] text-center font-bold text-muted-foreground uppercase tracking-widest">Digitalização Completa via FitBase</p>
               </div>
            </Card>
