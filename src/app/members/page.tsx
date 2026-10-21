@@ -276,7 +276,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
   return (
     <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group cursor-pointer">
       <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
-        <Link href={`/members/${member.id}`} className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors">
+        <Link href={`/members/${member.id}/anamnese`} className="flex items-center gap-2 md:gap-3 group-hover:text-primary transition-colors">
           <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0 group-hover:scale-110 transition-transform">
             <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
           </div>
@@ -310,7 +310,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       </TableCell>
       <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
         <div className="flex items-center justify-end gap-1">
-          <Link href={`/members/${member.id}`}>
+          <Link href={`/members/${member.id}/anamnese`}>
             <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-primary/10 text-primary hidden sm:flex">
               <ChevronRight className="w-4 h-4" />
             </Button>
