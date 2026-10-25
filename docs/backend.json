@@ -12,7 +12,8 @@
         "email": { "type": "string" },
         "plan": { "type": "string", "enum": ["mensal", "trimestral", "anual"] },
         "status": { "type": "string", "enum": ["ativo", "vencido"] },
-        "joinedAt": { "type": "string", "format": "date-time" }
+        "joinedAt": { "type": "string", "format": "date-time" },
+        "expiryDate": { "type": "string", "format": "date-time" }
       },
       "required": ["userId", "name", "plan", "status"]
     },

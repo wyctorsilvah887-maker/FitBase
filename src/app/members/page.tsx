@@ -46,7 +46,7 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
@@ -120,7 +120,6 @@ export default function MembersPage() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 animate-in fade-in duration-700">
         
-        {/* Top Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-1">
             <h1 className="text-3xl md:text-5xl font-headline font-bold uppercase tracking-tighter">
@@ -138,7 +137,6 @@ export default function MembersPage() {
           </div>
         </div>
 
-        {/* Controls Section */}
         <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center bg-card/50 p-4 rounded-[2rem] border-2 border-border/50">
           <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
              <div className="relative group w-full sm:w-80">
@@ -165,17 +163,15 @@ export default function MembersPage() {
           </Button>
         </div>
 
-        {/* Table Section */}
         <Card className="rounded-[2.5rem] border-2 border-border bg-card overflow-hidden shadow-2xl shadow-black/5">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-accent/30">
                 <TableRow className="border-b-2 border-border hover:bg-transparent">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação do Aluno</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação / Vigência</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 text-center">Status</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano Vigente</TableHead>
-                  <TableHead className="hidden md:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Contato Direto</TableHead>
-                  <TableHead className="hidden lg:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Início</TableHead>
+                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano</TableHead>
+                  <TableHead className="hidden md:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">WhatsApp</TableHead>
                   <TableHead className="text-right py-6 pr-8"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -183,7 +179,7 @@ export default function MembersPage() {
                 {isLoading ? (
                   Array(5).fill(0).map((_, i) => (
                     <TableRow key={i} className="animate-pulse border-b border-border/50">
-                      <TableCell colSpan={6} className="h-20 bg-accent/5"></TableCell>
+                      <TableCell colSpan={5} className="h-20 bg-accent/5"></TableCell>
                     </TableRow>
                   ))
                 ) : filteredMembers.length > 0 ? (
@@ -198,7 +194,7 @@ export default function MembersPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="py-24 text-center">
+                    <TableCell colSpan={5} className="py-24 text-center">
                       <div className="flex flex-col items-center justify-center space-y-6 max-w-xs mx-auto">
                         <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center border-2 border-dashed border-primary/20">
                           <UserPlus className="w-8 h-8 text-muted-foreground/50" />
@@ -206,7 +202,7 @@ export default function MembersPage() {
                         <div className="space-y-1">
                           <p className="text-sm font-bold text-foreground uppercase tracking-tight">Nenhum aluno encontrado</p>
                           <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest leading-relaxed">
-                            Tente ajustar os filtros ou cadastrar um novo membro no sistema.
+                            Tente ajustar os filtros ou cadastrar um novo membro.
                           </p>
                         </div>
                         <Button 
@@ -295,6 +291,17 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
     }
 
     const paymentsRef = collection(db, "users", userId, "payments");
+    const memberRef = doc(db, "users", userId, "members", member.id);
+    
+    // Calcula novo vencimento baseado no plano
+    const now = new Date();
+    let nextExpiry = new Date(member.expiryDate || now);
+    if (nextExpiry < now) nextExpiry = now;
+
+    if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
+    else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
+    else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
+
     addDocumentNonBlocking(paymentsRef, {
       userId,
       memberId: member.id,
@@ -302,15 +309,21 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       amount: monthlyFee,
       status: "pago",
       paymentMethod: method,
-      dueDate: new Date().toISOString(),
-      paidAt: new Date().toISOString(),
+      dueDate: now.toISOString(),
+      paidAt: now.toISOString(),
       createdAt: serverTimestamp(),
       type: type
     });
 
+    updateDoc(memberRef, {
+      status: 'ativo',
+      expiryDate: nextExpiry.toISOString(),
+      updatedAt: serverTimestamp()
+    });
+
     toast({
       title: type === 'renovacao' ? "Plano Renovado" : "Pagamento Confirmado",
-      description: `${type === 'renovacao' ? 'Renovação' : 'Pagamento'} de ${member.name} via ${method.toUpperCase()} registrado.`,
+      description: `${member.name} está com plano ativo até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
     });
   };
 
@@ -340,7 +353,12 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
           </div>
           <div className="min-w-0">
             <p className="text-sm font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
-            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate">{member.email || "Sem e-mail cadastrado"}</p>
+            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
+              Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
+              Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+                {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
+              </span>
+            </p>
           </div>
         </div>
       </TableCell>
@@ -360,12 +378,6 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
             <Phone className="w-3.5 h-3.5 text-emerald-500" />
           </div>
           <span>{member.phone || "---"}</span>
-        </div>
-      </TableCell>
-      <TableCell className="hidden lg:table-cell py-5">
-        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
-          <Calendar className="w-3.5 h-3.5 text-primary" />
-          <span>{member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}</span>
         </div>
       </TableCell>
       <TableCell className="py-5 pr-8 text-right">

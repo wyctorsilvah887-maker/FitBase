@@ -75,6 +75,14 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
       const memberRef = collection(db, "users", user.uid, "members");
       const paymentsRef = collection(db, "users", user.uid, "payments");
       
+      const now = new Date();
+      const expiryDate = new Date(now);
+
+      // Calcula vencimento baseado no plano
+      if (formData.plan === 'mensal') expiryDate.setMonth(expiryDate.getMonth() + 1);
+      else if (formData.plan === 'trimestral') expiryDate.setMonth(expiryDate.getMonth() + 3);
+      else if (formData.plan === 'anual') expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+
       const memberPromise = addDocumentNonBlocking(memberRef, {
         userId: user.uid,
         name: formData.name,
@@ -82,7 +90,8 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
         email: formData.email,
         plan: formData.plan,
         status: formData.status,
-        joinedAt: new Date().toISOString(),
+        joinedAt: now.toISOString(),
+        expiryDate: expiryDate.toISOString(),
         createdAt: serverTimestamp(),
       });
 
@@ -94,8 +103,8 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
             memberName: formData.name,
             amount: monthlyFee,
             status: "pago",
-            dueDate: new Date().toISOString(),
-            paidAt: new Date().toISOString(),
+            dueDate: now.toISOString(),
+            paidAt: now.toISOString(),
             createdAt: serverTimestamp(),
             type: 'adesao'
           });
@@ -104,7 +113,7 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
 
       toast({
         title: "Aluno Matriculado",
-        description: `${formData.name} matriculado e primeira mensalidade registrada.`,
+        description: `${formData.name} matriculado até ${expiryDate.toLocaleDateString('pt-BR')}.`,
       });
 
       setFormData({
@@ -192,9 +201,9 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
                         <SelectValue placeholder="Selecione o plano" />
                       </SelectTrigger>
                       <SelectContent className="bg-popover border-border rounded-xl">
-                        <SelectItem value="mensal">Mensal</SelectItem>
-                        <SelectItem value="trimestral">Trimestral</SelectItem>
-                        <SelectItem value="anual">Anual</SelectItem>
+                        <SelectItem value="mensal">Mensal (+30 dias)</SelectItem>
+                        <SelectItem value="trimestral">Trimestral (+90 dias)</SelectItem>
+                        <SelectItem value="anual">Anual (+365 dias)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
