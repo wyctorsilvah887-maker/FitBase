@@ -64,33 +64,44 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
         return;
       }
 
-      // 1. Registra o Pagamento
+      // 1. Calcula Novo Início e Novo Vencimento
+      const now = new Date();
+      let baseDate = new Date(member.expiryDate || now);
+      
+      // Se já venceu, o novo período começa HOJE
+      // Se ainda é ativo, o novo período começa quando o atual terminar (extensão)
+      if (baseDate < now) {
+        baseDate = now;
+      }
+
+      const newJoinedAt = baseDate.toISOString();
+      let nextExpiry = new Date(baseDate);
+
+      if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
+      else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
+      else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
+
+      const newExpiryDate = nextExpiry.toISOString();
+
+      // 2. Registra o Pagamento no Histórico
       addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
         memberId: member.id,
         memberName: member.name,
         amount: paymentAmount,
         status: "pago",
-        dueDate: new Date().toISOString(),
-        paidAt: new Date().toISOString(),
+        dueDate: now.toISOString(),
+        paidAt: now.toISOString(),
         createdAt: serverTimestamp(),
         type: 'renovacao',
-        paymentMethod: 'pix' // Padrão para renovação manual
+        paymentMethod: 'pix'
       });
 
-      // 2. Calcula Novo Vencimento
-      const now = new Date();
-      let nextExpiry = new Date(member.expiryDate || now);
-      if (nextExpiry < now) nextExpiry = now;
-
-      if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
-      else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
-      else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
-
-      // 3. Atualiza o Aluno
+      // 3. Atualiza o Aluno com novas datas
       await updateDoc(memberRef, {
         status: 'ativo',
-        expiryDate: nextExpiry.toISOString(),
+        joinedAt: newJoinedAt,
+        expiryDate: newExpiryDate,
         updatedAt: serverTimestamp()
       });
 

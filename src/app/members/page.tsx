@@ -382,7 +382,7 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
 
         <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
           <div className="space-y-1">
-            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Matrícula</p>
+            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Início Período</p>
             <div className="flex items-center gap-2 text-[10px] font-bold">
               <Calendar className="w-3 h-3 text-primary" />
               {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}
@@ -470,8 +470,16 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     const memberRef = doc(db, "users", userId, "members", member.id);
     
     const now = new Date();
-    let nextExpiry = new Date(member.expiryDate || now);
-    if (nextExpiry < now) nextExpiry = now;
+    let baseDate = new Date(member.expiryDate || now);
+    
+    // Se o aluno já venceu, o novo período começa AGORA
+    // Se ele ainda é ativo, o novo período começa quando o atual acabar
+    if (baseDate < now) {
+      baseDate = now;
+    }
+
+    const newJoinedAt = baseDate.toISOString();
+    let nextExpiry = new Date(baseDate);
 
     if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
     else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
@@ -492,13 +500,14 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
 
     updateDoc(memberRef, {
       status: 'ativo',
+      joinedAt: newJoinedAt,
       expiryDate: nextExpiry.toISOString(),
       updatedAt: serverTimestamp()
     });
 
     toast({
       title: type === 'renovacao' ? "Plano Renovado" : "Pagamento Confirmado",
-      description: `${member.name} está com plano ativo até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
+      description: `${member.name} renovado até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
     });
   };
 
@@ -574,3 +583,4 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     </DropdownMenu>
   );
 }
+
