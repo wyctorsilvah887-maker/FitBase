@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -506,8 +505,8 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     });
 
     toast({
-      title: type === 'renovacao' ? "Plano Renovado" : "Pagamento Confirmado",
-      description: `${member.name} renovado até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
+      title: "Plano Renovado",
+      description: `Renovado ${member.name} até ${nextExpiry.toLocaleDateString('pt-BR')}`,
     });
   };
 

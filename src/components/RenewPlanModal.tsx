@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -106,8 +105,8 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
       });
 
       toast({
-        title: "Renovação Confirmada",
-        description: `${member.name} está ativo até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
+        title: "Plano Renovado",
+        description: `Renovado ${member.name} até ${nextExpiry.toLocaleDateString('pt-BR')}`,
       });
 
       onClose();
