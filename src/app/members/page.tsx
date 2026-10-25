@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -21,7 +22,6 @@ import {
   Users,
   CheckCircle2,
   AlertCircle,
-  DollarSign,
   Timer
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/table";
 import { collection, query, orderBy, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
+import { RenewPlanModal } from "@/components/RenewPlanModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
@@ -358,54 +359,72 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
 }
 
 function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+  const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
+
   return (
-    <Card className="rounded-[2rem] border-2 border-border bg-card p-5 space-y-4 shadow-lg shadow-black/5 hover:border-primary/20 transition-all">
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
-            <UserCircle className="w-5 h-5" />
+    <>
+      <Card className="rounded-[2rem] border-2 border-border bg-card p-5 space-y-4 shadow-lg shadow-black/5 hover:border-primary/20 transition-all">
+        <div className="flex justify-between items-start">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
+              <UserCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-tight leading-none mb-1">{member.name}</h3>
+              <div className="flex flex-wrap items-center gap-2">
+                <MemberStatusBadge status={member.status} />
+                {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+              </div>
+            </div>
           </div>
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-tight leading-none mb-1">{member.name}</h3>
-            <div className="flex flex-wrap items-center gap-2">
-              <MemberStatusBadge status={member.status} />
-              {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+          <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
+          <div className="space-y-1">
+            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Matrícula</p>
+            <div className="flex items-center gap-2 text-[10px] font-bold">
+              <Calendar className="w-3 h-3 text-primary" />
+              {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}
+            </div>
+          </div>
+          <div className="space-y-1">
+            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vencimento</p>
+            <div className={cn("flex items-center gap-2 text-[10px] font-bold", member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+              <Clock className="w-3 h-3" />
+              {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
             </div>
           </div>
         </div>
-        <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
-      </div>
 
-      <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
-        <div className="space-y-1">
-          <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Matrícula</p>
-          <div className="flex items-center gap-2 text-[10px] font-bold">
-            <Calendar className="w-3 h-3 text-primary" />
-            {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}
+        <div className="flex justify-between items-center bg-accent/20 p-3 rounded-xl">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[8px] font-black uppercase py-0.5">
+              {member.plan}
+            </Badge>
+            <span className="text-[10px] font-black tracking-tight">R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+            <Phone className="w-3 h-3 text-emerald-500" />
+            {member.phone || "---"}
           </div>
         </div>
-        <div className="space-y-1">
-          <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vencimento</p>
-          <div className={cn("flex items-center gap-2 text-[10px] font-bold", member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-            <Clock className="w-3 h-3" />
-            {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-          </div>
-        </div>
-      </div>
 
-      <div className="flex justify-between items-center bg-accent/20 p-3 rounded-xl">
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[8px] font-black uppercase py-0.5">
-            {member.plan}
-          </Badge>
-          <span className="text-[10px] font-black tracking-tight">R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-        </div>
-        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-          <Phone className="w-3 h-3 text-emerald-500" />
-          {member.phone || "---"}
-        </div>
-      </div>
-    </Card>
+        <Button 
+          onClick={() => setIsRenewModalOpen(true)}
+          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
+        >
+          <RefreshCcw className="w-4 h-4 mr-2" /> Renovar Plano
+        </Button>
+      </Card>
+      
+      <RenewPlanModal 
+        isOpen={isRenewModalOpen} 
+        onClose={() => setIsRenewModalOpen(false)} 
+        member={member} 
+        defaultAmount={monthlyFee}
+      />
+    </>
   );
 }
 

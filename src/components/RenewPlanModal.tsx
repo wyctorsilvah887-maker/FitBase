@@ -1,13 +1,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
+import { collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
 import { Loader2, DollarSign, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,14 +15,21 @@ interface RenewPlanModalProps {
   isOpen: boolean;
   onClose: () => void;
   member: any | null;
+  defaultAmount?: number;
 }
 
-export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps) {
+export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: RenewPlanModalProps) {
   const { user } = useUser();
   const db = useFirestore();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [amount, setAmount] = useState("0,00");
+
+  useEffect(() => {
+    if (isOpen && defaultAmount > 0) {
+      setAmount(defaultAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
+  }, [isOpen, defaultAmount]);
 
   const formatCurrency = (value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -43,7 +50,8 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
 
     try {
       const paymentsRef = collection(db, "users", user.uid, "payments");
-      // Remove pontos de milhar e troca vírgula por ponto para salvar como número
+      const memberRef = doc(db, "users", user.uid, "members", member.id);
+      
       const paymentAmount = parseFloat(amount.replace(/\./g, '').replace(',', '.'));
 
       if (isNaN(paymentAmount) || paymentAmount <= 0) {
@@ -56,6 +64,7 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
         return;
       }
 
+      // 1. Registra o Pagamento
       addDocumentNonBlocking(paymentsRef, {
         userId: user.uid,
         memberId: member.id,
@@ -65,24 +74,41 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
         dueDate: new Date().toISOString(),
         paidAt: new Date().toISOString(),
         createdAt: serverTimestamp(),
+        type: 'renovacao',
+        paymentMethod: 'pix' // Padrão para renovação manual
+      });
+
+      // 2. Calcula Novo Vencimento
+      const now = new Date();
+      let nextExpiry = new Date(member.expiryDate || now);
+      if (nextExpiry < now) nextExpiry = now;
+
+      if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
+      else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
+      else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
+
+      // 3. Atualiza o Aluno
+      await updateDoc(memberRef, {
+        status: 'ativo',
+        expiryDate: nextExpiry.toISOString(),
+        updatedAt: serverTimestamp()
       });
 
       toast({
         title: "Renovação Confirmada",
-        description: `O plano de ${member.name} foi renovado com sucesso.`,
+        description: `${member.name} está ativo até ${nextExpiry.toLocaleDateString('pt-BR')}.`,
       });
 
-      setAmount("0,00");
       onClose();
     } catch (error) {
       console.error("Erro ao renovar plano:", error);
       toast({
         variant: "destructive",
         title: "Erro na renovação",
-        description: "Não foi possível registrar o pagamento.",
+        description: "Não foi possível atualizar os dados do aluno.",
       });
     } finally {
-      setTimeout(() => setIsSubmitting(false), 500);
+      setIsSubmitting(false);
     }
   };
 
@@ -93,16 +119,16 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
           <div className="p-8 md:p-10 space-y-8">
             <DialogHeader className="text-left space-y-2">
               <DialogTitle className="text-2xl font-headline font-black tracking-tighter uppercase leading-tight">
-                Renovação de <span className="text-primary italic">Plano</span>
+                Confirmar <span className="text-primary italic">Renovação</span>
               </DialogTitle>
               <DialogDescription className="text-muted-foreground font-bold text-[9px] uppercase tracking-[0.2em]">
-                Aluno: {member?.name}
+                Membro: {member?.name} • Plano {member?.plan}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-muted-foreground ml-3">Valor da Renovação (R$)</Label>
+                <Label className="text-[9px] uppercase font-black tracking-[0.25em] text-muted-foreground ml-3">Valor do Recebimento (R$)</Label>
                 <div className="relative">
                   <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500" />
                   <Input 
@@ -116,8 +142,8 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
                     autoFocus
                   />
                 </div>
-                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest text-center mt-2">
-                  A renovação será registrada como "Paga" no histórico
+                <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest text-center mt-2 leading-relaxed">
+                  O status será alterado para <span className="text-emerald-500">Ativo</span> e a data de vencimento será estendida automaticamente.
                 </p>
               </div>
             </div>
@@ -137,7 +163,7 @@ export function RenewPlanModal({ isOpen, onClose, member }: RenewPlanModalProps)
                 className="rounded-2xl h-14 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 sm:flex-1"
                 disabled={isSubmitting || amount === "0,00"}
               >
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Renovação</>}
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Pagamento</>}
               </Button>
             </DialogFooter>
           </div>
