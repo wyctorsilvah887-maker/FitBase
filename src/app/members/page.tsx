@@ -68,7 +68,6 @@ export default function MembersPage() {
   const { user, isUserLoading } = useUser();
   const db = useFirestore();
   const router = useRouter();
-  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
@@ -194,7 +193,11 @@ export default function MembersPage() {
                     />
                   ))
                 ) : (
-                  <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
+                  <TableRow>
+                    <TableCell colSpan={5} className="p-0 border-none hover:bg-transparent">
+                      <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
+                    </TableCell>
+                  </TableRow>
                 )}
               </TableBody>
             </Table>
@@ -291,7 +294,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
             <UserCircle className="w-6 h-6" />
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
+            <p className="text-sm font-bold uppercase tracking-tight text-foreground transition-colors truncate">{member.name}</p>
             <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
               Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
               Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
