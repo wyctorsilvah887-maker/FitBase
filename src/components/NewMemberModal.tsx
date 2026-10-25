@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -210,8 +211,7 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border rounded-xl">
                       <SelectItem value="ativo">Ativo</SelectItem>
-                      <SelectItem value="pendente">Pendente</SelectItem>
-                      <SelectItem value="inativo">Inativo</SelectItem>
+                      <SelectItem value="vencido">Vencido</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

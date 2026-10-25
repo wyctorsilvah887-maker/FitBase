@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -24,7 +25,6 @@ import { collection, query, orderBy, doc, serverTimestamp } from "firebase/fires
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import Image from "next/image";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -50,7 +50,6 @@ export default function DashboardPage() {
 
   const paymentsQuery = useMemoFirebase(() => {
     if (!user || !db) return null;
-    // Buscando os últimos registros ordenados por data
     return query(collection(db, "users", user.uid, "payments"), orderBy("dueDate", "desc"));
   }, [user, db]);
 
@@ -115,7 +114,7 @@ export default function DashboardPage() {
     }, 0) || 0;
 
   const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
-  const pendingPayments = payments?.filter(p => p.status === "pendente").length || 0;
+  const overdueMembers = members?.filter(m => m.status === "vencido").length || 0;
 
   // Filtragem dos pagamentos visíveis (limite de 5 se não expandido)
   const visiblePayments = showAllRecent ? payments : payments?.slice(0, 5);
@@ -162,13 +161,13 @@ export default function DashboardPage() {
             title="Alunos Ativos" 
             value={activeMembers.toString()} 
             icon={<Users className="w-4 h-4" />} 
-            color="text-blue-500" 
+            color="text-emerald-500" 
           />
           <StatCard 
-            title="Pendências" 
-            value={pendingPayments.toString()} 
+            title="Alunos Vencidos" 
+            value={overdueMembers.toString()} 
             icon={<AlertCircle className="w-4 h-4" />} 
-            color="text-amber-500" 
+            color="text-red-500" 
           />
           
           <Card className="rounded-[1.5rem] border-2 border-border bg-card p-6 space-y-3 transition-all hover:border-primary/20">
@@ -269,9 +268,9 @@ export default function DashboardPage() {
                  <div className="p-5 rounded-2xl bg-primary/10 border border-primary/20 space-y-3">
                     <p className="text-sm font-bold uppercase tracking-tight text-primary">Controle Financeiro</p>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                       {pendingPayments > 0 
-                        ? `Você possui ${pendingPayments} pendências registradas. Mantenha sua lista de alunos atualizada.`
-                        : "Excelente! Não há pendências registradas para o período."
+                       {overdueMembers > 0 
+                        ? `Você possui ${overdueMembers} alunos com status vencido. Mantenha sua lista de alunos atualizada.`
+                        : "Excelente! Não há alunos vencidos registrados para o período."
                        }
                     </p>
                  </div>

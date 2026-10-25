@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -18,7 +19,6 @@ import {
   Banknote,
   QrCode,
   Clock,
-  Filter,
   Users,
   CheckCircle2,
   AlertCircle
@@ -51,7 +51,6 @@ import { NewMemberModal } from "@/components/NewMemberModal";
 import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
@@ -102,7 +101,7 @@ export default function MembersPage() {
   const stats = {
     total: members?.length || 0,
     ativos: members?.filter(m => m.status === 'ativo').length || 0,
-    pendentes: members?.filter(m => m.status === 'pendente').length || 0,
+    vencidos: members?.filter(m => m.status === 'vencido').length || 0,
   };
 
   if (isUserLoading || !user || isUserDocLoading) {
@@ -135,7 +134,7 @@ export default function MembersPage() {
           <div className="grid grid-cols-3 gap-3 md:gap-6">
             <StatMiniCard label="Total" value={stats.total} icon={<Users className="w-3 h-3" />} color="text-primary" />
             <StatMiniCard label="Ativos" value={stats.ativos} icon={<CheckCircle2 className="w-3 h-3" />} color="text-emerald-500" />
-            <StatMiniCard label="Pendentes" value={stats.pendentes} icon={<AlertCircle className="w-3 h-3" />} color="text-amber-500" />
+            <StatMiniCard label="Vencidos" value={stats.vencidos} icon={<AlertCircle className="w-3 h-3" />} color="text-red-500" />
           </div>
         </div>
 
@@ -154,8 +153,7 @@ export default function MembersPage() {
              <div className="flex gap-1 bg-background border-2 border-border p-1 rounded-2xl overflow-x-auto custom-scrollbar">
                 <FilterButton active={statusFilter === "todos"} onClick={() => setStatusFilter("todos")}>Todos</FilterButton>
                 <FilterButton active={statusFilter === "ativo"} onClick={() => setStatusFilter("ativo")}>Ativos</FilterButton>
-                <FilterButton active={statusFilter === "pendente"} onClick={() => setStatusFilter("pendente")}>Pendentes</FilterButton>
-                <FilterButton active={statusFilter === "inativo"} onClick={() => setStatusFilter("inativo")}>Inativos</FilterButton>
+                <FilterButton active={statusFilter === "vencido"} onClick={() => setStatusFilter("vencido")}>Vencidos</FilterButton>
              </div>
           </div>
 
@@ -270,11 +268,10 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
   
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
-    inativo: { label: "Inativo", color: "bg-red-500/10 text-red-600 border-red-600/20" },
-    pendente: { label: "Pendente", color: "bg-amber-500/10 text-amber-600 border-amber-600/20" },
+    vencido: { label: "Vencido", color: "bg-red-500/10 text-red-600 border-red-600/20" },
   };
 
-  const config = statusConfig[member.status] || statusConfig.pendente;
+  const config = statusConfig[member.status] || statusConfig.vencido;
 
   const handleDelete = () => {
     if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
