@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -170,7 +169,7 @@ export default function MembersPage() {
                 <TableRow className="border-b-2 border-border hover:bg-transparent">
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação / Vigência</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 text-center">Status</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano</TableHead>
+                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano / Valor</TableHead>
                   <TableHead className="hidden md:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">WhatsApp</TableHead>
                   <TableHead className="text-right py-6 pr-8"></TableHead>
                 </TableRow>
@@ -368,9 +367,14 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
         </Badge>
       </TableCell>
       <TableCell className="hidden sm:table-cell py-5">
-        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
-          {member.plan}
-        </span>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
+            {member.plan}
+          </span>
+          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
+            R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
       </TableCell>
       <TableCell className="hidden md:table-cell py-5">
         <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
