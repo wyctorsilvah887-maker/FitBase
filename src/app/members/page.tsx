@@ -347,12 +347,24 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
           </div>
         </TableCell>
         <TableCell className="py-5">
-          <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
-              <Phone className="w-3.5 h-3.5 text-emerald-500" />
+          {member.phone ? (
+            <a 
+              href={`tel:${member.phone.replace(/\D/g, "")}`}
+              className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors group/phone"
+            >
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center group-hover/phone:bg-primary/10 group-hover/phone:border-primary/20 transition-all">
+                <Phone className="w-3.5 h-3.5 text-emerald-500 group-hover/phone:text-primary transition-colors" />
+              </div>
+              <span>{member.phone}</span>
+            </a>
+          ) : (
+            <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground opacity-30">
+              <div className="w-7 h-7 rounded-lg bg-muted border border-border flex items-center justify-center">
+                <Phone className="w-3.5 h-3.5" />
+              </div>
+              <span>---</span>
             </div>
-            <span>{member.phone || "---"}</span>
-          </div>
+          )}
         </TableCell>
         <TableCell className="py-5 pr-8 text-right">
           <div className="flex items-center justify-end gap-2">
@@ -428,8 +440,17 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
             <span className="text-[10px] font-black tracking-tight">R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
           </div>
           <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-            <Phone className="w-3 h-3 text-emerald-500" />
-            {member.phone || "---"}
+            {member.phone ? (
+              <a href={`tel:${member.phone.replace(/\D/g, "")}`} className="flex items-center gap-2 hover:text-primary transition-colors">
+                <Phone className="w-3 h-3 text-emerald-500" />
+                {member.phone}
+              </a>
+            ) : (
+              <div className="flex items-center gap-2 opacity-30">
+                <Phone className="w-3 h-3" />
+                ---
+              </div>
+            )}
           </div>
         </div>
 
