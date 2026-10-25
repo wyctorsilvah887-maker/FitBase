@@ -6,8 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp, doc, updateDoc } from "firebase/firestore";
+import { useUser, useFirestore, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp, doc } from "firebase/firestore";
 import { Loader2, DollarSign, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -97,8 +97,8 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
         paymentMethod: 'pix'
       });
 
-      // 3. Atualiza o Aluno com novas datas
-      await updateDoc(memberRef, {
+      // 3. Atualiza o Aluno com novas datas (Padrão não-bloqueante)
+      updateDocumentNonBlocking(memberRef, {
         status: 'ativo',
         joinedAt: newJoinedAt,
         expiryDate: newExpiryDate,
@@ -174,7 +174,7 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
                 className="rounded-2xl h-14 bg-primary text-primary-foreground text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20 sm:flex-1"
                 disabled={isSubmitting || amount === "0,00"}
               >
-                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar Pagamento</>}
+                {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><CheckCircle2 className="w-4 h-4 mr-2" /> Confirmar</>}
               </Button>
             </DialogFooter>
           </div>

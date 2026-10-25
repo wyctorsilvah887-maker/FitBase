@@ -47,11 +47,11 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { collection, query, orderBy, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { RenewPlanModal } from "@/components/RenewPlanModal";
 import { useToast } from "@/hooks/use-toast";
-import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { deleteDocumentNonBlocking, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import { cn } from "@/lib/utils";
 
@@ -414,7 +414,7 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
           onClick={() => setIsRenewModalOpen(true)}
           className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
         >
-          <RefreshCcw className="w-4 h-4 mr-2" /> Renovar Plano
+          <RefreshCcw className="w-4 h-4 mr-2" /> Renovar
         </Button>
       </Card>
       
@@ -498,7 +498,7 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
       type: type
     });
 
-    updateDoc(memberRef, {
+    updateDocumentNonBlocking(memberRef, {
       status: 'ativo',
       joinedAt: newJoinedAt,
       expiryDate: nextExpiry.toISOString(),
@@ -583,4 +583,3 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     </DropdownMenu>
   );
 }
-
