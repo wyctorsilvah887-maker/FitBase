@@ -20,7 +20,8 @@ import {
   Clock,
   Users,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  DollarSign
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -117,7 +118,7 @@ export default function MembersPage() {
     <div className="min-h-screen bg-background text-foreground font-body">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 animate-in fade-in duration-700">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 animate-in fade-in duration-700 pb-20">
         
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-1">
@@ -141,7 +142,7 @@ export default function MembersPage() {
              <div className="relative group w-full sm:w-80">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
-                  placeholder="Pesquisar por nome ou celular..." 
+                  placeholder="Pesquisar..." 
                   className="pl-11 h-12 w-full bg-background border-border rounded-2xl border-2 focus-visible:ring-primary transition-all text-sm font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -162,15 +163,16 @@ export default function MembersPage() {
           </Button>
         </div>
 
-        <Card className="rounded-[2.5rem] border-2 border-border bg-card overflow-hidden shadow-2xl shadow-black/5">
-          <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+          <Card className="rounded-[2.5rem] border-2 border-border bg-card overflow-hidden shadow-2xl shadow-black/5">
             <Table>
               <TableHeader className="bg-accent/30">
                 <TableRow className="border-b-2 border-border hover:bg-transparent">
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação / Vigência</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 text-center">Status</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano / Valor</TableHead>
-                  <TableHead className="hidden md:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">WhatsApp</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano / Valor</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">WhatsApp</TableHead>
                   <TableHead className="text-right py-6 pr-8"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -192,33 +194,33 @@ export default function MembersPage() {
                     />
                   ))
                 ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="py-24 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-6 max-w-xs mx-auto">
-                        <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center border-2 border-dashed border-primary/20">
-                          <UserPlus className="w-8 h-8 text-muted-foreground/50" />
-                        </div>
-                        <div className="space-y-1">
-                          <p className="text-sm font-bold text-foreground uppercase tracking-tight">Nenhum aluno encontrado</p>
-                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest leading-relaxed">
-                            Tente ajustar os filtros ou cadastrar um novo membro.
-                          </p>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => setIsNewMemberModalOpen(true)}
-                          className="rounded-xl text-[10px] font-black uppercase tracking-widest h-11 px-8 border-2 hover:bg-primary/5 hover:text-primary transition-all"
-                        >
-                          Começar Cadastro
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                  <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
                 )}
               </TableBody>
             </Table>
-          </div>
-        </Card>
+          </Card>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="grid grid-cols-1 gap-4 md:hidden">
+          {isLoading ? (
+            Array(3).fill(0).map((_, i) => (
+              <div key={i} className="h-48 bg-card border-2 border-border rounded-[2rem] animate-pulse" />
+            ))
+          ) : filteredMembers.length > 0 ? (
+            filteredMembers.map((member) => (
+              <MemberMobileCard 
+                key={member.id} 
+                member={member} 
+                userId={user.uid} 
+                monthlyFee={userDoc?.monthlyFee || 0}
+                gymName={userDoc?.gymName || "FitBase"}
+              />
+            ))
+          ) : (
+            <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
+          )}
+        </div>
       </main>
 
       <NewMemberModal 
@@ -257,16 +259,141 @@ function FilterButton({ children, active, onClick }: { children: string, active:
   );
 }
 
+function EmptyState({ onClick }: { onClick: () => void }) {
+  return (
+    <div className="py-24 text-center flex flex-col items-center justify-center space-y-6 max-w-xs mx-auto">
+      <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center border-2 border-dashed border-primary/20">
+        <UserPlus className="w-8 h-8 text-muted-foreground/50" />
+      </div>
+      <div className="space-y-1">
+        <p className="text-sm font-bold text-foreground uppercase tracking-tight">Nenhum aluno encontrado</p>
+        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest leading-relaxed">
+          Tente ajustar os filtros ou cadastrar um novo membro.
+        </p>
+      </div>
+      <Button 
+        variant="outline" 
+        onClick={onClick}
+        className="rounded-xl text-[10px] font-black uppercase tracking-widest h-11 px-8 border-2 hover:bg-primary/5 hover:text-primary transition-all"
+      >
+        Começar Cadastro
+      </Button>
+    </div>
+  );
+}
+
 function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
-  const db = useFirestore();
-  const { toast } = useToast();
-  
+  return (
+    <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
+      <TableCell className="py-5 pl-8">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
+            <UserCircle className="w-6 h-6" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
+            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
+              Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
+              Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+                {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
+              </span>
+            </p>
+          </div>
+        </div>
+      </TableCell>
+      <TableCell className="py-5 text-center">
+        <MemberStatusBadge status={member.status} />
+      </TableCell>
+      <TableCell className="py-5">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
+            {member.plan}
+          </span>
+          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
+            R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </span>
+        </div>
+      </TableCell>
+      <TableCell className="py-5">
+        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
+          <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
+            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
+          <span>{member.phone || "---"}</span>
+        </div>
+      </TableCell>
+      <TableCell className="py-5 pr-8 text-right">
+        <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
+      </TableCell>
+    </TableRow>
+  );
+}
+
+function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+  return (
+    <Card className="rounded-[2rem] border-2 border-border bg-card p-5 space-y-4 shadow-lg shadow-black/5 hover:border-primary/20 transition-all">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
+            <UserCircle className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-tight leading-none mb-1">{member.name}</h3>
+            <MemberStatusBadge status={member.status} />
+          </div>
+        </div>
+        <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
+        <div className="space-y-1">
+          <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Matrícula</p>
+          <div className="flex items-center gap-2 text-[10px] font-bold">
+            <Calendar className="w-3 h-3 text-primary" />
+            {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}
+          </div>
+        </div>
+        <div className="space-y-1">
+          <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vencimento</p>
+          <div className={cn("flex items-center gap-2 text-[10px] font-bold", member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+            <Clock className="w-3 h-3" />
+            {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-between items-center bg-accent/20 p-3 rounded-xl">
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[8px] font-black uppercase py-0.5">
+            {member.plan}
+          </Badge>
+          <span className="text-[10px] font-black tracking-tight">R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        </div>
+        <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
+          <Phone className="w-3 h-3 text-emerald-500" />
+          {member.phone || "---"}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function MemberStatusBadge({ status }: { status: string }) {
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
     vencido: { label: "Vencido", color: "bg-red-500/10 text-red-600 border-red-600/20" },
   };
+  const config = statusConfig[status] || statusConfig.vencido;
+  return (
+    <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-2 px-3 py-0.5", config.color)}>
+      {config.label}
+    </Badge>
+  );
+}
 
-  const config = statusConfig[member.status] || statusConfig.vencido;
+function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+  const db = useFirestore();
+  const { toast } = useToast();
 
   const handleDelete = () => {
     if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
@@ -292,7 +419,6 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
     const paymentsRef = collection(db, "users", userId, "payments");
     const memberRef = doc(db, "users", userId, "members", member.id);
     
-    // Calcula novo vencimento baseado no plano
     const now = new Date();
     let nextExpiry = new Date(member.expiryDate || now);
     if (nextExpiry < now) nextExpiry = now;
@@ -335,127 +461,66 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
       });
       return;
     }
-
     const cleanPhone = member.phone.replace(/\D/g, "");
     const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano na ${gymName} está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
     const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`;
-    
     window.open(url, '_blank');
   };
 
   return (
-    <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
-      <TableCell className="py-5 pl-8">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
-            <UserCircle className="w-6 h-6" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
-            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
-              Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
-              Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-                {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-              </span>
-            </p>
-          </div>
-        </div>
-      </TableCell>
-      <TableCell className="py-5 text-center">
-        <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-2 px-3 py-1", config.color)}>
-          {config.label}
-        </Badge>
-      </TableCell>
-      <TableCell className="hidden sm:table-cell py-5">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
-            {member.plan}
-          </span>
-          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
-            R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell className="hidden md:table-cell py-5">
-        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
-          <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
-            <Phone className="w-3.5 h-3.5 text-emerald-500" />
-          </div>
-          <span>{member.phone || "---"}</span>
-        </div>
-      </TableCell>
-      <TableCell className="py-5 pr-8 text-right">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-accent border border-transparent hover:border-border transition-all">
-              <MoreVertical className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl animate-in zoom-in duration-200">
-            <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground px-4 py-3">
-              Gestão de Matrícula
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-primary/10 group">
-                <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent 
-                side="left" 
-                align="start"
-                sideOffset={12}
-                className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover"
-              >
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
-                  <QrCode className="w-4 h-4 text-primary" /> PIX
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
-                  <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10">
-                <CreditCard className="w-4 h-4 text-emerald-500" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Antecipado</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent 
-                side="left" 
-                align="start"
-                sideOffset={12}
-                className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover"
-              >
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
-                  <QrCode className="w-4 h-4 text-primary" /> PIX
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
-                  <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            
-            <DropdownMenuItem 
-              onClick={handleWhatsAppReminder}
-              className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
-            >
-              <WhatsAppIcon className="w-4 h-4" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Cobrança WhatsApp</span>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-accent border border-transparent hover:border-border transition-all">
+          <MoreVertical className="w-4 h-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl animate-in zoom-in duration-200">
+        <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground px-4 py-3">
+          Gestão de Matrícula
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-primary/10 group">
+            <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
+            <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent side="left" align="start" className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover">
+            <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
+              <QrCode className="w-4 h-4 text-primary" /> PIX
             </DropdownMenuItem>
-
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={handleDelete}
-              className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
+            <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
+              <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
             </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </TableCell>
-    </TableRow>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10">
+            <CreditCard className="w-4 h-4 text-emerald-500" />
+            <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Antecipado</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent side="left" align="start" className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover">
+            <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
+              <QrCode className="w-4 h-4 text-primary" /> PIX
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
+              <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+        
+        <DropdownMenuItem onClick={handleWhatsAppReminder} className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600">
+          <WhatsAppIcon className="w-4 h-4" />
+          <span className="text-[11px] font-bold uppercase tracking-tight">Cobrança WhatsApp</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={handleDelete} className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500">
+          <Trash2 className="w-4 h-4" />
+          <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
