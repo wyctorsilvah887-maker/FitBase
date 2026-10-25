@@ -323,7 +323,8 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               <div className="flex flex-col">
                 <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
                   Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
-                  Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+                  {member.status === 'ativo' ? 'Renovado até: ' : 'Vencimento: '}
+                  <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
                     {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
                   </span>
                 </p>
@@ -409,7 +410,9 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vencimento</p>
+            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
+              {member.status === 'ativo' ? 'Renovado até' : 'Vencimento'}
+            </p>
             <div className={cn("flex items-center gap-2 text-[10px] font-bold", member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
               <Clock className="w-3 h-3" />
               {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
