@@ -17,7 +17,11 @@ import {
   UserCircle,
   Banknote,
   QrCode,
-  Clock
+  Clock,
+  Filter,
+  Users,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -48,6 +52,7 @@ import { useToast } from "@/hooks/use-toast";
 import { deleteDocumentNonBlocking, addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const WhatsAppIcon = ({ className }: { className?: string }) => (
   <svg 
@@ -66,6 +71,7 @@ export default function MembersPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
 
   useEffect(() => {
@@ -87,10 +93,17 @@ export default function MembersPage() {
   const { data: members, isLoading } = useCollection(membersQuery);
   const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
 
-  const filteredMembers = members?.filter(member => 
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.phone?.includes(searchTerm)
-  ) || [];
+  const filteredMembers = members?.filter(member => {
+    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) || member.phone?.includes(searchTerm);
+    const matchesStatus = statusFilter === "todos" || member.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  }) || [];
+
+  const stats = {
+    total: members?.length || 0,
+    ativos: members?.filter(m => m.status === 'ativo').length || 0,
+    pendentes: members?.filter(m => m.status === 'pendente').length || 0,
+  };
 
   if (isUserLoading || !user || isUserDocLoading) {
     return (
@@ -106,54 +119,73 @@ export default function MembersPage() {
     <div className="min-h-screen bg-background text-foreground font-body">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-6 md:space-y-8 animate-in fade-in duration-700">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 animate-in fade-in duration-700">
+        
+        {/* Top Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="space-y-1">
-            <h1 className="text-2xl md:text-3xl font-headline font-bold uppercase tracking-tighter">
+            <h1 className="text-3xl md:text-5xl font-headline font-bold uppercase tracking-tighter">
               Lista de <span className="text-primary italic">Alunos</span>
             </h1>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-              Controle de acesso e planos • FitBase
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.4em]">
+              Gestão de Acesso e Planos • FitBase
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
-             <div className="relative group w-full sm:w-auto">
+          <div className="grid grid-cols-3 gap-3 md:gap-6">
+            <StatMiniCard label="Total" value={stats.total} icon={<Users className="w-3 h-3" />} color="text-primary" />
+            <StatMiniCard label="Ativos" value={stats.ativos} icon={<CheckCircle2 className="w-3 h-3" />} color="text-emerald-500" />
+            <StatMiniCard label="Pendentes" value={stats.pendentes} icon={<AlertCircle className="w-3 h-3" />} color="text-amber-500" />
+          </div>
+        </div>
+
+        {/* Controls Section */}
+        <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center bg-card/50 p-4 rounded-[2rem] border-2 border-border/50">
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+             <div className="relative group w-full sm:w-80">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
-                  placeholder="Pesquisar aluno..." 
-                  className="pl-11 h-11 w-full sm:w-64 bg-card border-border rounded-2xl border-2 focus-visible:ring-primary transition-all text-sm"
+                  placeholder="Pesquisar por nome ou celular..." 
+                  className="pl-11 h-12 w-full bg-background border-border rounded-2xl border-2 focus-visible:ring-primary transition-all text-sm font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
              </div>
-             <Button 
-                onClick={() => setIsNewMemberModalOpen(true)}
-                className="h-11 w-full sm:w-auto px-6 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/10 hover:scale-105 transition-all"
-              >
-                <Plus className="w-4 h-4 mr-2" /> Novo Aluno
-             </Button>
+             <div className="flex gap-1 bg-background border-2 border-border p-1 rounded-2xl overflow-x-auto custom-scrollbar">
+                <FilterButton active={statusFilter === "todos"} onClick={() => setStatusFilter("todos")}>Todos</FilterButton>
+                <FilterButton active={statusFilter === "ativo"} onClick={() => setStatusFilter("ativo")}>Ativos</FilterButton>
+                <FilterButton active={statusFilter === "pendente"} onClick={() => setStatusFilter("pendente")}>Pendentes</FilterButton>
+                <FilterButton active={statusFilter === "inativo"} onClick={() => setStatusFilter("inativo")}>Inativos</FilterButton>
+             </div>
           </div>
+
+          <Button 
+            onClick={() => setIsNewMemberModalOpen(true)}
+            className="h-12 w-full lg:w-auto px-8 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+          >
+            <Plus className="w-5 h-5 mr-2" /> Novo Aluno
+          </Button>
         </div>
 
-        <Card className="rounded-[1.5rem] md:rounded-[2rem] border-2 border-border bg-card overflow-hidden">
+        {/* Table Section */}
+        <Card className="rounded-[2.5rem] border-2 border-border bg-card overflow-hidden shadow-2xl shadow-black/5">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-accent/50">
+              <TableHeader className="bg-accent/30">
                 <TableRow className="border-b-2 border-border hover:bg-transparent">
-                  <TableHead className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6 pl-4 md:pl-8">Aluno</TableHead>
-                  <TableHead className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Status</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Plano</TableHead>
-                  <TableHead className="hidden md:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Contato</TableHead>
-                  <TableHead className="hidden lg:table-cell text-[9px] md:text-[10px] font-black uppercase tracking-widest text-muted-foreground py-4 md:py-6">Matrícula</TableHead>
-                  <TableHead className="text-right py-4 md:py-6 pr-4 md:pr-8"></TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação do Aluno</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 text-center">Status</TableHead>
+                  <TableHead className="hidden sm:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano Vigente</TableHead>
+                  <TableHead className="hidden md:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Contato Direto</TableHead>
+                  <TableHead className="hidden lg:table-cell text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Início</TableHead>
+                  <TableHead className="text-right py-6 pr-8"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {isLoading ? (
                   Array(5).fill(0).map((_, i) => (
-                    <TableRow key={i} className="animate-pulse">
-                      <TableCell colSpan={6} className="h-16 bg-accent/10"></TableCell>
+                    <TableRow key={i} className="animate-pulse border-b border-border/50">
+                      <TableCell colSpan={6} className="h-20 bg-accent/5"></TableCell>
                     </TableRow>
                   ))
                 ) : filteredMembers.length > 0 ? (
@@ -168,18 +200,23 @@ export default function MembersPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="py-16 md:py-20 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-4">
-                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl bg-primary/5 flex items-center justify-center">
-                          <UserPlus className="w-6 h-6 md:w-8 md:h-8 text-muted-foreground" />
+                    <TableCell colSpan={6} className="py-24 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-6 max-w-xs mx-auto">
+                        <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center border-2 border-dashed border-primary/20">
+                          <UserPlus className="w-8 h-8 text-muted-foreground/50" />
                         </div>
-                        <p className="text-[10px] md:text-sm font-bold text-muted-foreground uppercase tracking-widest">Nenhum aluno cadastrado</p>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-foreground uppercase tracking-tight">Nenhum aluno encontrado</p>
+                          <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest leading-relaxed">
+                            Tente ajustar os filtros ou cadastrar um novo membro no sistema.
+                          </p>
+                        </div>
                         <Button 
                           variant="outline" 
                           onClick={() => setIsNewMemberModalOpen(true)}
-                          className="rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest h-9 md:h-10 px-4 md:px-6 border-2"
+                          className="rounded-xl text-[10px] font-black uppercase tracking-widest h-11 px-8 border-2 hover:bg-primary/5 hover:text-primary transition-all"
                         >
-                          Cadastrar Primeiro Aluno
+                          Começar Cadastro
                         </Button>
                       </div>
                     </TableCell>
@@ -199,6 +236,31 @@ export default function MembersPage() {
 
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>
+  );
+}
+
+function StatMiniCard({ label, value, icon, color }: { label: string, value: number, icon: any, color: string }) {
+  return (
+    <div className="flex flex-col items-center md:items-start gap-1 p-3 md:px-5 md:py-4 rounded-2xl bg-card border-2 border-border/50">
+      <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", color)}>
+        {icon} {label}
+      </div>
+      <span className="text-xl md:text-2xl font-headline font-bold tracking-tighter leading-none">{value}</span>
+    </div>
+  );
+}
+
+function FilterButton({ children, active, onClick }: { children: string, active: boolean, onClick: () => void }) {
+  return (
+    <button 
+      onClick={onClick}
+      className={cn(
+        "px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
+        active ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      )}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -273,113 +335,113 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
   };
 
   return (
-    <TableRow className="border-b border-border hover:bg-accent/30 transition-colors group">
-      <TableCell className="py-4 md:py-5 pl-4 md:pl-8">
-        <div className="flex items-center gap-2 md:gap-3 cursor-default">
-          <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-            <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
+    <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
+      <TableCell className="py-5 pl-8">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
+            <UserCircle className="w-6 h-6" />
           </div>
           <div className="min-w-0">
-            <p className="text-xs md:text-sm font-bold uppercase tracking-tight truncate">{member.name}</p>
-            <p className="text-[8px] md:text-[9px] text-muted-foreground uppercase font-medium truncate sm:block hidden">{member.email || "Sem e-mail"}</p>
+            <p className="text-sm font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
+            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate">{member.email || "Sem e-mail cadastrado"}</p>
           </div>
         </div>
       </TableCell>
-      <TableCell className="py-4 md:py-5">
-        <Badge variant="outline" className={`text-[7px] md:text-[8px] font-black uppercase tracking-widest border-2 px-2 md:px-3 py-0.5 ${config.color} whitespace-nowrap`}>
+      <TableCell className="py-5 text-center">
+        <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-2 px-3 py-1", config.color)}>
           {config.label}
         </Badge>
       </TableCell>
-      <TableCell className="hidden sm:table-cell py-4 md:py-5">
-        <span className="text-[9px] md:text-[10px] font-black text-primary uppercase tracking-widest">
+      <TableCell className="hidden sm:table-cell py-5">
+        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
           {member.plan}
         </span>
       </TableCell>
-      <TableCell className="hidden md:table-cell py-4 md:py-5">
-        <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
-          <Phone className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
+      <TableCell className="hidden md:table-cell py-5">
+        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
+          <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
+            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+          </div>
           <span>{member.phone || "---"}</span>
         </div>
       </TableCell>
-      <TableCell className="hidden lg:table-cell py-4 md:py-5">
-        <div className="flex items-center gap-2 text-[10px] md:text-[11px] font-medium text-muted-foreground">
-          <Calendar className="w-3 h-3 md:w-3.5 md:h-3.5 text-primary" />
+      <TableCell className="hidden lg:table-cell py-5">
+        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
+          <Calendar className="w-3.5 h-3.5 text-primary" />
           <span>{member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}</span>
         </div>
       </TableCell>
-      <TableCell className="py-4 md:py-5 pr-4 md:pr-8 text-right">
-        <div className="flex items-center justify-end gap-1">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-xl h-8 w-8 hover:bg-accent">
-                <MoreVertical className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" sideOffset={8} collisionPadding={16} className="w-56 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl">
-              <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-widest text-muted-foreground px-3 py-2">
-                Gestão do Aluno
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10 group">
-                  <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-                  <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent 
-                  side="left" 
-                  align="start"
-                  sideOffset={4}
-                  className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
-                >
-                  <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
-                    <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
-                    <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-primary/10">
-                  <CreditCard className="w-4 h-4 text-emerald-500" />
-                  <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Adiantado</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent 
-                  side="left" 
-                  align="start"
-                  sideOffset={4}
-                  className="rounded-2xl border-2 border-border p-2 min-w-[150px] animate-in fade-in slide-in-from-right-1 shadow-2xl z-50 bg-popover"
-                >
-                  <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-primary/10">
-                    <QrCode className="w-3.5 h-3.5 text-primary" /> PIX
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2 px-3 flex items-center gap-2 cursor-pointer focus:bg-emerald-500/10">
-                    <Banknote className="w-3.5 h-3.5 text-emerald-500" /> Cédula
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              
-              <DropdownMenuItem 
-                onClick={handleWhatsAppReminder}
-                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
+      <TableCell className="py-5 pr-8 text-right">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-accent border border-transparent hover:border-border transition-all">
+              <MoreVertical className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl animate-in zoom-in duration-200">
+            <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground px-4 py-3">
+              Gestão de Matrícula
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-primary/10 group">
+                <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent 
+                side="left" 
+                align="start"
+                sideOffset={12}
+                className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover"
               >
-                <WhatsAppIcon className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Lembrete WhatsApp</span>
-              </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
+                  <QrCode className="w-4 h-4 text-primary" /> PIX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
+                  <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
 
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                onClick={handleDelete}
-                className="rounded-xl flex items-center gap-3 py-2.5 px-3 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10">
+                <CreditCard className="w-4 h-4 text-emerald-500" />
+                <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Antecipado</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent 
+                side="left" 
+                align="start"
+                sideOffset={12}
+                className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover"
               >
-                <Trash2 className="w-4 h-4" />
-                <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
+                  <QrCode className="w-4 h-4 text-primary" /> PIX
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
+                  <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            
+            <DropdownMenuItem 
+              onClick={handleWhatsAppReminder}
+              className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600"
+            >
+              <WhatsAppIcon className="w-4 h-4" />
+              <span className="text-[11px] font-bold uppercase tracking-tight">Cobrança WhatsApp</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={handleDelete}
+              className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TableCell>
     </TableRow>
   );
