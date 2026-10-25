@@ -21,7 +21,8 @@ import {
   Users,
   CheckCircle2,
   AlertCircle,
-  DollarSign
+  DollarSign,
+  Timer
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -285,6 +286,27 @@ function EmptyState({ onClick }: { onClick: () => void }) {
   );
 }
 
+// Helper to get days remaining
+function getDaysRemaining(expiryDateStr: string | null) {
+  if (!expiryDateStr) return null;
+  const expiry = new Date(expiryDateStr);
+  const now = new Date();
+  const diff = expiry.getTime() - now.getTime();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+function ExpiryAlert({ expiryDate }: { expiryDate: string | null }) {
+  const days = getDaysRemaining(expiryDate);
+  if (days === null || days > 5 || days < 0) return null;
+  
+  return (
+    <div className="inline-flex items-center gap-1 mt-1 text-[8px] font-black uppercase tracking-widest text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+      <Timer className="w-2.5 h-2.5" />
+      {days === 0 ? "Vence hoje" : `Vence em ${days} ${days === 1 ? 'dia' : 'dias'}`}
+    </div>
+  );
+}
+
 function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
   return (
     <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
@@ -295,12 +317,15 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
           </div>
           <div className="min-w-0">
             <p className="text-sm font-bold uppercase tracking-tight text-foreground transition-colors truncate">{member.name}</p>
-            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
-              Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
-              Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-                {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-              </span>
-            </p>
+            <div className="flex flex-col">
+              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
+                Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
+                Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+                  {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
+                </span>
+              </p>
+              {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+            </div>
           </div>
         </div>
       </TableCell>
@@ -342,7 +367,10 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
           </div>
           <div>
             <h3 className="text-sm font-bold uppercase tracking-tight leading-none mb-1">{member.name}</h3>
-            <MemberStatusBadge status={member.status} />
+            <div className="flex flex-wrap items-center gap-2">
+              <MemberStatusBadge status={member.status} />
+              {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+            </div>
           </div>
         </div>
         <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
