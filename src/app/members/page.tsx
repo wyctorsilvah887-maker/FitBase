@@ -308,52 +308,73 @@ function ExpiryAlert({ expiryDate }: { expiryDate: string | null }) {
 }
 
 function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+  const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
+
   return (
-    <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
-      <TableCell className="py-5 pl-8">
-        <div className="flex items-center gap-4">
-          <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
-            <UserCircle className="w-6 h-6" />
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold uppercase tracking-tight text-foreground transition-colors truncate">{member.name}</p>
-            <div className="flex flex-col">
-              <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
-                Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
-                Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-                  {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-                </span>
-              </p>
-              {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+    <>
+      <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
+        <TableCell className="py-5 pl-8">
+          <div className="flex items-center gap-4">
+            <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
+              <UserCircle className="w-6 h-6" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold uppercase tracking-tight text-foreground transition-colors truncate">{member.name}</p>
+              <div className="flex flex-col">
+                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
+                  Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
+                  Vencimento: <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
+                    {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
+                  </span>
+                </p>
+                {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
+              </div>
             </div>
           </div>
-        </div>
-      </TableCell>
-      <TableCell className="py-5 text-center">
-        <MemberStatusBadge status={member.status} />
-      </TableCell>
-      <TableCell className="py-5">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
-            {member.plan}
-          </span>
-          <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
-            R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-          </span>
-        </div>
-      </TableCell>
-      <TableCell className="py-5">
-        <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
-          <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
-            <Phone className="w-3.5 h-3.5 text-emerald-500" />
+        </TableCell>
+        <TableCell className="py-5 text-center">
+          <MemberStatusBadge status={member.status} />
+        </TableCell>
+        <TableCell className="py-5">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
+              {member.plan}
+            </span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
+              R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </span>
           </div>
-          <span>{member.phone || "---"}</span>
-        </div>
-      </TableCell>
-      <TableCell className="py-5 pr-8 text-right">
-        <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
-      </TableCell>
-    </TableRow>
+        </TableCell>
+        <TableCell className="py-5">
+          <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center">
+              <Phone className="w-3.5 h-3.5 text-emerald-500" />
+            </div>
+            <span>{member.phone || "---"}</span>
+          </div>
+        </TableCell>
+        <TableCell className="py-5 pr-8 text-right">
+          <div className="flex items-center justify-end gap-2">
+            <Button 
+              onClick={() => setIsRenewModalOpen(true)}
+              variant="outline"
+              size="sm"
+              className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest border-2 hover:bg-primary/5 hover:text-primary transition-all hidden lg:flex"
+            >
+              <RefreshCcw className="w-3.5 h-3.5 mr-2" /> Renovar
+            </Button>
+            <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
+          </div>
+        </TableCell>
+      </TableRow>
+      
+      <RenewPlanModal 
+        isOpen={isRenewModalOpen} 
+        onClose={() => setIsRenewModalOpen(false)} 
+        member={member} 
+        defaultAmount={monthlyFee}
+      />
+    </>
   );
 }
 
