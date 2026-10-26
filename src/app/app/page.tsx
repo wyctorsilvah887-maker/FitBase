@@ -48,9 +48,9 @@ export default function GymLandingPage() {
       
       <main className="relative z-10">
         {/* Seção Hero com Fundo de Caderno Restrito */}
-        <section className="relative overflow-hidden pt-12 pb-24 md:pt-24 md:pb-32">
+        <section className="relative overflow-hidden pt-12 pb-24 md:pt-24 md:pb-32 min-h-[80vh] flex items-center">
           {/* Imagem do Caderno fixada apenas nesta seção */}
-          <div className="absolute inset-0 pointer-events-none opacity-30 grayscale brightness-125 -z-10">
+          <div className="absolute inset-0 pointer-events-none opacity-40 grayscale brightness-90 -z-10">
             {notebookBg && (
               <Image 
                 src={notebookBg.imageUrl} 
@@ -61,8 +61,9 @@ export default function GymLandingPage() {
                 data-ai-hint={notebookBg.imageHint}
               />
             )}
-            {/* Overlay de gradiente para suavizar a transição para o restante da página */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
+            {/* Overlay de gradiente para suavizar a transição e garantir contraste do texto */}
+            <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
+            <div className="absolute inset-0 bg-background/20" />
           </div>
 
           <div className="max-w-7xl mx-auto px-6 text-center space-y-12 relative z-10">
