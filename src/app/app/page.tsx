@@ -43,9 +43,12 @@ export default function GymLandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden relative">
-      {/* Imagem de Fundo do Caderno - Ajustada para maior visibilidade */}
-      <div className="fixed inset-0 pointer-events-none opacity-10 grayscale contrast-125 -z-10">
+    <div className="min-h-screen text-foreground selection:bg-primary/30 font-body overflow-x-hidden relative">
+      {/* Camada 1: Cor de Fundo Base */}
+      <div className="fixed inset-0 bg-background -z-20" />
+
+      {/* Camada 2: Imagem do Caderno (Fundo) */}
+      <div className="fixed inset-0 pointer-events-none opacity-25 grayscale brightness-125 -z-10">
         {notebookBg && (
           <Image 
             src={notebookBg.imageUrl} 
@@ -61,7 +64,8 @@ export default function GymLandingPage() {
       <Header />
       
       <main className="relative z-10">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.07)_0%,transparent_70%)] pointer-events-none -z-10" />
+        {/* Gradiente de iluminação central */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.1)_0%,transparent_70%)] pointer-events-none -z-10" />
 
         <section className="max-w-7xl mx-auto px-6 pt-12 pb-24 md:pt-24 md:pb-32 text-center space-y-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-in fade-in duration-1000">
