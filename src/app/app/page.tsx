@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from "react";
@@ -15,13 +14,10 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function GymLandingPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
-
-  const notebookBg = PlaceHolderImages.find(img => img.id === 'notebook-bg');
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -47,25 +43,8 @@ export default function GymLandingPage() {
       <Header />
       
       <main className="relative z-10">
-        {/* Seção Hero com Fundo de Caderno Restrito */}
+        {/* Seção Hero com Fundo Limpo */}
         <section className="relative overflow-hidden pt-12 pb-24 md:pt-24 md:pb-32 min-h-[80vh] flex items-center">
-          {/* Imagem do Caderno fixada apenas nesta seção */}
-          <div className="absolute inset-0 pointer-events-none opacity-40 grayscale brightness-90 -z-10">
-            {notebookBg && (
-              <Image 
-                src={notebookBg.imageUrl} 
-                alt="Notebook Background" 
-                fill 
-                className="object-cover" 
-                priority
-                data-ai-hint={notebookBg.imageHint}
-              />
-            )}
-            {/* Overlay de gradiente para suavizar a transição e garantir contraste do texto */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/60 to-background" />
-            <div className="absolute inset-0 bg-background/20" />
-          </div>
-
           <div className="max-w-7xl mx-auto px-6 text-center space-y-12 relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-in fade-in duration-1000">
               <Zap className="w-3 h-3 animate-pulse" />
@@ -90,7 +69,6 @@ export default function GymLandingPage() {
           </div>
         </section>
 
-        {/* Seções restantes continuam com fundo limpo */}
         <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden backdrop-blur-sm border-y border-border/50">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
             <div className="max-w-4xl space-y-16">
