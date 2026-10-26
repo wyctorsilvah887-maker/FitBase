@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from "react";
@@ -14,10 +15,13 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 
 export default function GymLandingPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
+
+  const notebookBg = PlaceHolderImages.find(img => img.id === 'notebook-bg');
 
   useEffect(() => {
     if (!isUserLoading && user) {
@@ -39,7 +43,20 @@ export default function GymLandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden relative">
+      {/* Imagem de Fundo do Caderno */}
+      <div className="fixed inset-0 pointer-events-none opacity-[0.03] grayscale contrast-125 -z-20">
+        {notebookBg && (
+          <Image 
+            src={notebookBg.imageUrl} 
+            alt="Notebook Background" 
+            fill 
+            className="object-cover" 
+            data-ai-hint={notebookBg.imageHint}
+          />
+        )}
+      </div>
+
       <Header />
       
       <main className="relative">
@@ -68,7 +85,7 @@ export default function GymLandingPage() {
           </div>
         </section>
 
-        <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden">
+        <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden backdrop-blur-sm border-y border-border/50">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
             <div className="max-w-4xl space-y-16">
               <div className="space-y-6">
@@ -106,7 +123,7 @@ export default function GymLandingPage() {
           </div>
         </section>
 
-        <footer className="py-20 border-t border-border bg-card/50">
+        <footer className="py-20 border-t border-border bg-card/50 backdrop-blur-md">
            <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-12">
               <div className="flex items-center gap-3">
                  <div className="w-12 h-12 relative">
