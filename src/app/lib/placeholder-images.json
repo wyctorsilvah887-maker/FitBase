@@ -27,9 +27,9 @@
     },
     {
       "id": "notebook-bg",
-      "description": "Fundo de papel de caderno antigo e gasto",
-      "imageUrl": "https://picsum.photos/seed/notebook7/1920/1080",
-      "imageHint": "old notebook"
+      "description": "Papel de caderno antigo com pautas",
+      "imageUrl": "https://picsum.photos/seed/notebook-paper-101/1920/1080",
+      "imageHint": "ruled notebook"
     }
   ]
 }

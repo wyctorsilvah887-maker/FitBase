@@ -43,53 +43,53 @@ export default function GymLandingPage() {
   }
 
   return (
-    <div className="min-h-screen text-foreground selection:bg-primary/30 font-body overflow-x-hidden relative">
-      {/* Camada 1: Cor de Fundo Base */}
-      <div className="fixed inset-0 bg-background -z-20" />
-
-      {/* Camada 2: Imagem do Caderno (Fundo) */}
-      <div className="fixed inset-0 pointer-events-none opacity-25 grayscale brightness-125 -z-10">
-        {notebookBg && (
-          <Image 
-            src={notebookBg.imageUrl} 
-            alt="Notebook Background" 
-            fill 
-            className="object-cover" 
-            priority
-            data-ai-hint={notebookBg.imageHint}
-          />
-        )}
-      </div>
-
+    <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-body overflow-x-hidden relative">
       <Header />
       
       <main className="relative z-10">
-        {/* Gradiente de iluminação central */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1000px] bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.1)_0%,transparent_70%)] pointer-events-none -z-10" />
-
-        <section className="max-w-7xl mx-auto px-6 pt-12 pb-24 md:pt-24 md:pb-32 text-center space-y-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-in fade-in duration-1000">
-            <Zap className="w-3 h-3 animate-pulse" />
-            O fim da era dos cadernos chegou
+        {/* Seção Hero com Fundo de Caderno Restrito */}
+        <section className="relative overflow-hidden pt-12 pb-24 md:pt-24 md:pb-32">
+          {/* Imagem do Caderno fixada apenas nesta seção */}
+          <div className="absolute inset-0 pointer-events-none opacity-30 grayscale brightness-125 -z-10">
+            {notebookBg && (
+              <Image 
+                src={notebookBg.imageUrl} 
+                alt="Notebook Background" 
+                fill 
+                className="object-cover" 
+                priority
+                data-ai-hint={notebookBg.imageHint}
+              />
+            )}
+            {/* Overlay de gradiente para suavizar a transição para o restante da página */}
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
           </div>
-          
-          <h1 className="text-6xl md:text-9xl font-headline font-black tracking-tight uppercase leading-[0.85] max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            Aposente o <br /><span className="text-primary italic">Caderno</span> Hoje
-          </h1>
-          
-          <p className="text-muted-foreground text-lg md:text-2xl font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-            Digitalize sua academia com eficiência. Controle pagamentos, alunos e crescimento sem perder uma única folha.
-          </p>
 
-          <div className="flex justify-center pt-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
-            <Link href="/register">
-              <Button size="lg" className="h-16 px-12 rounded-3xl bg-primary text-primary-foreground font-black uppercase text-[12px] tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all w-full sm:w-auto">
-                Começar Grátis <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
-            </Link>
+          <div className="max-w-7xl mx-auto px-6 text-center space-y-12 relative z-10">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-in fade-in duration-1000">
+              <Zap className="w-3 h-3 animate-pulse" />
+              O fim da era dos cadernos chegou
+            </div>
+            
+            <h1 className="text-6xl md:text-9xl font-headline font-black tracking-tight uppercase leading-[0.85] max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-1000">
+              Aposente o <br /><span className="text-primary italic">Caderno</span> Hoje
+            </h1>
+            
+            <p className="text-muted-foreground text-lg md:text-2xl font-medium max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+              Digitalize sua academia com eficiência. Controle pagamentos, alunos e crescimento sem perder uma única folha.
+            </p>
+
+            <div className="flex justify-center pt-8 animate-in fade-in slide-in-from-bottom-16 duration-1000 delay-300">
+              <Link href="/register">
+                <Button size="lg" className="h-16 px-12 rounded-3xl bg-primary text-primary-foreground font-black uppercase text-[12px] tracking-[0.2em] shadow-2xl shadow-primary/20 hover:scale-105 transition-all w-full sm:w-auto">
+                  Começar Grátis <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </section>
 
+        {/* Seções restantes continuam com fundo limpo */}
         <section className="py-24 md:py-48 bg-accent/30 relative overflow-hidden backdrop-blur-sm border-y border-border/50">
           <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
             <div className="max-w-4xl space-y-16">
