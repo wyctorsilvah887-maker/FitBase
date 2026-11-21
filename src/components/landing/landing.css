@@ -195,14 +195,14 @@
   cursor: pointer;
 }
 
-/* ---------- Logo (PNG transparente já recortado: public/logo-fitbase.png) ---------- */
+/* ---------- Logo (recorte do PNG quadrado: public/logo fitbase.png) ---------- */
 
 .lp-logo {
   display: block;
   width: 98px;
   height: 78px;
   border-radius: 14px;
-  background: url("/logo-fitbase.png") center / 84px auto no-repeat;
+  background: url("/logo%20fitbase.png") center 50% / 190px 190px no-repeat;
 }
 
 .dark .lp .lp-logo {
@@ -212,7 +212,7 @@
 .lp-logo--footer {
   width: 84px;
   height: 64px;
-  background-size: 74px auto;
+  background-size: 156px 156px;
 }
 
 /* ---------- Navegação ---------- */
@@ -1084,4 +1084,37 @@
   .lp-bar {
     transform: scaleY(1);
   }
+}
+
+/* ---------- Botão de tema (sem borda, sem estado "apertado") ---------- */
+
+.lp-theme {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--lp-ink-2);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+@media (hover: hover) {
+  .lp-theme:hover {
+    background: var(--lp-tint);
+    color: var(--lp-ink);
+  }
+}
+
+.lp-theme:active {
+  background: transparent;
+}
+
+.lp .lp-theme:focus-visible {
+  outline: 2px solid var(--lp-teal);
+  outline-offset: 2px;
 }
