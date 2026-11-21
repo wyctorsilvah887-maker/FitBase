@@ -358,8 +358,8 @@ export default function RegisterPage() {
                   />
                   <span>
                     Li e concordo com os{" "}
-                    <Link href="/terms">Termos de Uso</Link>{" "}
-                    do FitBase.
+                    <Link href="/terms">Termos de Uso</Link> e a{" "}
+                    <Link href="/privacy">Política de Privacidade</Link> do FitBase.
                   </span>
                 </label>
                 {errorFor("terms") && <ErrorText id="err-terms">{errorFor("terms")}</ErrorText>}

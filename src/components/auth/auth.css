@@ -831,3 +831,32 @@
   font: inherit;
   font-weight: 700;
 }
+
+.lp-terms-other {
+  margin: 20px 0 0;
+  font-size: 0.92rem;
+  color: var(--lp-ink-2);
+}
+
+.lp-terms-other a {
+  color: var(--lp-teal);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.lp-terms-article ul {
+  margin: 12px 0 0;
+  padding-left: 1.2em;
+  line-height: 1.7;
+  color: var(--lp-ink-2);
+}
+
+.lp-terms-article li + li {
+  margin-top: 6px;
+}
+
+.lp-terms-article p + p,
+.lp-terms-article p + ul,
+.lp-terms-article ul + p {
+  margin-top: 12px;
+}

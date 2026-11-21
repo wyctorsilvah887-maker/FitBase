@@ -39,7 +39,7 @@ export function validateRegister(values: {
   if (!values.password) errors.password = "Crie uma senha.";
   else if (values.password.length < 6) errors.password = "A senha precisa ter pelo menos 6 caracteres.";
   if (values.fee <= 0) errors.fee = "Informe o valor da mensalidade. Você pode alterar depois no painel.";
-  if (!values.acceptedTerms) errors.terms = "Aceite os Termos de Uso para criar a conta.";
+  if (!values.acceptedTerms) errors.terms = "Aceite os Termos de Uso e a Política de Privacidade para criar a conta.";
   return errors;
 }
 
