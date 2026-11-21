@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LpThemeToggle } from "@/components/landing/LpThemeToggle";
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
@@ -26,7 +26,7 @@ export function LandingNav() {
         </nav>
 
         <div className="lp-nav-actions">
-          <ThemeToggle />
+          <LpThemeToggle />
           <Link href="/login" className="lp-btn lp-btn-ghost lp-btn-sm">
             Entrar
           </Link>

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, serverTimestamp } from "firebase/firestore";
 import { useAuth, useUser, useFirestore, setDocumentNonBlocking } from "@/firebase";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LpThemeToggle } from "@/components/landing/LpThemeToggle";
 import { RegisterPanel } from "@/components/auth/RegisterPanel";
 import {
   authErrorMessage,
@@ -149,7 +149,7 @@ export default function RegisterPage() {
             <div className="lp-auth-top-right">
               <span>Já tem conta?</span>
               <Link href="/login">Entrar</Link>
-              <ThemeToggle />
+              <LpThemeToggle />
             </div>
           </div>
 

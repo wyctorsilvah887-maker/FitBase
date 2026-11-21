@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { useAuth, useUser } from "@/firebase";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { LpThemeToggle } from "@/components/landing/LpThemeToggle";
 import { LoginPanel } from "@/components/auth/LoginPanel";
 import {
   RESET_SENT_MESSAGE,
@@ -143,7 +143,7 @@ export default function LoginPage() {
             <div className="lp-auth-top-right">
               <span>Novo por aqui?</span>
               <Link href="/register">Criar conta</Link>
-              <ThemeToggle />
+              <LpThemeToggle />
             </div>
           </div>
 
