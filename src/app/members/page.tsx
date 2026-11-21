@@ -46,11 +46,12 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { collection, query, orderBy, doc, serverTimestamp } from "firebase/firestore";
+import { collection, query, orderBy, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { RenewPlanModal } from "@/components/RenewPlanModal";
 import { useToast } from "@/hooks/use-toast";
-import { deleteDocumentNonBlocking, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { getEffectiveStatus, getPlanPrice, getRenewalDates } from "@/lib/member-utils";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import { cn } from "@/lib/utils";
 
@@ -89,8 +90,11 @@ export default function MembersPage() {
     return doc(db, "users", user.uid);
   }, [user, db]);
 
-  const { data: members, isLoading } = useCollection(membersQuery);
+  const { data: rawMembers, isLoading } = useCollection(membersQuery);
   const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
+
+  // O status gravado só reflete a última renovação; o status real vem da data de vencimento.
+  const members = rawMembers?.map(m => ({ ...m, status: getEffectiveStatus(m) }));
 
   const filteredMembers = members?.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) || member.phone?.includes(searchTerm);
@@ -343,7 +347,7 @@ function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userI
               {member.plan}
             </span>
             <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
-              R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              R$ {getPlanPrice(member.plan, monthlyFee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </TableCell>
@@ -441,7 +445,7 @@ function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any
             <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[8px] font-black uppercase py-0.5">
               {member.plan}
             </Badge>
-            <span className="text-[10px] font-black tracking-tight">R$ {monthlyFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+            <span className="text-[10px] font-black tracking-tight">R$ {getPlanPrice(member.plan, monthlyFee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
           </div>
           <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
             {member.phone ? (
@@ -509,7 +513,7 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     }
   };
 
-  const handleQuickAction = (type: 'renovacao' | 'adiantado', method: 'pix' | 'cedula') => {
+  const handleQuickAction = async (type: 'renovacao' | 'adiantado', method: 'pix' | 'cedula') => {
     if (monthlyFee <= 0) {
       toast({
         variant: "destructive",
@@ -521,47 +525,49 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
 
     const paymentsRef = collection(db, "users", userId, "payments");
     const memberRef = doc(db, "users", userId, "members", member.id);
-    
+
     const now = new Date();
-    let baseDate = new Date(member.expiryDate || now);
-    
-    // Se o aluno já venceu, o novo período começa AGORA
-    // Se ele ainda é ativo, o novo período começa quando o atual acabar
-    if (baseDate < now) {
-      baseDate = now;
+    // Plano vencido: novo período começa agora. Plano ativo: começa quando o atual acabar.
+    const { joinedAt, expiry } = getRenewalDates(member, now);
+
+    try {
+      // Pagamento e renovação na mesma operação: ou gravam os dois, ou nenhum.
+      const batch = writeBatch(db);
+
+      batch.set(doc(paymentsRef), {
+        userId,
+        memberId: member.id,
+        memberName: member.name,
+        amount: getPlanPrice(member.plan, monthlyFee),
+        status: "pago",
+        paymentMethod: method,
+        dueDate: now.toISOString(),
+        paidAt: now.toISOString(),
+        createdAt: serverTimestamp(),
+        type: type
+      });
+
+      batch.update(memberRef, {
+        status: 'ativo',
+        joinedAt: joinedAt.toISOString(),
+        expiryDate: expiry.toISOString(),
+        updatedAt: serverTimestamp()
+      });
+
+      await batch.commit();
+
+      toast({
+        title: "Plano Renovado",
+        description: `Renovado ${member.name} até ${expiry.toLocaleDateString('pt-BR')}`,
+      });
+    } catch (error) {
+      console.error("Erro ao renovar plano:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro na renovação",
+        description: "Não foi possível registrar o pagamento. Nada foi alterado, tente novamente.",
+      });
     }
-
-    const newJoinedAt = baseDate.toISOString();
-    let nextExpiry = new Date(baseDate);
-
-    if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
-    else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
-    else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
-
-    addDocumentNonBlocking(paymentsRef, {
-      userId,
-      memberId: member.id,
-      memberName: member.name,
-      amount: monthlyFee,
-      status: "pago",
-      paymentMethod: method,
-      dueDate: now.toISOString(),
-      paidAt: now.toISOString(),
-      createdAt: serverTimestamp(),
-      type: type
-    });
-
-    updateDocumentNonBlocking(memberRef, {
-      status: 'ativo',
-      joinedAt: newJoinedAt,
-      expiryDate: nextExpiry.toISOString(),
-      updatedAt: serverTimestamp()
-    });
-
-    toast({
-      title: "Plano Renovado",
-      description: `Renovado ${member.name} até ${nextExpiry.toLocaleDateString('pt-BR')}`,
-    });
   };
 
   const handleWhatsAppReminder = () => {

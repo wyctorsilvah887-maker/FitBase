@@ -25,6 +25,7 @@ import { collection, query, orderBy, doc, serverTimestamp } from "firebase/fires
 import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { getEffectiveStatus } from "@/lib/member-utils";
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -113,8 +114,8 @@ export default function DashboardPage() {
       return acc + (isNaN(val) ? 0 : val);
     }, 0) || 0;
 
-  const activeMembers = members?.filter(m => m.status === "ativo").length || 0;
-  const overdueMembers = members?.filter(m => m.status === "vencido").length || 0;
+  const activeMembers = members?.filter(m => getEffectiveStatus(m) === "ativo").length || 0;
+  const overdueMembers = members?.filter(m => getEffectiveStatus(m) === "vencido").length || 0;
 
   // Filtragem dos pagamentos visíveis (limite de 5 se não expandido)
   const visiblePayments = showAllRecent ? payments : payments?.slice(0, 5);
