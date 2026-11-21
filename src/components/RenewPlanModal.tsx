@@ -5,8 +5,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser, useFirestore, addDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp, doc } from "firebase/firestore";
+import { useUser, useFirestore } from "@/firebase";
+import { collection, serverTimestamp, doc, writeBatch } from "firebase/firestore";
+import { getPlanPrice, getRenewalDates } from "@/lib/member-utils";
 import { Loader2, DollarSign, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,9 +27,11 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
 
   useEffect(() => {
     if (isOpen && defaultAmount > 0) {
-      setAmount(defaultAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+      // Valor sugerido = preço do plano do aluno (mensalidade x meses do plano)
+      const suggested = getPlanPrice(member?.plan, defaultAmount);
+      setAmount(suggested.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     }
-  }, [isOpen, defaultAmount]);
+  }, [isOpen, defaultAmount, member?.plan]);
 
   const formatCurrency = (value: string) => {
     const digits = value.replace(/\D/g, "");
@@ -63,27 +66,15 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
         return;
       }
 
-      // 1. Calcula Novo Início e Novo Vencimento
+      // 1. Calcula novo início e novo vencimento
+      // (vencido: começa hoje; ainda ativo: começa quando o período atual terminar)
       const now = new Date();
-      let baseDate = new Date(member.expiryDate || now);
-      
-      // Se já venceu, o novo período começa HOJE
-      // Se ainda é ativo, o novo período começa quando o atual terminar (extensão)
-      if (baseDate < now) {
-        baseDate = now;
-      }
+      const { joinedAt, expiry } = getRenewalDates(member, now);
 
-      const newJoinedAt = baseDate.toISOString();
-      let nextExpiry = new Date(baseDate);
+      // 2. Pagamento e renovação na mesma operação: ou gravam os dois, ou nenhum
+      const batch = writeBatch(db);
 
-      if (member.plan === 'mensal') nextExpiry.setMonth(nextExpiry.getMonth() + 1);
-      else if (member.plan === 'trimestral') nextExpiry.setMonth(nextExpiry.getMonth() + 3);
-      else if (member.plan === 'anual') nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
-
-      const newExpiryDate = nextExpiry.toISOString();
-
-      // 2. Registra o Pagamento no Histórico
-      addDocumentNonBlocking(paymentsRef, {
+      batch.set(doc(paymentsRef), {
         userId: user.uid,
         memberId: member.id,
         memberName: member.name,
@@ -96,17 +87,18 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
         paymentMethod: 'pix'
       });
 
-      // 3. Atualiza o Aluno com novas datas (Padrão não-bloqueante)
-      updateDocumentNonBlocking(memberRef, {
+      batch.update(memberRef, {
         status: 'ativo',
-        joinedAt: newJoinedAt,
-        expiryDate: newExpiryDate,
+        joinedAt: joinedAt.toISOString(),
+        expiryDate: expiry.toISOString(),
         updatedAt: serverTimestamp()
       });
 
+      await batch.commit();
+
       toast({
         title: "Plano Renovado",
-        description: `Renovado ${member.name} até ${nextExpiry.toLocaleDateString('pt-BR')}`,
+        description: `Renovado ${member.name} até ${expiry.toLocaleDateString('pt-BR')}`,
       });
 
       onClose();

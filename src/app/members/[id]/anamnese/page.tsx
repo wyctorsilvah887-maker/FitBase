@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { doc, collection, query, where, orderBy } from "firebase/firestore";
 import Link from "next/link";
+import { getEffectiveStatus } from "@/lib/member-utils";
 
 export default function AnamnesisPage() {
   const { user, isUserLoading } = useUser();
@@ -86,10 +87,9 @@ export default function AnamnesisPage() {
 
   const statusConfig: any = {
     ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
-    inativo: { label: "Inativo", color: "bg-red-500/10 text-red-600 border-red-600/20" },
-    pendente: { label: "Pendente", color: "bg-amber-500/10 text-amber-600 border-amber-600/20" },
+    vencido: { label: "Vencido", color: "bg-red-500/10 text-red-600 border-red-600/20" },
   };
-  const config = statusConfig[member.status] || statusConfig.pendente;
+  const config = statusConfig[getEffectiveStatus(member)];
 
   return (
     <div className="min-h-screen bg-background text-foreground font-body">

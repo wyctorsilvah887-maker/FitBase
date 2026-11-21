@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useUser, useFirestore, addDocumentNonBlocking } from "@/firebase";
-import { collection, serverTimestamp } from "firebase/firestore";
+import { useUser, useFirestore } from "@/firebase";
+import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { addPlanPeriod, getPlanPrice } from "@/lib/member-utils";
 import { Loader2, UserPlus, ShieldCheck, Phone, Mail, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -72,18 +73,19 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
     setIsSubmitting(true);
 
     try {
-      const memberRef = collection(db, "users", user.uid, "members");
-      const paymentsRef = collection(db, "users", user.uid, "payments");
-      
+      const membersCol = collection(db, "users", user.uid, "members");
+      const paymentsCol = collection(db, "users", user.uid, "payments");
+
       const now = new Date();
-      const expiryDate = new Date(now);
+      // Aluno cadastrado como "vencido" não pagou nada: o plano já nasce vencido
+      // e nenhum pagamento é registrado. Ele será renovado depois.
+      const startsExpired = formData.status === "vencido";
+      const expiryDate = startsExpired ? now : addPlanPeriod(now, formData.plan);
 
-      // Calcula vencimento baseado no plano
-      if (formData.plan === 'mensal') expiryDate.setMonth(expiryDate.getMonth() + 1);
-      else if (formData.plan === 'trimestral') expiryDate.setMonth(expiryDate.getMonth() + 3);
-      else if (formData.plan === 'anual') expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      const memberRef = doc(membersCol);
+      const batch = writeBatch(db);
 
-      const memberPromise = addDocumentNonBlocking(memberRef, {
+      batch.set(memberRef, {
         userId: user.uid,
         name: formData.name,
         phone: formData.phone,
@@ -95,25 +97,28 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
         createdAt: serverTimestamp(),
       });
 
-      memberPromise?.then((docRef) => {
-        if (docRef && monthlyFee > 0) {
-          addDocumentNonBlocking(paymentsRef, {
-            userId: user.uid,
-            memberId: docRef.id,
-            memberName: formData.name,
-            amount: monthlyFee,
-            status: "pago",
-            dueDate: now.toISOString(),
-            paidAt: now.toISOString(),
-            createdAt: serverTimestamp(),
-            type: 'adesao'
-          });
-        }
-      });
+      if (!startsExpired && monthlyFee > 0) {
+        batch.set(doc(paymentsCol), {
+          userId: user.uid,
+          memberId: memberRef.id,
+          memberName: formData.name,
+          amount: getPlanPrice(formData.plan, monthlyFee),
+          status: "pago",
+          dueDate: now.toISOString(),
+          paidAt: now.toISOString(),
+          createdAt: serverTimestamp(),
+          type: 'adesao'
+        });
+      }
+
+      // Aluno e pagamento são gravados juntos; só confirma depois que o servidor aceitar.
+      await batch.commit();
 
       toast({
-        title: "Aluno Matriculado",
-        description: `${formData.name} matriculado até ${expiryDate.toLocaleDateString('pt-BR')}.`,
+        title: startsExpired ? "Aluno Cadastrado" : "Aluno Matriculado",
+        description: startsExpired
+          ? `${formData.name} cadastrado com plano vencido.`
+          : `${formData.name} matriculado até ${expiryDate.toLocaleDateString('pt-BR')}.`,
       });
 
       setFormData({
@@ -126,6 +131,11 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
       onClose();
     } catch (error) {
       console.error("Erro ao cadastrar aluno:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro no cadastro",
+        description: "Não foi possível salvar o aluno. Verifique a conexão e tente novamente.",
+      });
     } finally {
       setIsSubmitting(false);
     }
