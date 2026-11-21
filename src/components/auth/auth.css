@@ -1,0 +1,519 @@
+/* ==========================================================================
+   Páginas de acesso (cadastro). Reaproveita os tokens e botões da landing
+   (landing.css), sempre dentro do wrapper .lp.
+   ========================================================================== */
+
+.lp-auth {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+@media (min-width: 960px) {
+  .lp-auth {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+/* ---------- Painel lateral ---------- */
+
+.lp-auth-panel {
+  display: none;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 36px 48px 48px;
+  overflow: hidden;
+  background: linear-gradient(150deg, #0b5360 0%, #08323a 75%);
+  color: #fff;
+}
+
+.lp-auth-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, transparent 0 47px, rgba(255, 255, 255, 0.07) 47px 48px);
+  -webkit-mask-image: linear-gradient(180deg, transparent 10%, #000 90%);
+  mask-image: linear-gradient(180deg, transparent 10%, #000 90%);
+  pointer-events: none;
+}
+
+.lp-auth-panel > * {
+  position: relative;
+}
+
+@media (min-width: 960px) {
+  .lp-auth-panel {
+    display: flex;
+  }
+}
+
+.lp-logo--badge {
+  background-color: #f2f7f6;
+}
+
+.lp-auth-panel-title {
+  margin: 0 0 32px;
+  max-width: 14ch;
+  font-family: "Bricolage Grotesque", "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* prévia do painel (sempre clara, como o app) */
+
+.lp-preview {
+  max-width: 420px;
+  padding: 20px;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #0c2b30;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.55);
+}
+
+.lp-preview-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lp-preview-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #0e7c86;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.lp-preview-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: "Bricolage Grotesque", "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.015em;
+}
+
+.lp-preview-name.is-empty {
+  color: #7a9298;
+  font-weight: 600;
+}
+
+.lp-preview-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.lp-preview-stats > div {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #e8f2f0;
+}
+
+.lp-preview-stats small {
+  display: block;
+  font-size: 0.78rem;
+  color: #46626a;
+}
+
+.lp-preview-stats strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-preview-empty {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 14px;
+  border: 1.5px dashed #b9d0cd;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  color: #46626a;
+}
+
+.lp-preview-plus {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #8cc63f;
+  color: #16300a;
+  font-weight: 800;
+}
+
+.lp-auth-points {
+  list-style: none;
+  display: grid;
+  gap: 12px;
+  margin: 28px 0 0;
+  padding: 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.98rem;
+}
+
+.lp-auth-points li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lp-auth-points svg {
+  flex: none;
+  color: #8cc63f;
+}
+
+/* ---------- Coluna do formulário ---------- */
+
+.lp-auth-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 16px 20px 32px;
+}
+
+.lp-auth-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lp-auth-top .lp-logo-link {
+  display: inline-flex;
+}
+
+@media (min-width: 960px) {
+  .lp-auth-top {
+    justify-content: flex-end;
+    padding: 12px 28px 0;
+  }
+  .lp-auth-top .lp-logo-link {
+    display: none;
+  }
+}
+
+.lp-auth-top-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.92rem;
+  color: var(--lp-ink-2);
+}
+
+.lp-auth-top-right a {
+  color: var(--lp-teal);
+  font-weight: 700;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.lp-auth-top-right a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 420px) {
+  .lp-auth-top-right > span {
+    display: none;
+  }
+}
+
+.lp-auth-wrap {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 24px 0 24px;
+}
+
+@media (min-width: 960px) {
+  .lp-auth-wrap {
+    margin: auto;
+    padding: 16px 0 48px;
+  }
+}
+
+.lp-auth-title {
+  margin: 0;
+  font-family: "Bricolage Grotesque", "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2rem, 4vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.lp-auth-sub {
+  margin: 12px 0 28px;
+  color: var(--lp-ink-2);
+  line-height: 1.55;
+}
+
+/* ---------- Campos ---------- */
+
+.lp-form {
+  display: grid;
+  gap: 20px;
+}
+
+.lp-label {
+  display: block;
+  margin: 0 0 7px;
+  font-weight: 650;
+  font-size: 0.92rem;
+}
+
+.lp-input-wrap {
+  position: relative;
+}
+
+.lp-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--lp-line);
+  border-radius: 12px;
+  background: var(--lp-surface);
+  color: var(--lp-ink);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lp-input::placeholder {
+  color: color-mix(in srgb, var(--lp-ink-2) 70%, transparent);
+}
+
+.lp-input:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--lp-teal) 45%, var(--lp-line));
+}
+
+.lp .lp-input:focus-visible {
+  outline: 0;
+  border-color: var(--lp-teal);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--lp-teal) 22%, transparent);
+}
+
+.lp-input:disabled {
+  opacity: 0.6;
+}
+
+.lp-input[aria-invalid="true"] {
+  border-color: var(--lp-bad);
+}
+
+.lp .lp-input[aria-invalid="true"]:focus-visible {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--lp-bad) 22%, transparent);
+}
+
+.lp-input--money {
+  padding-left: 46px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-input--pw {
+  padding-right: 52px;
+}
+
+.lp-prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 700;
+  color: var(--lp-ink-2);
+  pointer-events: none;
+}
+
+.lp-eye {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--lp-ink-2);
+  cursor: pointer;
+}
+
+.lp-eye:hover {
+  background: var(--lp-tint);
+  color: var(--lp-ink);
+}
+
+.lp-hint {
+  margin: 7px 0 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--lp-ink-2);
+}
+
+.lp-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 7px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--lp-bad);
+}
+
+.lp-error svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.lp-error a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+/* força da senha */
+
+.lp-strength {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.lp-seg {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--lp-line);
+  transition: background-color 0.25s ease;
+}
+
+.lp-strength.is-l1 .lp-seg:nth-child(-n + 1) {
+  background: #d9902b;
+}
+
+.lp-strength.is-l2 .lp-seg:nth-child(-n + 2) {
+  background: var(--lp-teal);
+}
+
+.lp-strength.is-l3 .lp-seg {
+  background: var(--lp-lime);
+}
+
+/* termos */
+
+.lp-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--lp-ink-2);
+}
+
+.lp-check input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--lp-teal);
+  cursor: pointer;
+}
+
+.lp-check a {
+  color: var(--lp-teal);
+  font-weight: 650;
+  text-underline-offset: 3px;
+}
+
+/* aviso do formulário */
+
+.lp-alert {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--lp-bad-bg);
+  color: var(--lp-bad);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.lp-alert svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* envio */
+
+.lp-submit {
+  width: 100%;
+  height: 56px;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+
+.lp-submit:disabled {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+.lp-spinner {
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  border: 2.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: lp-spin 0.7s linear infinite;
+}
+
+@keyframes lp-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lp-auth-foot {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 0.92rem;
+  color: var(--lp-ink-2);
+}
+
+.lp-auth-foot a {
+  color: var(--lp-teal);
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
