@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -27,6 +27,7 @@ const FIELD_IDS: Record<RegisterField, string> = {
   fee: "reg-fee",
   terms: "reg-terms",
 };
+const DRAFT_KEY = "fitbase:register-draft";
 const FIELD_ORDER: RegisterField[] = ["gymName", "email", "password", "fee", "terms"];
 
 const STRENGTH_LABEL = [
@@ -67,6 +68,27 @@ export default function RegisterPage() {
   const { user } = useUser();
   const router = useRouter();
 
+  // Os Termos abrem na mesma aba: guardamos o rascunho (sem a senha) para não perder o que foi digitado.
+  const draftLoaded = useRef(false);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (typeof d.gymName === "string") setGymName(d.gymName);
+        if (typeof d.email === "string") setEmail(d.email);
+        if (typeof d.fee === "string") setFee(d.fee);
+      }
+    } catch {}
+    draftLoaded.current = true;
+  }, []);
+  useEffect(() => {
+    if (!draftLoaded.current) return;
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ gymName, email, fee }));
+    } catch {}
+  }, [gymName, email, fee]);
+
   // Quem já está logado não precisa de cadastro.
   useEffect(() => {
     if (user && !isSubmitting) router.replace("/members");
@@ -95,6 +117,12 @@ export default function RegisterPage() {
     setAttempted(true);
     setFormError(null);
 
+    // O botão só vale depois de aceitar os Termos; tocar nele antes leva ao aceite.
+    if (!acceptedTerms) {
+      focusField("terms");
+      return;
+    }
+
     const firstInvalid = FIELD_ORDER.find((f) => errors[f]);
     if (firstInvalid) {
       focusField(firstInvalid);
@@ -119,6 +147,9 @@ export default function RegisterPage() {
         { merge: true }
       );
 
+      try {
+        sessionStorage.removeItem(DRAFT_KEY);
+      } catch {}
       router.push("/members");
     } catch (error: any) {
       const { field, message } = authErrorMessage(error?.code);
@@ -327,16 +358,20 @@ export default function RegisterPage() {
                   />
                   <span>
                     Li e concordo com os{" "}
-                    <Link href="/terms" target="_blank" rel="noopener noreferrer">
-                      Termos de Uso
-                    </Link>{" "}
+                    <Link href="/terms">Termos de Uso</Link>{" "}
                     do FitBase.
                   </span>
                 </label>
                 {errorFor("terms") && <ErrorText id="err-terms">{errorFor("terms")}</ErrorText>}
               </div>
 
-              <button type="submit" className="lp-btn lp-btn-primary lp-submit" disabled={isSubmitting}>
+              <button
+                type="submit"
+                className="lp-btn lp-btn-primary lp-submit"
+                disabled={isSubmitting}
+                aria-disabled={!acceptedTerms}
+                data-locked={!acceptedTerms}
+              >
                 {isSubmitting ? (
                   <>
                     <span className="lp-spinner" aria-hidden="true" />
