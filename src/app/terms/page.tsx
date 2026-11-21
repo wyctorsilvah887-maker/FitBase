@@ -1,12 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { LpThemeToggle } from "@/components/landing/LpThemeToggle";
-import "@/components/landing/landing.css";
-import "@/components/auth/auth.css";
+import { LegalPage } from "@/components/legal/LegalPage";
+import type { LegalSection } from "@/components/legal/LegalPage";
 
-const SECTIONS: { id: string; title: string; body: React.ReactNode }[] = [
+const SECTIONS: LegalSection[] = [
   {
     id: "natureza",
     title: "Natureza do serviço",
@@ -64,64 +61,13 @@ const SECTIONS: { id: string; title: string; body: React.ReactNode }[] = [
 ];
 
 export default function TermsPage() {
-  const router = useRouter();
-
-  // Quem veio do cadastro volta para ele; quem abriu o link direto vai para o cadastro.
-  const goBack = () => {
-    if (typeof window !== "undefined" && window.history.length > 1) router.back();
-    else router.push("/register");
-  };
-
   return (
-    <div className="lp lp-terms">
-      <div className="lp-wrap">
-        <div className="lp-terms-top">
-          <Link href="/" className="lp-logo-link" aria-label="FitBase, página inicial">
-            <span className="lp-logo" role="img" aria-label="FitBase" />
-          </Link>
-          <div className="lp-auth-top-right">
-            <button type="button" className="lp-text-btn" onClick={goBack}>
-              Voltar
-            </button>
-            <LpThemeToggle />
-          </div>
-        </div>
-
-        <div className="lp-terms-body">
-          <aside className="lp-terms-aside">
-            <h1>Termos de Uso</h1>
-            <p className="lp-terms-meta">Instrumento particular. Versão 2026.1.Legal</p>
-            <ul className="lp-terms-toc">
-              {SECTIONS.map((s, i) => (
-                <li key={s.id}>
-                  <a href={`#${s.id}`}>
-                    {i + 1}. {s.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </aside>
-
-          <article className="lp-terms-article">
-            {SECTIONS.map((s, i) => (
-              <section key={s.id} id={s.id}>
-                <h2>
-                  <span>{i + 1}.</span>
-                  {s.title}
-                </h2>
-                {s.body}
-              </section>
-            ))}
-
-            <div className="lp-terms-accept">
-              <p>Leu tudo? Volte ao cadastro e marque a caixa de aceite para criar sua conta.</p>
-              <button type="button" className="lp-btn lp-btn-primary" onClick={goBack}>
-                Voltar ao cadastro
-              </button>
-            </div>
-          </article>
-        </div>
-      </div>
-    </div>
+    <LegalPage
+      title="Termos de Uso"
+      meta="Instrumento particular. Versão 2026.1.Legal"
+      sections={SECTIONS}
+      closing="Leu tudo? Volte ao cadastro e marque a caixa de aceite para criar sua conta."
+      other={{ href: "/privacy", label: "Política de Privacidade" }}
+    />
   );
 }
