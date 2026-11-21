@@ -195,14 +195,14 @@
   cursor: pointer;
 }
 
-/* ---------- Logo (recorte do PNG quadrado) ---------- */
+/* ---------- Logo (PNG transparente já recortado: public/logo-fitbase.png) ---------- */
 
 .lp-logo {
   display: block;
   width: 98px;
   height: 78px;
   border-radius: 14px;
-  background: url("/logo%20fitbase.png") center 50% / 190px 190px no-repeat;
+  background: url("/logo-fitbase.png") center / 84px auto no-repeat;
 }
 
 .dark .lp .lp-logo {
@@ -212,7 +212,7 @@
 .lp-logo--footer {
   width: 84px;
   height: 64px;
-  background-size: 156px 156px;
+  background-size: 74px auto;
 }
 
 /* ---------- Navegação ---------- */

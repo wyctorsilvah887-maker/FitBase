@@ -517,3 +517,121 @@
   font-weight: 700;
   text-underline-offset: 3px;
 }
+
+/* ---------- Login: prévia de vencimentos e ações extras ---------- */
+
+.lp-preview-title {
+  margin: 0 0 12px;
+  font-family: "Bricolage Grotesque", "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.015em;
+}
+
+.lp-prows {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+}
+
+.lp-prow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #e8f2f0;
+}
+
+.lp-preview-avatar--sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+}
+
+.lp-prow-who {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+}
+
+.lp-prow-who strong {
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-prow-who small {
+  font-size: 0.78rem;
+  color: #46626a;
+}
+
+.lp-pchip {
+  flex: none;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.lp-pchip--ok {
+  background: #dcf1c2;
+  color: #2c5710;
+}
+
+.lp-pchip--warn {
+  background: #fbe8c2;
+  color: #7a4b05;
+}
+
+.lp-pchip--bad {
+  background: #fbd9d6;
+  color: #9a1f17;
+}
+
+.lp-preview-note {
+  margin: 12px 0 0;
+  font-size: 0.78rem;
+  color: #7a9298;
+}
+
+.lp-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lp-label-row .lp-label {
+  margin: 0 0 7px;
+}
+
+.lp-text-btn {
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--lp-teal);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-underline-offset: 3px;
+}
+
+.lp-text-btn:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.lp-text-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.lp-alert--ok {
+  background: var(--lp-ok-bg);
+  color: var(--lp-ok);
+}
