@@ -91,6 +91,8 @@ export function RenewPlanModal({ isOpen, onClose, member, defaultAmount = 0 }: R
         status: 'ativo',
         joinedAt: joinedAt.toISOString(),
         expiryDate: expiry.toISOString(),
+        lastPaymentMethod: 'pix',
+        lastPaidAt: new Date().toISOString(),
         updatedAt: serverTimestamp()
       });
 

@@ -105,6 +105,7 @@ export function NewMemberModal({ isOpen, onClose, monthlyFee }: NewMemberModalPr
         status: paidNow ? "ativo" : "vencido",
         joinedAt: at.toISOString(),
         expiryDate: expiryDate.toISOString(),
+        ...(paidNow && hasFee ? { lastPaymentMethod: pay, lastPaidAt: at.toISOString() } : {}),
         createdAt: serverTimestamp(),
       });
 
