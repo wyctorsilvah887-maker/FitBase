@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useInView, usePrefersReducedMotion } from "./useInView";
+import { MonthSummary } from "./MonthSummary";
 
 /* ------------------------------------------------------------------ */
 /* Busca de alunos                                                      */
@@ -179,63 +180,8 @@ function PaymentDemo() {
 /* Resumo do mês                                                        */
 /* ------------------------------------------------------------------ */
 
-function useCountUp(target: number, run: boolean, reduced: boolean, ms = 1100) {
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    if (!run) return;
-    if (reduced) {
-      setValue(target);
-      return;
-    }
-    let raf = 0;
-    const t0 = performance.now();
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - t0) / ms);
-      setValue(Math.round(target * (1 - Math.pow(1 - p, 3))));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [run, target, reduced, ms]);
-  return value;
-}
-
-const WEEKS = [1480, 2210, 2050, 2900];
-const MAX_WEEK = Math.max(...WEEKS);
-
 function MonthDemo() {
-  const { ref, inView } = useInView<HTMLDivElement>(0.4);
-  const reduced = usePrefersReducedMotion();
-  const total = useCountUp(8640, inView, reduced);
-
-  return (
-    <div className={`lp-month${inView ? " is-in" : ""}`} ref={ref}>
-      <div className="lp-month-top">
-        <div>
-          <span className="lp-month-label">Entrou no caixa este mês</span>
-          <strong className="lp-month-total">R$ {total.toLocaleString("pt-BR")}</strong>
-        </div>
-        <div className="lp-month-chips">
-          <span className="lp-chip lp-chip--ok">62 em dia</span>
-          <span className="lp-chip lp-chip--bad">7 vencidos</span>
-        </div>
-      </div>
-
-      <div className="lp-bars" role="img" aria-label="Receita por semana: 1.480, 2.210, 2.050 e 2.900 reais">
-        {WEEKS.map((v, i) => (
-          <div className="lp-bar-col" key={i}>
-            <div className="lp-bar-track">
-              <div
-                className="lp-bar"
-                style={{ height: `${(v / MAX_WEEK) * 100}%`, transitionDelay: `${i * 120}ms` }}
-              />
-            </div>
-            <span>Semana {i + 1}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  return <MonthSummary total={8640} weeks={[1480, 2210, 2050, 2900]} active={62} overdue={7} />;
 }
 
 /* ------------------------------------------------------------------ */
