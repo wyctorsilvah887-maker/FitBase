@@ -32,13 +32,18 @@ type Props = { member: any; userId: string; monthlyFee: number; gymName: string 
 export function MemberCard({ member, userId, monthlyFee, gymName }: Props) {
   const db = useFirestore();
   const { toast } = useToast();
-  const [paid, setPaid] = useState<Method | null>(null);
+  const [justPaid, setJustPaid] = useState<Method | null>(null);
+  const [dismissed, setDismissed] = useState(false);
   const [busy, setBusy] = useState<Method | null>(null);
   const [pending, setPending] = useState<Method | null>(null);
   const [renewOpen, setRenewOpen] = useState(false);
 
-  const isPaid = paid !== null;
   const expired = member.status === "vencido";
+  // Selo vale enquanto o plano está em dia e o último pagamento foi registrado pelo sistema.
+  const saved: Method | null =
+    !expired && !dismissed && METHODS.includes(member.lastPaymentMethod) ? member.lastPaymentMethod : null;
+  const paid: Method | null = justPaid ?? saved;
+  const isPaid = paid !== null;
   const due = describeDue(member.expiryDate, isPaid ? "ativo" : member.status);
   const price = getPlanPrice(member.plan, monthlyFee);
   const hasFee = monthlyFee > 0;
@@ -86,12 +91,15 @@ export function MemberCard({ member, userId, monthlyFee, gymName }: Props) {
         status: "ativo",
         joinedAt: joinedAt.toISOString(),
         expiryDate: expiry.toISOString(),
+        // Guardado no aluno para o selo "Pago" continuar aparecendo depois de recarregar a página.
+        lastPaymentMethod: method,
+        lastPaidAt: now.toISOString(),
         updatedAt: serverTimestamp(),
       });
       await batch.commit();
 
       setPending(null);
-      setPaid(method);
+      setJustPaid(method);
       toast({
         title: "Pagamento registrado",
         description: `${member.name} está em dia até ${expiry.toLocaleDateString("pt-BR")}.`,
@@ -190,7 +198,10 @@ export function MemberCard({ member, userId, monthlyFee, gymName }: Props) {
         className="lp-link-btn lp-redo"
         data-visible={isPaid}
         tabIndex={isPaid ? 0 : -1}
-        onClick={() => setPaid(null)}
+        onClick={() => {
+          setJustPaid(null);
+          setDismissed(true);
+        }}
       >
         Registrar outro pagamento
       </button>
