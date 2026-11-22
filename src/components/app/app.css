@@ -377,167 +377,153 @@
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--lp-teal) 22%, transparent);
 }
 
-/* lista */
+/* lista de alunos: cada aluno é um cartão igual ao exemplo de pagamento da landing */
 
 .ap-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.ap-card {
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.15s ease;
+}
+
+.ap-card:hover {
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--lp-teal) 40%, var(--lp-line));
+}
+
+.ap-card-head {
+  grid-template-columns: 38px minmax(0, 1fr) auto auto;
   gap: 10px;
 }
 
-.ap-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "who who"
-    "plan due"
-    "actions actions";
-  align-items: center;
-  gap: 12px 16px;
-  padding: 16px;
-  border: 1px solid var(--lp-line);
-  border-radius: 16px;
-  background: var(--lp-surface);
-  transition: border-color 0.15s ease;
+.ap-card-head .lp-avatar {
+  font-size: 0.78rem;
 }
 
-.ap-row:hover {
-  border-color: color-mix(in srgb, var(--lp-teal) 40%, var(--lp-line));
+.ap-card-head .ap-menu-wrap {
+  margin-right: -8px;
 }
 
-.ap-who {
-  grid-area: who;
+.ap-contact {
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-width: 0;
+  gap: 6px;
+  margin: 12px 0 0;
+  min-height: 20px;
+  font-size: 0.84rem;
+  color: var(--lp-ink-2);
 }
 
-.ap-avatar {
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--lp-tint);
-  color: var(--lp-teal);
-  font-weight: 800;
-  font-size: 0.92rem;
-}
-
-.ap-name {
-  min-width: 0;
-}
-
-.ap-name strong {
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 1.02rem;
-}
-
-.ap-phone {
+.ap-contact a {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-top: 2px;
   color: var(--lp-ink-2);
-  font-size: 0.88rem;
   text-decoration: none;
-  font-variant-numeric: tabular-nums;
 }
 
-a.ap-phone:hover {
+.ap-contact a:hover {
   color: var(--lp-teal);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.ap-phone--none {
-  opacity: 0.7;
+.ap-contact svg {
+  color: #25a05c;
 }
 
-.ap-plan {
-  grid-area: plan;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
+/* total e botões ficam na base: cartões da mesma linha alinham mesmo com textos de tamanhos diferentes */
+.ap-card .lp-pay-total {
+  margin-top: auto;
 }
 
-.ap-plan-name {
-  padding: 3px 10px;
-  border-radius: 999px;
+.ap-contact {
+  margin-bottom: 12px;
+}
+
+.ap-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* confirmação antes de registrar um pagamento adiantado */
+
+.ap-pay-confirm {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
   background: var(--lp-tint);
-  font-weight: 700;
-  font-size: 0.82rem;
-  text-transform: capitalize;
+  animation: lp-pop 0.25s ease-out;
 }
 
-.ap-price {
-  font-variant-numeric: tabular-nums;
-  font-weight: 650;
-  color: var(--lp-ink-2);
-  font-size: 0.92rem;
-}
-
-.ap-due {
-  grid-area: due;
-  min-width: 0;
-  text-align: right;
+.ap-pay-confirm p {
+  margin: 0 0 10px;
   font-size: 0.9rem;
-  font-weight: 650;
+  line-height: 1.45;
 }
 
-.ap-due small {
-  display: block;
-  margin-top: 2px;
-  color: var(--lp-ink-2);
-  font-weight: 500;
-  font-size: 0.8rem;
+.ap-pay-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.ap-due--ok {
-  color: var(--lp-ok);
-}
-
-.ap-due--warn {
-  color: var(--lp-warn);
-}
-
-.ap-due--bad {
-  color: var(--lp-bad);
-}
-
-.ap-due--muted {
-  color: var(--lp-ink-2);
-}
-
-.ap-status {
-  grid-area: chip;
-  display: none;
-}
-
-.ap-actions {
-  grid-area: actions;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-top: 12px;
-  border-top: 1px solid var(--lp-line);
-}
-
-.ap-actions .ap-renew {
-  flex: 1;
+.ap-pay-confirm-actions button {
   height: 42px;
+  border: 1px solid var(--lp-line);
+  border-radius: 10px;
+  background: var(--lp-surface);
+  color: var(--lp-ink);
+  font: inherit;
+  font-weight: 650;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
-.ap-actions .ap-menu-wrap {
-  flex: none;
+.ap-pay-confirm-actions .is-primary {
+  border-color: transparent;
+  background: var(--lp-lime);
+  color: var(--lp-lime-ink);
+}
+
+.ap-card .lp-redo {
+  margin-top: 6px;
+  padding: 2px 0;
+  font-size: 0.82rem;
+}
+
+.ap-card .lp-pay-btn {
+  position: relative;
+}
+
+.ap-card .lp-pay-btn.is-busy {
+  opacity: 1;
+}
+
+.ap-card .lp-pay-btn.is-busy::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+  vertical-align: -1px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: lp-spin 0.7s linear infinite;
 }
 
 .ap-renew {
@@ -574,52 +560,6 @@ a.ap-phone:hover {
 .ap-more[aria-expanded="true"] {
   background: var(--lp-tint);
   color: var(--lp-ink);
-}
-
-/* o chip de status acompanha o nome no celular */
-.ap-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.ap-chip--ok {
-  background: var(--lp-ok-bg);
-  color: var(--lp-ok);
-}
-
-.ap-chip--bad {
-  background: var(--lp-bad-bg);
-  color: var(--lp-bad);
-}
-
-.ap-who .ap-chip {
-  margin-left: 4px;
-  vertical-align: middle;
-}
-
-@media (min-width: 820px) {
-  .ap-row {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1.1fr) auto;
-    grid-template-areas: "who plan due actions";
-    padding: 14px 18px;
-  }
-  .ap-actions {
-    padding-top: 0;
-    border-top: 0;
-    justify-self: end;
-  }
-  .ap-actions .ap-renew {
-    flex: none;
-    height: 38px;
-  }
-  .ap-due {
-    text-align: left;
-  }
 }
 
 /* estados vazios */
@@ -687,7 +627,7 @@ a.ap-phone:hover {
 /* carregando */
 
 .ap-skel {
-  height: 76px;
+  height: 268px;
   border: 1px solid var(--lp-line);
   border-radius: 16px;
   background: linear-gradient(100deg, var(--lp-surface) 30%, var(--lp-tint) 50%, var(--lp-surface) 70%) 0 0 / 220% 100%;
@@ -716,20 +656,4 @@ a.ap-phone:hover {
   margin: 14px 2px 0;
   color: var(--lp-ink-2);
   font-size: 0.88rem;
-}
-
-.ap-name-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 10px;
-  margin-top: 3px;
-}
-
-.ap-name-meta .ap-phone {
-  margin-top: 0;
-}
-
-.ap-who .ap-chip {
-  margin-left: 0;
 }
