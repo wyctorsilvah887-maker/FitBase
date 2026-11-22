@@ -977,3 +977,112 @@
     animation: none;
   }
 }
+
+/* ---------- Painel ---------- */
+
+.ap-dash-month {
+  margin-top: 28px;
+  padding: 28px;
+}
+
+.ap-dash-grid {
+  display: grid;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+@media (min-width: 900px) {
+  .ap-dash-month {
+    padding: 36px 40px;
+  }
+  .ap-dash-grid {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  }
+}
+
+.ap-dash-h {
+  margin: 0;
+  font-weight: 750;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+}
+
+.ap-dash-note {
+  margin: 6px 0 18px;
+  color: var(--lp-ink-2);
+  font-size: 0.92rem;
+}
+
+.ap-dash-save {
+  width: 100%;
+  margin-top: 14px;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.ap-dash-save:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.ap-pay-list {
+  display: grid;
+  gap: 4px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ap-pay-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--lp-line);
+}
+
+.ap-pay-list li:last-child {
+  border-bottom: 0;
+}
+
+.ap-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--lp-tint);
+  color: var(--lp-teal);
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.ap-pay-who {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.ap-pay-who strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+}
+
+.ap-pay-who small {
+  color: var(--lp-ink-2);
+}
+
+.ap-pay-val {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
