@@ -1,5 +1,6 @@
 "use client";
 
+import { waLink, buildDueMessage } from "@/lib/whatsapp";
 import { useRef, useState } from "react";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useFirestore } from "@/firebase";
@@ -123,6 +124,9 @@ export function MemberCard({ member, userId, monthlyFee, gymName }: Props) {
     else setPending(method);
   };
 
+  // Vencido: cobrar. Em dia, mas vencendo em até 5 dias: lembrar.
+  const nudge: "bad" | "warn" | null = due.tone === "bad" ? "bad" : due.tone === "warn" ? "warn" : null;
+
   const subtitle = `${PLAN_LABEL[member.plan] || member.plan} · ${isPaid && member.expiryDate ? describeDue(member.expiryDate, "ativo").short : due.short}`;
 
   return (
@@ -143,10 +147,23 @@ export function MemberCard({ member, userId, monthlyFee, gymName }: Props) {
 
       <p className="ap-contact">
         {cleanPhone ? (
-          <a href={`https://wa.me/55${cleanPhone}`} target="_blank" rel="noopener noreferrer" aria-label={`Abrir WhatsApp de ${member.name}`}>
-            <WhatsAppIcon />
-            {member.phone}
-          </a>
+          <>
+            <a href={waLink(member.phone)} target="_blank" rel="noopener noreferrer" aria-label={`Abrir WhatsApp de ${member.name}`}>
+              <WhatsAppIcon />
+              {member.phone}
+            </a>
+            {!isPaid && nudge && (
+              <a
+                className={`ap-nudge ap-nudge--${nudge}`}
+                href={waLink(member.phone, buildDueMessage(member.name, gymName, member.expiryDate))}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${nudge === "bad" ? "Cobrar" : "Lembrar"} ${member.name} pelo WhatsApp`}
+              >
+                {nudge === "bad" ? "Cobrar" : "Lembrar"}
+              </a>
+            )}
+          </>
         ) : (
           <span>Sem telefone</span>
         )}
@@ -248,9 +265,7 @@ function MemberMenu({ member, userId, gymName, onOtherPlan }: { member: any; use
       });
       return;
     }
-    const cleanPhone = member.phone.replace(/\D/g, "");
-    const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano na ${gymName} está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
-    window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    window.open(waLink(member.phone, buildDueMessage(member.name, gymName, member.expiryDate)), "_blank", "noopener,noreferrer");
     close();
   };
 
