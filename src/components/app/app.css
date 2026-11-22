@@ -657,3 +657,323 @@
   color: var(--lp-ink-2);
   font-size: 0.88rem;
 }
+
+/* ---------- Modal: novo aluno ---------- */
+
+.ap-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(4, 24, 29, 0.55);
+  backdrop-filter: blur(3px);
+  animation: ap-fade 0.18s ease-out;
+}
+
+@keyframes ap-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.ap-modal {
+  box-sizing: border-box;
+  min-height: 0; /* .lp força 100vh; o modal deve ter só a altura do conteúdo */
+  position: fixed;
+  z-index: 101;
+  left: 50%;
+  top: 50%;
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  transform: translate(-50%, -50%);
+  padding: 24px;
+  border: 1px solid var(--lp-line);
+  border-radius: 22px;
+  background: var(--lp-surface);
+  color: var(--lp-ink);
+  font-family: Inter, system-ui, sans-serif;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.45);
+  animation: ap-sheet 0.22s ease-out;
+}
+
+.ap-modal:focus {
+  outline: 0;
+}
+
+@keyframes ap-sheet {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 12px));
+  }
+}
+
+@media (max-width: 560px) {
+  .ap-modal {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-height: 94vh;
+    max-height: 94dvh;
+    padding: 20px 18px calc(18px + env(safe-area-inset-bottom));
+    transform: translate(-50%, 0);
+    border-radius: 22px 22px 0 0;
+    animation: ap-sheet-up 0.25s ease-out;
+  }
+  @keyframes ap-sheet-up {
+    from {
+      transform: translate(-50%, 40px);
+      opacity: 0;
+    }
+  }
+}
+
+.ap-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ap-modal-title {
+  margin: 0;
+  font-family: "Bricolage Grotesque", "Space Grotesk", Inter, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.ap-modal-sub {
+  margin: 6px 0 0;
+  color: var(--lp-ink-2);
+  font-size: 0.92rem;
+}
+
+.ap-modal-x {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 38px;
+  height: 38px;
+  margin: -6px -8px 0 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--lp-ink-2);
+  cursor: pointer;
+}
+
+.ap-modal-x:hover {
+  background: var(--lp-tint);
+  color: var(--lp-ink);
+}
+
+.ap-fields {
+  display: grid;
+  gap: 18px;
+}
+
+.ap-label {
+  display: block;
+  margin: 0 0 7px;
+  padding: 0;
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+
+.ap-input {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px;
+  border: 1px solid var(--lp-line);
+  border-radius: 12px;
+  background: var(--lp-bg);
+  color: var(--lp-ink);
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ap-input::placeholder {
+  color: color-mix(in srgb, var(--lp-ink-2) 70%, transparent);
+}
+
+.ap-input:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--lp-teal) 45%, var(--lp-line));
+}
+
+.lp .ap-input:focus-visible {
+  outline: 0;
+  border-color: var(--lp-teal);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--lp-teal) 22%, transparent);
+}
+
+.ap-input[aria-invalid="true"] {
+  border-color: var(--lp-bad);
+}
+
+.ap-input:disabled {
+  opacity: 0.6;
+}
+
+.ap-field-error {
+  margin: 7px 0 0;
+  color: var(--lp-bad);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+.ap-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ap-choices {
+  display: grid;
+  gap: 8px;
+}
+
+.ap-choices--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ap-choice {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.ap-choice input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ap-choice-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  min-height: 54px;
+  padding: 8px 6px;
+  border: 1px solid var(--lp-line);
+  border-radius: 12px;
+  background: var(--lp-bg);
+  text-align: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ap-choice-box strong {
+  font-size: 0.92rem;
+}
+
+.ap-choice-box small {
+  color: var(--lp-ink-2);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ap-choice:hover input:not(:disabled) + .ap-choice-box {
+  border-color: color-mix(in srgb, var(--lp-teal) 45%, var(--lp-line));
+}
+
+.ap-choice input:checked + .ap-choice-box {
+  border-color: var(--lp-teal);
+  background: var(--lp-tint);
+  box-shadow: 0 0 0 1px var(--lp-teal);
+}
+
+.lp .ap-choice input:focus-visible + .ap-choice-box {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--lp-teal) 28%, transparent);
+}
+
+.ap-choice.is-off {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.ap-choice.is-off input {
+  cursor: not-allowed;
+}
+
+.ap-modal-summary {
+  min-height: 44px;
+  margin: 18px 0 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--lp-tint);
+  color: var(--lp-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.ap-modal-summary strong {
+  color: var(--lp-ink);
+}
+
+.ap-modal-actions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* no celular o botão principal ocupa a largura toda; o texto com o valor não cabe ao lado do Cancelar */
+@media (max-width: 560px) {
+  .ap-modal-actions {
+    grid-template-columns: 1fr;
+  }
+  .ap-modal-submit {
+    order: -1;
+  }
+  .ap-modal-cancel {
+    height: 46px;
+  }
+}
+
+.ap-modal-cancel {
+  height: 54px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--lp-ink-2);
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ap-modal-cancel:hover:not(:disabled) {
+  background: var(--lp-tint);
+  color: var(--lp-ink);
+}
+
+.ap-modal-submit {
+  height: 54px;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.ap-modal-submit:disabled {
+  cursor: progress;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-overlay,
+  .ap-modal {
+    animation: none;
+  }
+}
