@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { Dumbbell } from "lucide-react";
+import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { LandingNav } from "@/components/landing/LandingNav";
 import { LandingContent } from "@/components/landing/LandingContent";
 import "@/components/landing/landing.css";
@@ -18,17 +18,9 @@ export default function GymLandingPage() {
     }
   }, [user, isUserLoading, router]);
 
+  // Visitante: a landing aparece assim que o login for checado. Já logado: segue para os alunos.
   if (isUserLoading || user) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="animate-spin">
-          <Dumbbell className="w-16 h-16 text-primary" />
-        </div>
-        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
-          Sincronizando <span className="text-primary italic">FitBase...</span>
-        </p>
-      </div>
-    );
+    return <LoadingScreen message={user ? "Abrindo seus alunos" : "Verificando seu acesso"} />;
   }
 
   return (

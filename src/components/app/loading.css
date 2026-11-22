@@ -1,0 +1,150 @@
+/* Tela de carregamento e barra de progresso entre páginas.
+   Tokens próprios (não dependem do wrapper .lp) para funcionar em qualquer rota. */
+
+.fb-loading {
+  --fb-bg: #f2f7f6;
+  --fb-ink: #0c2b30;
+  --fb-ink-2: #46626a;
+  --fb-track: #cfe0de;
+  --fb-lime: #8cc63f;
+  --fb-teal: #0e7c86;
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 24px;
+  overflow: hidden;
+  background: var(--fb-bg);
+  color: var(--fb-ink);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.dark .fb-loading {
+  --fb-bg: #071f26;
+  --fb-ink: #e7f3f1;
+  --fb-ink-2: #9fbbbe;
+  --fb-track: #1a4651;
+  --fb-teal: #47bbc9;
+}
+
+/* linhas de caderno ao fundo, a mesma ideia do herói da landing */
+.fb-loading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(to bottom, transparent 0 47px, color-mix(in srgb, var(--fb-teal) 14%, transparent) 47px 48px);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, transparent 70%);
+  mask-image: radial-gradient(ellipse at center, #000 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* só aparece se a espera passar de ~150ms, para carregamentos rápidos não piscarem */
+.fb-loading-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  text-align: center;
+  animation: fb-in 0.35s ease 0.15s both;
+}
+
+.fb-loading-logo {
+  width: 140px;
+  height: 112px;
+  border-radius: 24px;
+  background: url("/logo%20fitbase.png") center 50% / 272px 272px no-repeat;
+}
+
+.dark .fb-loading-logo {
+  background-color: #f2f7f6;
+}
+
+.fb-loading-track {
+  position: relative;
+  width: 168px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--fb-track);
+}
+
+.fb-loading-track::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 42%;
+  border-radius: inherit;
+  background: var(--fb-lime);
+  animation: fb-slide 1.15s cubic-bezier(0.5, 0, 0.3, 1) infinite;
+}
+
+.fb-loading-text {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--fb-ink-2);
+}
+
+@keyframes fb-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fb-slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(240%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-loading-card {
+    animation: none;
+  }
+  .fb-loading-track::after {
+    width: 100%;
+    animation: none;
+    opacity: 0.55;
+  }
+}
+
+/* ---------- Barra de progresso no topo, entre páginas ---------- */
+
+.fb-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  height: 3px;
+  background: #8cc63f;
+  box-shadow: 0 0 10px rgba(140, 198, 63, 0.7);
+  border-radius: 0 3px 3px 0;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: left;
+}
+
+.fb-progress[data-state="running"] {
+  opacity: 1;
+  transition: width 0.4s ease;
+}
+
+.fb-progress[data-state="done"] {
+  opacity: 0;
+  transition: width 0.2s ease, opacity 0.4s ease 0.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-progress[data-state="running"],
+  .fb-progress[data-state="done"] {
+    transition: none;
+  }
+}
