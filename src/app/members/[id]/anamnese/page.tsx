@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser, useFirestore, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { useRouter, useParams } from "next/navigation";
 import Header from "@/components/Header";
+import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { 
   ArrowLeft, 
   UserCircle, 
@@ -14,7 +15,6 @@ import {
   CreditCard, 
   ChevronRight,
   TrendingUp,
-  Dumbbell,
   Clock,
   CheckCircle2,
   AlertCircle,
@@ -61,13 +61,7 @@ export default function AnamnesisPage() {
   const { data: payments, isLoading: isPaymentsLoading } = useCollection(paymentsQuery);
 
   if (isUserLoading || isMemberLoading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="animate-spin">
-          <Dumbbell className="w-12 h-12 text-primary" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Abrindo a ficha" />;
   }
 
   if (!member) {

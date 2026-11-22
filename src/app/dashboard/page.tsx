@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { 
   CreditCard, 
   Users, 
@@ -14,7 +15,6 @@ import {
   DollarSign,
   Save,
   Check,
-  Dumbbell,
   ChevronDown,
   ChevronUp
 } from "lucide-react";
@@ -121,13 +121,7 @@ export default function DashboardPage() {
   const visiblePayments = showAllRecent ? payments : payments?.slice(0, 5);
 
   if (!mounted || isUserLoading) {
-    return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="animate-spin">
-          <Dumbbell className="w-12 h-12 text-primary" />
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Abrindo o painel" />;
   }
 
   return (

@@ -1,68 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
-import { 
-  Plus, 
-  Search, 
-  UserPlus, 
-  Phone, 
-  Calendar,
-  MoreVertical,
-  RefreshCcw,
-  CreditCard,
-  Trash2,
-  UserCircle,
-  Banknote,
-  QrCode,
-  Clock,
-  Users,
-  CheckCircle2,
-  AlertCircle,
-  Timer
-} from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent
-} from "@/components/ui/dropdown-menu";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
 import { collection, query, orderBy, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useToast } from "@/hooks/use-toast";
+import { AppHeader } from "@/components/app/AppHeader";
+import { LoadingScreen } from "@/components/app/LoadingScreen";
+import { MembersSkeleton } from "@/components/app/MembersSkeleton";
+import { useDismiss } from "@/components/app/useDismiss";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { RenewPlanModal } from "@/components/RenewPlanModal";
-import { useToast } from "@/hooks/use-toast";
-import { deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import { getEffectiveStatus, getPlanPrice, getRenewalDates } from "@/lib/member-utils";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
-import { cn } from "@/lib/utils";
+import { getEffectiveStatus, getPlanPrice, getRenewalDates } from "@/lib/member-utils";
+import { describeDue } from "@/lib/member-due";
+import { formatBRL, initialsOf, normalizeText } from "@/lib/format";
+import "@/components/landing/landing.css";
+import "@/components/app/app.css";
 
-const WhatsAppIcon = ({ className }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="currentColor" 
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+type Filter = "todos" | "ativo" | "vencido";
+
+const WhatsAppIcon = ({ size = 14 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
   </svg>
 );
 
@@ -71,13 +33,11 @@ export default function MembersPage() {
   const db = useFirestore();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("todos");
+  const [statusFilter, setStatusFilter] = useState<Filter>("todos");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push("/login");
-    }
+    if (!isUserLoading && !user) router.replace("/login");
   }, [user, isUserLoading, router]);
 
   const membersQuery = useMemoFirebase(() => {
@@ -94,431 +54,230 @@ export default function MembersPage() {
   const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
 
   // O status gravado só reflete a última renovação; o status real vem da data de vencimento.
-  const members = rawMembers?.map(m => ({ ...m, status: getEffectiveStatus(m) }));
+  const members = useMemo(
+    () => rawMembers?.map((m: any) => ({ ...m, status: getEffectiveStatus(m) })) ?? [],
+    [rawMembers]
+  );
 
-  const filteredMembers = members?.filter(member => {
-    const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) || member.phone?.includes(searchTerm);
-    const matchesStatus = statusFilter === "todos" || member.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }) || [];
+  const counts = useMemo(
+    () => ({
+      todos: members.length,
+      ativo: members.filter((m) => m.status === "ativo").length,
+      vencido: members.filter((m) => m.status === "vencido").length,
+    }),
+    [members]
+  );
 
-  const stats = {
-    total: members?.length || 0,
-    ativos: members?.filter(m => m.status === 'ativo').length || 0,
-    vencidos: members?.filter(m => m.status === 'vencido').length || 0,
-  };
+  const filtered = useMemo(() => {
+    const q = normalizeText(searchTerm.trim());
+    const digits = searchTerm.replace(/\D/g, "");
+    return members.filter((m) => {
+      const matchesSearch =
+        !q ||
+        normalizeText(m.name || "").includes(q) ||
+        (digits.length > 0 && (m.phone || "").replace(/\D/g, "").includes(digits));
+      const matchesStatus = statusFilter === "todos" || m.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [members, searchTerm, statusFilter]);
 
   if (isUserLoading || !user || isUserDocLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Clock className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
+    return <LoadingScreen message="Abrindo seus alunos" />;
   }
 
+  const monthlyFee: number = userDoc?.monthlyFee || 0;
+  const gymName: string = userDoc?.gymName || "FitBase";
   const showTermsModal = !userDoc || !userDoc.acceptedTerms;
+  const hasFilters = statusFilter !== "todos" || searchTerm.trim() !== "";
+  const clearFilters = () => {
+    setStatusFilter("todos");
+    setSearchTerm("");
+  };
+
+  const FILTERS: { key: Filter; label: string }[] = [
+    { key: "todos", label: "Todos" },
+    { key: "ativo", label: "Ativos" },
+    { key: "vencido", label: "Vencidos" },
+  ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-body">
-      <Header />
+    <div className="lp">
+      <AppHeader active="members" />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-10 space-y-8 animate-in fade-in duration-700 pb-20">
-        
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-          <div className="space-y-1">
-            <h1 className="text-3xl md:text-5xl font-headline font-bold uppercase tracking-tighter">
-              Lista de <span className="text-primary italic">Alunos</span>
-            </h1>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.4em]">
-              Gestão de Acesso e Planos • FitBase
-            </p>
+      <main className="ap-main">
+        <div className="ap-head">
+          <div>
+            <h1 className="ap-title">Alunos</h1>
+            <p className="ap-sub">{gymName}</p>
           </div>
-
-          <div className="grid grid-cols-3 gap-3 md:gap-6">
-            <StatMiniCard label="Total" value={stats.total} icon={<Users className="w-3 h-3" />} color="text-primary" />
-            <StatMiniCard label="Ativos" value={stats.ativos} icon={<CheckCircle2 className="w-3 h-3" />} color="text-emerald-500" />
-            <StatMiniCard label="Vencidos" value={stats.vencidos} icon={<AlertCircle className="w-3 h-3" />} color="text-red-500" />
-          </div>
+          <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
+            Novo aluno
+          </button>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center bg-card/50 p-4 rounded-[2rem] border-2 border-border/50">
-          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-             <div className="relative group w-full sm:w-80">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input 
-                  placeholder="Pesquisar..." 
-                  className="pl-11 h-12 w-full bg-background border-border rounded-2xl border-2 focus-visible:ring-primary transition-all text-sm font-medium"
+        {monthlyFee <= 0 && (
+          <div className="ap-notice" role="status">
+            <span>A mensalidade ainda não foi definida, então não dá para registrar renovações.</span>
+            <Link href="/dashboard">Definir no painel</Link>
+          </div>
+        )}
+
+        {!isLoading && counts.todos === 0 ? (
+          <div className="ap-empty">
+            <div className="ap-empty-art" aria-hidden="true" />
+            <h2>Sua lista ainda está vazia</h2>
+            <p>Cadastre o primeiro aluno. Nome, telefone e plano bastam para começar.</p>
+            <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
+              Cadastrar aluno
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="ap-toolbar">
+              <div className="ap-filters" role="group" aria-label="Filtrar por situação">
+                {FILTERS.map((f) => (
+                  <button key={f.key} type="button" aria-pressed={statusFilter === f.key} onClick={() => setStatusFilter(f.key)}>
+                    {f.label} <b>{isLoading ? "" : counts[f.key]}</b>
+                  </button>
+                ))}
+              </div>
+              <div className="ap-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M20 20l-3.5-3.5" />
+                </svg>
+                <input
+                  type="search"
+                  placeholder="Buscar por nome ou telefone"
+                  aria-label="Buscar aluno por nome ou telefone"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-             </div>
-             <div className="flex gap-1 bg-background border-2 border-border p-1 rounded-2xl overflow-x-auto custom-scrollbar">
-                <FilterButton active={statusFilter === "todos"} onClick={() => setStatusFilter("todos")}>Todos</FilterButton>
-                <FilterButton active={statusFilter === "ativo"} onClick={() => setStatusFilter("ativo")}>Ativos</FilterButton>
-                <FilterButton active={statusFilter === "vencido"} onClick={() => setStatusFilter("vencido")}>Vencidos</FilterButton>
-             </div>
-          </div>
+              </div>
+            </div>
 
-          <Button 
-            onClick={() => setIsNewMemberModalOpen(true)}
-            className="h-12 w-full lg:w-auto px-8 rounded-2xl bg-primary text-primary-foreground font-black uppercase text-[11px] tracking-[0.2em] shadow-xl shadow-primary/20 hover:scale-105 transition-all"
-          >
-            <Plus className="w-5 h-5 mr-2" /> Novo Aluno
-          </Button>
-        </div>
-
-        {/* Desktop Table View */}
-        <div className="hidden md:block">
-          <Card className="rounded-[2.5rem] border-2 border-border bg-card overflow-hidden shadow-2xl shadow-black/5">
-            <Table>
-              <TableHeader className="bg-accent/30">
-                <TableRow className="border-b-2 border-border hover:bg-transparent">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 pl-8">Identificação / Vigência</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6 text-center">Status</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">Plano / Valor</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground py-6">WhatsApp</TableHead>
-                  <TableHead className="text-right py-6 pr-8"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {isLoading ? (
-                  Array(5).fill(0).map((_, i) => (
-                    <TableRow key={i} className="animate-pulse border-b border-border/50">
-                      <TableCell colSpan={5} className="h-20 bg-accent/5"></TableCell>
-                    </TableRow>
-                  ))
-                ) : filteredMembers.length > 0 ? (
-                  filteredMembers.map((member) => (
-                    <MemberRow 
-                      key={member.id} 
-                      member={member} 
-                      userId={user.uid} 
-                      monthlyFee={userDoc?.monthlyFee || 0}
-                      gymName={userDoc?.gymName || "FitBase"}
-                    />
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} className="p-0 border-none hover:bg-transparent">
-                      <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
-                    </TableCell>
-                  </TableRow>
+            {isLoading ? (
+              <MembersSkeleton />
+            ) : filtered.length > 0 ? (
+              <ul className="ap-list">
+                {filtered.map((m) => (
+                  <MemberRow key={m.id} member={m} userId={user.uid} monthlyFee={monthlyFee} gymName={gymName} />
+                ))}
+              </ul>
+            ) : (
+              <div className="ap-empty">
+                <h2>Nenhum aluno encontrado</h2>
+                <p>Confira a grafia ou mude o filtro para ver mais alunos.</p>
+                {hasFilters && (
+                  <button type="button" className="ap-renew" onClick={clearFilters}>
+                    Limpar filtros
+                  </button>
                 )}
-              </TableBody>
-            </Table>
-          </Card>
-        </div>
+              </div>
+            )}
 
-        {/* Mobile Card View */}
-        <div className="grid grid-cols-1 gap-4 md:hidden">
-          {isLoading ? (
-            Array(3).fill(0).map((_, i) => (
-              <div key={i} className="h-48 bg-card border-2 border-border rounded-[2rem] animate-pulse" />
-            ))
-          ) : filteredMembers.length > 0 ? (
-            filteredMembers.map((member) => (
-              <MemberMobileCard 
-                key={member.id} 
-                member={member} 
-                userId={user.uid} 
-                monthlyFee={userDoc?.monthlyFee || 0}
-                gymName={userDoc?.gymName || "FitBase"}
-              />
-            ))
-          ) : (
-            <EmptyState onClick={() => setIsNewMemberModalOpen(true)} />
-          )}
-        </div>
+            {!isLoading && filtered.length > 0 && hasFilters && (
+              <p className="ap-count-note" aria-live="polite">
+                Mostrando {filtered.length} de {counts.todos} alunos.
+              </p>
+            )}
+          </>
+        )}
       </main>
 
-      <NewMemberModal 
-        isOpen={isNewMemberModalOpen} 
-        onClose={() => setIsNewMemberModalOpen(false)} 
-        monthlyFee={userDoc?.monthlyFee || 0}
-      />
-
+      <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} monthlyFee={monthlyFee} />
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>
   );
 }
 
-function StatMiniCard({ label, value, icon, color }: { label: string, value: number, icon: any, color: string }) {
-  return (
-    <div className="flex flex-col items-center md:items-start gap-1 p-3 md:px-5 md:py-4 rounded-2xl bg-card border-2 border-border/50">
-      <div className={cn("flex items-center gap-2 text-[9px] font-black uppercase tracking-widest", color)}>
-        {icon} {label}
-      </div>
-      <span className="text-xl md:text-2xl font-headline font-bold tracking-tighter leading-none">{value}</span>
-    </div>
-  );
-}
-
-function FilterButton({ children, active, onClick }: { children: string, active: boolean, onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={cn(
-        "px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap",
-        active ? "bg-primary text-primary-foreground shadow-lg" : "text-muted-foreground hover:bg-accent hover:text-foreground"
-      )}
-    >
-      {children}
-    </button>
-  );
-}
-
-function EmptyState({ onClick }: { onClick: () => void }) {
-  return (
-    <div className="py-24 text-center flex flex-col items-center justify-center space-y-6 max-w-xs mx-auto">
-      <div className="w-20 h-20 rounded-[2rem] bg-primary/5 flex items-center justify-center border-2 border-dashed border-primary/20">
-        <UserPlus className="w-8 h-8 text-muted-foreground/50" />
-      </div>
-      <div className="space-y-1">
-        <p className="text-sm font-bold text-foreground uppercase tracking-tight">Nenhum aluno encontrado</p>
-        <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest leading-relaxed">
-          Tente ajustar os filtros ou cadastrar um novo membro.
-        </p>
-      </div>
-      <Button 
-        variant="outline" 
-        onClick={onClick}
-        className="rounded-xl text-[10px] font-black uppercase tracking-widest h-11 px-8 border-2 hover:bg-primary/5 hover:text-primary transition-all"
-      >
-        Começar Cadastro
-      </Button>
-    </div>
-  );
-}
-
-// Helper to get days remaining
-function getDaysRemaining(expiryDateStr: string | null) {
-  if (!expiryDateStr) return null;
-  const expiry = new Date(expiryDateStr);
-  const now = new Date();
-  const diff = expiry.getTime() - now.getTime();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
-}
-
-function ExpiryAlert({ expiryDate }: { expiryDate: string | null }) {
-  const days = getDaysRemaining(expiryDate);
-  if (days === null || days > 5 || days < 0) return null;
-  
-  return (
-    <div className="inline-flex items-center gap-1 mt-1 text-[8px] font-black uppercase tracking-widest text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-      <Timer className="w-2.5 h-2.5" />
-      {days === 0 ? "Vence hoje" : `Vence em ${days} ${days === 1 ? 'dia' : 'dias'}`}
-    </div>
-  );
-}
-
-function MemberRow({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+function MemberRow({ member, userId, monthlyFee, gymName }: { member: any; userId: string; monthlyFee: number; gymName: string }) {
   const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
-  const cleanPhone = member.phone?.replace(/\D/g, "");
+  const due = describeDue(member.expiryDate, member.status);
+  const price = getPlanPrice(member.plan, monthlyFee);
+  const cleanPhone = (member.phone || "").replace(/\D/g, "");
 
   return (
-    <>
-      <TableRow className="border-b border-border/50 hover:bg-accent/20 transition-all group">
-        <TableCell className="py-5 pl-8">
-          <div className="flex items-center gap-4">
-            <div className="w-11 h-11 rounded-[1.25rem] bg-primary/5 border-2 border-primary/10 flex items-center justify-center text-primary shrink-0 transition-transform group-hover:scale-110">
-              <UserCircle className="w-6 h-6" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-bold uppercase tracking-tight text-foreground transition-colors truncate">{member.name}</p>
-              <div className="flex flex-col">
-                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest truncate mt-0.5">
-                  Início: {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'} • 
-                  {member.status === 'ativo' ? 'Renovado até: ' : 'Vencimento: '}
-                  <span className={cn(member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-                    {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-                  </span>
-                </p>
-                {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
-              </div>
-            </div>
-          </div>
-        </TableCell>
-        <TableCell className="py-5 text-center">
-          <MemberStatusBadge status={member.status} />
-        </TableCell>
-        <TableCell className="py-5">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10 w-fit">
-              {member.plan}
-            </span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-[0.2em] pl-1">
-              R$ {getPlanPrice(member.plan, monthlyFee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-            </span>
-          </div>
-        </TableCell>
-        <TableCell className="py-5">
-          {member.phone ? (
-            <a 
-              href={`https://wa.me/55${cleanPhone}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground hover:text-primary transition-colors group/phone"
-            >
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/5 border border-emerald-500/10 flex items-center justify-center group-hover/phone:bg-primary/10 group-hover/phone:border-primary/20 transition-all">
-                <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-500 group-hover/phone:text-primary transition-colors" />
-              </div>
-              <span>{member.phone}</span>
-            </a>
-          ) : (
-            <div className="flex items-center gap-2.5 text-[11px] font-bold text-muted-foreground opacity-30">
-              <div className="w-7 h-7 rounded-lg bg-muted border border-border flex items-center justify-center">
-                <Phone className="w-3.5 h-3.5" />
-              </div>
-              <span>---</span>
-            </div>
-          )}
-        </TableCell>
-        <TableCell className="py-5 pr-8 text-right">
-          <div className="flex items-center justify-end gap-2">
-            <Button 
-              onClick={() => setIsRenewModalOpen(true)}
-              variant="outline"
-              size="sm"
-              className="h-9 px-4 rounded-xl text-[9px] font-black uppercase tracking-widest border-2 hover:bg-primary/5 hover:text-primary transition-all hidden lg:flex"
-            >
-              <RefreshCcw className="w-3.5 h-3.5 mr-2" /> Renovar
-            </Button>
-            <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
-          </div>
-        </TableCell>
-      </TableRow>
-      
-      <RenewPlanModal 
-        isOpen={isRenewModalOpen} 
-        onClose={() => setIsRenewModalOpen(false)} 
-        member={member} 
-        defaultAmount={monthlyFee}
-      />
-    </>
-  );
-}
-
-function MemberMobileCard({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
-  const [isRenewModalOpen, setIsRenewModalOpen] = useState(false);
-  const cleanPhone = member.phone?.replace(/\D/g, "");
-
-  return (
-    <>
-      <Card className="rounded-[2rem] border-2 border-border bg-card p-5 space-y-4 shadow-lg shadow-black/5 hover:border-primary/20 transition-all">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
-              <UserCircle className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-bold uppercase tracking-tight leading-none mb-1">{member.name}</h3>
-              <div className="flex flex-wrap items-center gap-2">
-                <MemberStatusBadge status={member.status} />
-                {member.status === 'ativo' && <ExpiryAlert expiryDate={member.expiryDate} />}
-              </div>
-            </div>
-          </div>
-          <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 py-4 border-y border-border/50">
-          <div className="space-y-1">
-            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Início Período</p>
-            <div className="flex items-center gap-2 text-[10px] font-bold">
-              <Calendar className="w-3 h-3 text-primary" />
-              {member.joinedAt ? new Date(member.joinedAt).toLocaleDateString('pt-BR') : '---'}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">
-              {member.status === 'ativo' ? 'Renovado até' : 'Vencimento'}
-            </p>
-            <div className={cn("flex items-center gap-2 text-[10px] font-bold", member.status === 'vencido' ? "text-red-500" : "text-emerald-600")}>
-              <Clock className="w-3 h-3" />
-              {member.expiryDate ? new Date(member.expiryDate).toLocaleDateString('pt-BR') : '---'}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center bg-accent/20 p-3 rounded-xl">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-primary/5 text-primary border-primary/10 text-[8px] font-black uppercase py-0.5">
-              {member.plan}
-            </Badge>
-            <span className="text-[10px] font-black tracking-tight">R$ {getPlanPrice(member.plan, monthlyFee).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-          </div>
-          <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
-            {member.phone ? (
-              <a 
-                href={`https://wa.me/55${cleanPhone}`} 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-primary transition-colors"
-              >
-                <WhatsAppIcon className="w-3 h-3 text-emerald-500" />
+    <li className="ap-row">
+      <div className="ap-who">
+        <span className="ap-avatar" aria-hidden="true">
+          {initialsOf(member.name)}
+        </span>
+        <div className="ap-name">
+          <strong title={member.name}>{member.name}</strong>
+          <div className="ap-name-meta">
+            <span className={`ap-chip ap-chip--${member.status === "ativo" ? "ok" : "bad"}`}>{member.status === "ativo" ? "Ativo" : "Vencido"}</span>
+            {cleanPhone ? (
+              <a className="ap-phone" href={`https://wa.me/55${cleanPhone}`} target="_blank" rel="noopener noreferrer" aria-label={`Abrir WhatsApp de ${member.name}`}>
+                <WhatsAppIcon />
                 {member.phone}
               </a>
             ) : (
-              <div className="flex items-center gap-2 opacity-30">
-                <Phone className="w-3 h-3" />
-                ---
-              </div>
+              <span className="ap-phone ap-phone--none">Sem telefone</span>
             )}
           </div>
         </div>
+      </div>
 
-        <Button 
-          onClick={() => setIsRenewModalOpen(true)}
-          className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all"
-        >
-          <RefreshCcw className="w-4 h-4 mr-2" /> Renovar
-        </Button>
-      </Card>
-      
-      <RenewPlanModal 
-        isOpen={isRenewModalOpen} 
-        onClose={() => setIsRenewModalOpen(false)} 
-        member={member} 
-        defaultAmount={monthlyFee}
-      />
-    </>
+      <div className="ap-plan">
+        <span className="ap-plan-name">{member.plan}</span>
+        <span className="ap-price">{monthlyFee > 0 ? formatBRL(price) : "Sem valor"}</span>
+      </div>
+
+      <div className={`ap-due ap-due--${due.tone}`}>
+        {due.text}
+        {member.joinedAt && <small>Período iniciado em {new Date(member.joinedAt).toLocaleDateString("pt-BR")}</small>}
+      </div>
+
+      <div className="ap-actions">
+        <button type="button" className="ap-renew" onClick={() => setIsRenewModalOpen(true)} aria-label={`Renovar plano de ${member.name}`}>
+          Renovar
+        </button>
+        <MemberActions member={member} userId={userId} monthlyFee={monthlyFee} gymName={gymName} />
+      </div>
+
+      <RenewPlanModal isOpen={isRenewModalOpen} onClose={() => setIsRenewModalOpen(false)} member={member} defaultAmount={monthlyFee} />
+    </li>
   );
 }
 
-function MemberStatusBadge({ status }: { status: string }) {
-  const statusConfig: any = {
-    ativo: { label: "Ativo", color: "bg-emerald-500/10 text-emerald-600 border-emerald-600/20" },
-    vencido: { label: "Vencido", color: "bg-red-500/10 text-red-600 border-red-600/20" },
-  };
-  const config = statusConfig[status] || statusConfig.vencido;
-  return (
-    <Badge variant="outline" className={cn("text-[8px] font-black uppercase tracking-widest border-2 px-3 py-0.5", config.color)}>
-      {config.label}
-    </Badge>
-  );
-}
-
-function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, userId: string, monthlyFee: number, gymName: string }) {
+function MemberActions({ member, userId, monthlyFee, gymName }: { member: any; userId: string; monthlyFee: number; gymName: string }) {
   const db = useFirestore();
   const { toast } = useToast();
+  const [open, setOpen] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+
+  const close = () => {
+    setOpen(false);
+    setConfirmingDelete(false);
+  };
+  useDismiss(wrap, open, () => {
+    close();
+    trigger.current?.focus();
+  });
+
+  const price = getPlanPrice(member.plan, monthlyFee);
 
   const handleDelete = () => {
-    if (confirm(`Tem certeza que deseja remover ${member.name}?`)) {
-      const memberRef = doc(db, "users", userId, "members", member.id);
-      deleteDocumentNonBlocking(memberRef);
-      toast({
-        title: "Aluno removido",
-        description: "Os dados do aluno foram excluídos com sucesso.",
-      });
-    }
+    const memberRef = doc(db, "users", userId, "members", member.id);
+    deleteDocumentNonBlocking(memberRef);
+    close();
+    toast({
+      title: "Aluno removido",
+      description: `${member.name} foi removido da lista.`,
+    });
   };
 
-  const handleQuickAction = async (type: 'renovacao' | 'adiantado', method: 'pix' | 'cedula') => {
+  const handleQuickAction = async (type: "renovacao" | "adiantado", method: "pix" | "cedula") => {
     if (monthlyFee <= 0) {
+      close();
       toast({
         variant: "destructive",
         title: "Mensalidade não configurada",
-        description: "Defina o valor da mensalidade no Dashboard para usar esta função.",
+        description: "Defina o valor da mensalidade no Painel para usar esta função.",
       });
       return;
     }
@@ -530,6 +289,7 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     // Plano vencido: novo período começa agora. Plano ativo: começa quando o atual acabar.
     const { joinedAt, expiry } = getRenewalDates(member, now);
 
+    setBusy(true);
     try {
       // Pagamento e renovação na mesma operação: ou gravam os dois, ou nenhum.
       const batch = writeBatch(db);
@@ -538,27 +298,28 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
         userId,
         memberId: member.id,
         memberName: member.name,
-        amount: getPlanPrice(member.plan, monthlyFee),
+        amount: price,
         status: "pago",
         paymentMethod: method,
         dueDate: now.toISOString(),
         paidAt: now.toISOString(),
         createdAt: serverTimestamp(),
-        type: type
+        type,
       });
 
       batch.update(memberRef, {
-        status: 'ativo',
+        status: "ativo",
         joinedAt: joinedAt.toISOString(),
         expiryDate: expiry.toISOString(),
-        updatedAt: serverTimestamp()
+        updatedAt: serverTimestamp(),
       });
 
       await batch.commit();
+      close();
 
       toast({
-        title: "Plano Renovado",
-        description: `Renovado ${member.name} até ${expiry.toLocaleDateString('pt-BR')}`,
+        title: "Plano renovado",
+        description: `${member.name} está em dia até ${expiry.toLocaleDateString("pt-BR")}.`,
       });
     } catch (error) {
       console.error("Erro ao renovar plano:", error);
@@ -567,11 +328,14 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
         title: "Erro na renovação",
         description: "Não foi possível registrar o pagamento. Nada foi alterado, tente novamente.",
       });
+    } finally {
+      setBusy(false);
     }
   };
 
   const handleWhatsAppReminder = () => {
     if (!member.phone) {
+      close();
       toast({
         variant: "destructive",
         title: "Telefone não cadastrado",
@@ -581,64 +345,76 @@ function MemberActions({ member, userId, monthlyFee, gymName }: { member: any, u
     }
     const cleanPhone = member.phone.replace(/\D/g, "");
     const message = `Olá ${member.name}! 🏋️‍♂️ Passando para lembrar que seu plano na ${gymName} está próximo do vencimento ou já venceu. Vamos renovar para não perder o ritmo dos treinos? 💪🔥`;
-    const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`;
-    window.open(url, '_blank');
+    window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
+    close();
   };
 
+  const firstName = (member.name || "").split(" ")[0];
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 hover:bg-accent border border-transparent hover:border-border transition-all">
-          <MoreVertical className="w-4 h-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" sideOffset={8} className="w-60 rounded-[1.5rem] border-2 border-border p-2 shadow-2xl animate-in zoom-in duration-200">
-        <DropdownMenuLabel className="text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground px-4 py-3">
-          Gestão de Matrícula
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-primary/10 group">
-            <RefreshCcw className="w-4 h-4 text-primary group-hover:rotate-180 transition-transform duration-500" />
-            <span className="text-[11px] font-bold uppercase tracking-tight">Renovação Rápida</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent side="left" align="start" className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover">
-            <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
-              <QrCode className="w-4 h-4 text-primary" /> PIX
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleQuickAction('renovacao', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
-              <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+    <div className="ap-menu-wrap" ref={wrap}>
+      <button
+        ref={trigger}
+        type="button"
+        className="ap-more"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`Mais ações para ${member.name}`}
+        onClick={() => (open ? close() : setOpen(true))}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <circle cx="12" cy="5" r="1.8" />
+          <circle cx="12" cy="12" r="1.8" />
+          <circle cx="12" cy="19" r="1.8" />
+        </svg>
+      </button>
 
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10">
-            <CreditCard className="w-4 h-4 text-emerald-500" />
-            <span className="text-[11px] font-bold uppercase tracking-tight">Pagamento Antecipado</span>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent side="left" align="start" className="rounded-2xl border-2 border-border p-2 min-w-[160px] shadow-2xl bg-popover">
-            <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'pix')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-primary/10">
-              <QrCode className="w-4 h-4 text-primary" /> PIX
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleQuickAction('adiantado', 'cedula')} className="rounded-xl py-2.5 px-4 flex items-center gap-3 cursor-pointer focus:bg-emerald-500/10">
-              <Banknote className="w-4 h-4 text-emerald-500" /> Dinheiro
-            </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        
-        <DropdownMenuItem onClick={handleWhatsAppReminder} className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-emerald-500/10 text-emerald-600 focus:text-emerald-600">
-          <WhatsAppIcon className="w-4 h-4" />
-          <span className="text-[11px] font-bold uppercase tracking-tight">Cobrança WhatsApp</span>
-        </DropdownMenuItem>
+      {open && (
+        <div className="ap-menu" role="menu">
+          {confirmingDelete ? (
+            <div className="ap-confirm">
+              <p>
+                Remover <strong>{firstName}</strong>? Os dados do aluno serão excluídos.
+              </p>
+              <div className="ap-confirm-actions">
+                <button type="button" onClick={() => setConfirmingDelete(false)}>
+                  Cancelar
+                </button>
+                <button type="button" className="is-danger" onClick={handleDelete}>
+                  Remover
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="ap-menu-group">Renovar agora</p>
+              <button type="button" role="menuitem" className="ap-menu-item" disabled={busy} onClick={() => handleQuickAction("renovacao", "pix")}>
+                Pix <small>{monthlyFee > 0 ? formatBRL(price) : ""}</small>
+              </button>
+              <button type="button" role="menuitem" className="ap-menu-item" disabled={busy} onClick={() => handleQuickAction("renovacao", "cedula")}>
+                Dinheiro <small>{monthlyFee > 0 ? formatBRL(price) : ""}</small>
+              </button>
 
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleDelete} className="rounded-xl flex items-center gap-3 py-3 px-4 cursor-pointer focus:bg-red-500/10 text-red-500 focus:text-red-500">
-          <Trash2 className="w-4 h-4" />
-          <span className="text-[11px] font-bold uppercase tracking-tight">Remover Aluno</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <p className="ap-menu-group">Pagamento antecipado</p>
+              <button type="button" role="menuitem" className="ap-menu-item" disabled={busy} onClick={() => handleQuickAction("adiantado", "pix")}>
+                Pix <small>{monthlyFee > 0 ? formatBRL(price) : ""}</small>
+              </button>
+              <button type="button" role="menuitem" className="ap-menu-item" disabled={busy} onClick={() => handleQuickAction("adiantado", "cedula")}>
+                Dinheiro <small>{monthlyFee > 0 ? formatBRL(price) : ""}</small>
+              </button>
+
+              <div className="ap-menu-sep" />
+              <button type="button" role="menuitem" className="ap-menu-item" onClick={handleWhatsAppReminder}>
+                <WhatsAppIcon size={16} /> Cobrar no WhatsApp
+              </button>
+              <div className="ap-menu-sep" />
+              <button type="button" role="menuitem" className="ap-menu-item ap-menu-item--bad" onClick={() => setConfirmingDelete(true)}>
+                Remover aluno
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

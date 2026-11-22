@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { FirebaseClientProvider } from "@/firebase/client-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { RouteProgress } from "@/components/app/RouteProgress";
 
 export const metadata: Metadata = {
   title: "FitBase - Gestão Inteligente",
@@ -34,6 +35,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
+            <RouteProgress />
             {children}
             <Toaster />
           </FirebaseClientProvider>

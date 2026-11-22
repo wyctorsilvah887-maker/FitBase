@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
-import { User, Mail, ShieldCheck, Calendar, LayoutDashboard, Dumbbell } from 'lucide-react';
+import { LoadingScreen } from "@/components/app/LoadingScreen";
+import { User, Mail, ShieldCheck, Calendar, LayoutDashboard } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -25,18 +26,7 @@ export default function ProfilePage() {
   }, [user, isUserLoading, router]);
 
   if (isUserLoading || !user) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin">
-            <Dumbbell className="w-16 h-16 text-primary" />
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-muted-foreground animate-pulse">
-            Sincronizando <span className="text-primary italic">Perfil...</span>
-          </p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Abrindo seu perfil" />;
   }
 
   return (
