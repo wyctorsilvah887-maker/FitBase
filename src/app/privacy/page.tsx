@@ -43,7 +43,7 @@ const SECTIONS: LegalSection[] = [
             <strong>Perfil da academia:</strong> nome da academia, valor da mensalidade e o registro do aceite dos Termos, com data e hora.
           </li>
           <li>
-            <strong>Alunos:</strong> nome, telefone, e-mail, plano, situação do plano e datas de matrícula e vencimento.
+            <strong>Alunos:</strong> nome, telefone (WhatsApp), plano, situação do plano e datas de matrícula e vencimento.
           </li>
           <li>
             <strong>Pagamentos:</strong> valor, tipo, datas e o aluno a que se referem. O FitBase é um registro interno e não processa pagamentos nem guarda dados de cartão.
