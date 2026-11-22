@@ -1086,3 +1086,29 @@
   font-weight: 750;
   font-variant-numeric: tabular-nums;
 }
+
+/* cobrar / lembrar pelo WhatsApp */
+.ap-contact {
+  flex-wrap: wrap;
+}
+
+.ap-contact .ap-nudge {
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--lp-bad);
+  background: var(--lp-bad-bg);
+}
+
+.ap-contact .ap-nudge--warn {
+  color: var(--lp-warn);
+  background: var(--lp-warn-bg);
+}
+
+.ap-contact .ap-nudge:hover {
+  text-decoration: none;
+  filter: brightness(0.95);
+}
