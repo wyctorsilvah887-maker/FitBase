@@ -1029,6 +1029,7 @@
 
 .ap-pay-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 4px;
   margin: 14px 0 0;
   padding: 0;
@@ -1111,4 +1112,116 @@
 .ap-contact .ap-nudge:hover {
   text-decoration: none;
   filter: brightness(0.95);
+}
+
+/* botão "Como funciona" do cabeçalho */
+.ap-tour-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--lp-ink-2);
+  font: inherit;
+  font-weight: 650;
+  font-size: 0.92rem;
+  cursor: pointer;
+}
+
+.ap-tour-btn:hover {
+  background: var(--lp-tint);
+  color: var(--lp-ink);
+}
+
+.ap-tour-btn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--lp-teal) 55%, transparent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 719px) {
+  .ap-tour-btn {
+    width: 40px;
+    justify-content: center;
+    padding: 0;
+  }
+  .ap-tour-btn span {
+    display: none;
+  }
+}
+
+/* ---------- Celular: cabeçalho e painel ---------- */
+
+.ap-dash-grid > * {
+  min-width: 0;
+}
+
+@media (max-width: 899px) {
+  .ap-dash-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .ap-header-in {
+    gap: 4px;
+    padding: 4px 12px;
+  }
+  .ap-nav a {
+    padding: 8px 9px;
+    font-size: 0.9rem;
+  }
+  .ap-header-right {
+    gap: 0;
+  }
+  .ap-header-right .lp-theme,
+  .ap-tour-btn {
+    width: 36px;
+    height: 36px;
+  }
+  .ap-avatar-btn {
+    margin-left: 4px;
+  }
+
+  .ap-main {
+    padding: 24px 16px 56px;
+  }
+  .ap-dash-month {
+    margin-top: 20px;
+    padding: 20px 16px;
+    border-radius: 22px;
+  }
+  .ap-dash-grid {
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .ap-dash-grid .lp-card {
+    padding: 20px 16px;
+    border-radius: 22px;
+  }
+  .ap-dash-month .lp-bars {
+    gap: 8px;
+  }
+  .ap-dash-month .lp-bar-track {
+    height: 110px;
+  }
+  .ap-dash-month .lp-bar-col {
+    font-size: 0.72rem;
+  }
+  .ap-head .lp-btn-ghost {
+    height: 42px;
+  }
+}
+
+@media (max-width: 360px) {
+  .ap-nav a {
+    padding: 8px 7px;
+    font-size: 0.86rem;
+  }
+}
+
+.ap-head .lp-btn-ghost {
+  box-shadow: inset 0 0 0 1px var(--lp-line);
 }

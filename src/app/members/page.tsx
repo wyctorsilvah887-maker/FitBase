@@ -9,6 +9,7 @@ import { AppHeader } from "@/components/app/AppHeader";
 import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { MembersSkeleton } from "@/components/app/MembersSkeleton";
 import { MemberCard } from "@/components/app/MemberCard";
+import { Tour, type TourStep } from "@/components/tour/Tour";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import { getEffectiveStatus } from "@/lib/member-utils";
@@ -17,6 +18,53 @@ import "@/components/landing/landing.css";
 import "@/components/app/app.css";
 
 type Filter = "todos" | "ativo" | "vencido";
+
+const TOUR: TourStep[] = [
+  {
+    title: "Bem-vindo ao FitBase",
+    body: "Em poucos passos você vê onde fica cada coisa nesta tela. Dá para sair quando quiser.",
+  },
+  {
+    target: '[data-tour="nav"]',
+    title: "Alunos e Painel",
+    body: "Alunos é a lista do dia a dia. O Painel mostra o mês: quanto entrou no caixa e quem está em dia.",
+  },
+  {
+    target: '[data-tour="new-member"]',
+    title: "Cadastre um aluno",
+    body: "Nome, telefone e plano bastam. Se o aluno já pagou, registre o pagamento na hora.",
+  },
+  {
+    target: '[data-tour="filters"]',
+    title: "Filtre por situação",
+    body: "Veja só quem está em dia ou só quem venceu. O número ao lado mostra quantos alunos há em cada grupo.",
+  },
+  {
+    target: '[data-tour="search"]',
+    title: "Ache um aluno rápido",
+    body: "Digite parte do nome ou do telefone. A lista filtra a cada letra.",
+  },
+  {
+    target: ".ap-card",
+    title: "O cartão do aluno",
+    body: "Mostra o plano, o vencimento e a situação. Quando o pagamento entra, o selo Pago aparece.",
+  },
+  {
+    target: ".ap-card .lp-pay-actions",
+    title: "Registre o pagamento em um toque",
+    body: "Escolha Pix ou dinheiro. O plano renova e o novo vencimento é calculado para você.",
+  },
+  {
+    target: ".ap-nudge",
+    title: "Cobre pelo WhatsApp",
+    body: "Em quem venceu, o botão Cobrar abre a conversa com a mensagem pronta. Em quem vence em breve, ele vira Lembrar.",
+  },
+  {
+    target: '[data-tour="account"]',
+    title: "Tema e conta",
+    body: "Troque entre claro e escuro, abra o painel de gestão ou saia da conta. O botão Como funciona repete este tour quando quiser.",
+  },
+];
 
 export default function MembersPage() {
   const { user, isUserLoading } = useUser();
@@ -100,7 +148,7 @@ export default function MembersPage() {
             <h1 className="ap-title">Alunos</h1>
             <p className="ap-sub">{gymName}</p>
           </div>
-          <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
+          <button type="button" className="lp-btn lp-btn-primary" data-tour="new-member" onClick={() => setIsNewMemberModalOpen(true)}>
             Novo aluno
           </button>
         </div>
@@ -124,14 +172,14 @@ export default function MembersPage() {
         ) : (
           <>
             <div className="ap-toolbar">
-              <div className="ap-filters" role="group" aria-label="Filtrar por situação">
+              <div className="ap-filters" data-tour="filters" role="group" aria-label="Filtrar por situação">
                 {FILTERS.map((f) => (
                   <button key={f.key} type="button" aria-pressed={statusFilter === f.key} onClick={() => setStatusFilter(f.key)}>
                     {f.label} <b>{isLoading ? "" : counts[f.key]}</b>
                   </button>
                 ))}
               </div>
-              <div className="ap-search">
+              <div className="ap-search" data-tour="search">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                   <circle cx="11" cy="11" r="7" />
                   <path d="M20 20l-3.5-3.5" />
@@ -175,6 +223,7 @@ export default function MembersPage() {
         )}
       </main>
 
+      <Tour steps={TOUR} />
       <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} monthlyFee={monthlyFee} />
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>

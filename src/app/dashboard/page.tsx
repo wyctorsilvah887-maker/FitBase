@@ -9,6 +9,7 @@ import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useToast } from "@/hooks/use-toast";
 import { AppHeader } from "@/components/app/AppHeader";
 import { LoadingScreen } from "@/components/app/LoadingScreen";
+import { Tour, type TourStep } from "@/components/tour/Tour";
 import { MonthSummary } from "@/components/landing/MonthSummary";
 import { getEffectiveStatus } from "@/lib/member-utils";
 import { monthRevenue } from "@/lib/dashboard-stats";
@@ -20,6 +21,43 @@ const maskMoney = (value: string) => {
   const cents = parseInt(value.replace(/\D/g, "") || "0", 10) / 100;
   return cents.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
+
+const TOUR: TourStep[] = [
+  {
+    title: "O mês numa tela",
+    body: "O Painel junta o que entrou no caixa e a situação dos alunos, sem somar nada à mão. Vamos ver cada parte.",
+  },
+  {
+    target: ".ap-dash-month .lp-month-total",
+    title: "Quanto entrou no caixa",
+    body: "Soma todos os pagamentos registrados neste mês. Ele atualiza sozinho a cada pagamento novo.",
+  },
+  {
+    target: ".ap-dash-month .lp-month-chips",
+    title: "Em dia e vencidos",
+    body: "Quantos alunos estão com o plano em dia e quantos venceram. Quem venceu aparece na lista de Alunos, pronto para cobrar.",
+  },
+  {
+    target: ".ap-dash-month .lp-bars",
+    title: "Receita por semana",
+    body: "Cada barra é uma semana do mês. A mais alta é a semana em que mais dinheiro entrou.",
+  },
+  {
+    target: '[data-tour="fee"]',
+    title: "Defina a mensalidade",
+    body: "Esse valor é usado ao registrar pagamentos e novos alunos. Se mudar o preço, salve aqui.",
+  },
+  {
+    target: '[data-tour="payments"]',
+    title: "Últimos pagamentos",
+    body: "Os pagamentos mais recentes, com a data e o valor. Use Ver todos para abrir a lista completa.",
+  },
+  {
+    target: '[data-tour="nav"]',
+    title: "Volte para os alunos",
+    body: "Pelo menu você troca entre o Painel e a lista de Alunos. O botão Como funciona repete este tour.",
+  },
+];
 
 export default function DashboardPage() {
   const { user, isUserLoading } = useUser();
@@ -93,7 +131,7 @@ export default function DashboardPage() {
         </section>
 
         <div className="ap-dash-grid">
-          <section className="lp-card" aria-labelledby="dash-fee">
+          <section className="lp-card" aria-labelledby="dash-fee" data-tour="fee">
             <h2 className="ap-dash-h" id="dash-fee">Valor da mensalidade</h2>
             <p className="ap-dash-note">Usado ao registrar renovações e novos alunos.</p>
             <label className="ap-label" htmlFor="fee">Mensalidade (R$)</label>
@@ -110,7 +148,7 @@ export default function DashboardPage() {
             </button>
           </section>
 
-          <section className="lp-card" aria-labelledby="dash-pay">
+          <section className="lp-card" aria-labelledby="dash-pay" data-tour="payments">
             <h2 className="ap-dash-h" id="dash-pay">Últimos pagamentos</h2>
             {list.length === 0 ? (
               <p className="ap-dash-note">Nenhum pagamento ainda. Registre o primeiro pelo cartão do aluno.</p>
@@ -143,6 +181,7 @@ export default function DashboardPage() {
           </section>
         </div>
       </main>
+      <Tour steps={TOUR} />
     </div>
   );
 }
