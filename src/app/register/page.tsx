@@ -141,6 +141,8 @@ export default function RegisterPage() {
           email: credential.user.email,
           monthlyFee: parseFee(fee),
           acceptedTerms: true,
+          // Conta nova: a tela de alunos abre o tour sozinha na primeira visita.
+          tourPending: true,
           acceptedAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
         },

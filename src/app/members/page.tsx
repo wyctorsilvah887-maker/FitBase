@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { collection, query, orderBy, doc } from "firebase/firestore";
-import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc, setDocumentNonBlocking } from "@/firebase";
 import { AppHeader } from "@/components/app/AppHeader";
 import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { MembersSkeleton } from "@/components/app/MembersSkeleton";
@@ -12,6 +12,7 @@ import { MemberCard } from "@/components/app/MemberCard";
 import { Tour, type TourStep } from "@/components/tour/Tour";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
+import { demoMembers } from "@/lib/tour-demo";
 import { getEffectiveStatus } from "@/lib/member-utils";
 import { normalizeText } from "@/lib/format";
 import "@/components/landing/landing.css";
@@ -73,6 +74,7 @@ export default function MembersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<Filter>("todos");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
+  const [tourDemo, setTourDemo] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) router.replace("/login");
@@ -97,19 +99,24 @@ export default function MembersPage() {
     [rawMembers]
   );
 
+  // Durante o tour, uma conta sem alunos mostra alunos fictícios só para ter o que apontar.
+  const showDemo = tourDemo && members.length === 0;
+  const demo = useMemo(() => (showDemo ? demoMembers() : []), [showDemo]);
+  const source = showDemo ? demo : members;
+
   const counts = useMemo(
     () => ({
-      todos: members.length,
-      ativo: members.filter((m) => m.status === "ativo").length,
-      vencido: members.filter((m) => m.status === "vencido").length,
+      todos: source.length,
+      ativo: source.filter((m: any) => getEffectiveStatus(m) === "ativo").length,
+      vencido: source.filter((m: any) => getEffectiveStatus(m) === "vencido").length,
     }),
-    [members]
+    [source]
   );
 
   const filtered = useMemo(() => {
     const q = normalizeText(searchTerm.trim());
     const digits = searchTerm.replace(/\D/g, "");
-    return members.filter((m) => {
+    return source.map((m: any) => ({ ...m, status: getEffectiveStatus(m) })).filter((m: any) => {
       const matchesSearch =
         !q ||
         normalizeText(m.name || "").includes(q) ||
@@ -117,13 +124,14 @@ export default function MembersPage() {
       const matchesStatus = statusFilter === "todos" || m.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
-  }, [members, searchTerm, statusFilter]);
+  }, [source, searchTerm, statusFilter]);
 
   if (isUserLoading || !user || isUserDocLoading) {
     return <LoadingScreen message="Abrindo seus alunos" />;
   }
 
-  const monthlyFee: number = userDoc?.monthlyFee || 0;
+  const realFee: number = userDoc?.monthlyFee || 0;
+  const monthlyFee = showDemo && realFee <= 0 ? 120 : realFee;
   const gymName: string = userDoc?.gymName || "FitBase";
   const showTermsModal = !userDoc || !userDoc.acceptedTerms;
   const hasFilters = statusFilter !== "todos" || searchTerm.trim() !== "";
@@ -153,10 +161,16 @@ export default function MembersPage() {
           </button>
         </div>
 
-        {monthlyFee <= 0 && (
+        {monthlyFee <= 0 && !showDemo && (
           <div className="ap-notice" role="status">
             <span>A mensalidade ainda não foi definida, então não dá para registrar renovações.</span>
             <Link href="/dashboard">Definir no painel</Link>
+          </div>
+        )}
+
+        {showDemo && (
+          <div className="ap-notice ap-notice--demo" role="status">
+            <span>Estes alunos são fictícios, só para mostrar o tour. Eles somem quando o tour termina.</span>
           </div>
         )}
 
@@ -197,7 +211,15 @@ export default function MembersPage() {
             {isLoading ? (
               <MembersSkeleton />
             ) : filtered.length > 0 ? (
-              <ul className="ap-list">
+              <ul
+                className="ap-list"
+                ref={(el) => {
+                  // `inert` bloqueia clique e teclado nos alunos de exemplo (definido na mão: nem toda versão do React o repassa).
+                  if (!el) return;
+                  if (showDemo) el.setAttribute("inert", "");
+                  else el.removeAttribute("inert");
+                }}
+              >
                 {filtered.map((m) => (
                   <MemberCard key={m.id} member={m} userId={user.uid} monthlyFee={monthlyFee} gymName={gymName} />
                 ))}
@@ -223,7 +245,16 @@ export default function MembersPage() {
         )}
       </main>
 
-      <Tour steps={TOUR} />
+      <Tour
+        steps={TOUR}
+        autoStart={userDoc?.tourPending === true && !showTermsModal && !isLoading}
+        onStart={() => {
+          setTourDemo(true);
+          // Marca como visto já no início: o tour automático aparece uma única vez.
+          if (userDoc?.tourPending && userRef) setDocumentNonBlocking(userRef, { tourPending: false }, { merge: true });
+        }}
+        onEnd={() => setTourDemo(false)}
+      />
       <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} monthlyFee={monthlyFee} />
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>

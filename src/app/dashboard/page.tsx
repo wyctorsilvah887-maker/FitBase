@@ -12,6 +12,7 @@ import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { Tour, type TourStep } from "@/components/tour/Tour";
 import { MonthSummary } from "@/components/landing/MonthSummary";
 import { getEffectiveStatus } from "@/lib/member-utils";
+import { DEMO_MONTH, demoPayments } from "@/lib/tour-demo";
 import { monthRevenue } from "@/lib/dashboard-stats";
 import { formatBRL, initialsOf } from "@/lib/format";
 import "@/components/landing/landing.css";
@@ -68,6 +69,7 @@ export default function DashboardPage() {
   const [fee, setFee] = useState("0,00");
   const [saved, setSaved] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [tourDemo, setTourDemo] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -94,9 +96,16 @@ export default function DashboardPage() {
     }
   }, [userDoc]);
 
-  const month = useMemo(() => monthRevenue(payments), [payments]);
-  const active = useMemo(() => (members ?? []).filter((m) => getEffectiveStatus(m) === "ativo").length, [members]);
-  const overdue = useMemo(() => (members ?? []).filter((m) => getEffectiveStatus(m) === "vencido").length, [members]);
+  // Durante o tour, uma conta ainda vazia mostra valores fictícios só para ter o que apontar.
+  const showDemo = tourDemo && !(payments?.length) && !(members?.length);
+  const demoList = useMemo(() => (showDemo ? demoPayments() : []), [showDemo]);
+
+  const realMonth = useMemo(() => monthRevenue(payments), [payments]);
+  const month = showDemo ? DEMO_MONTH : realMonth;
+  const realActive = useMemo(() => (members ?? []).filter((m) => getEffectiveStatus(m) === "ativo").length, [members]);
+  const realOverdue = useMemo(() => (members ?? []).filter((m) => getEffectiveStatus(m) === "vencido").length, [members]);
+  const active = showDemo ? DEMO_MONTH.active : realActive;
+  const overdue = showDemo ? DEMO_MONTH.overdue : realOverdue;
 
   const feeValue = parseFloat(fee.replace(/\./g, "").replace(",", ".")) || 0;
   const feeChanged = feeValue !== Number(userDoc?.monthlyFee ?? 0);
@@ -111,7 +120,8 @@ export default function DashboardPage() {
 
   if (!mounted || isUserLoading) return <LoadingScreen message="Abrindo o painel" />;
 
-  const list = showAll ? payments ?? [] : (payments ?? []).slice(0, 6);
+  const all = showDemo ? demoList : payments ?? [];
+  const list = showAll ? all : all.slice(0, 6);
 
   return (
     <div className="lp">
@@ -125,6 +135,12 @@ export default function DashboardPage() {
           </div>
           <Link href="/members" className="lp-btn lp-btn-ghost">Ver alunos</Link>
         </div>
+
+        {showDemo && (
+          <div className="ap-notice ap-notice--demo" role="status">
+            <span>Valores de exemplo, só para mostrar o tour. Eles somem quando o tour termina.</span>
+          </div>
+        )}
 
         <section className="lp-card ap-dash-month" aria-label="Resumo do mês">
           <MonthSummary total={month.total} weeks={month.weeks} active={active} overdue={overdue} />
@@ -173,7 +189,7 @@ export default function DashboardPage() {
                 })}
               </ul>
             )}
-            {(payments?.length ?? 0) > 6 && (
+            {all.length > 6 && (
               <button type="button" className="lp-link-btn" onClick={() => setShowAll((v) => !v)}>
                 {showAll ? "Mostrar menos" : "Ver todos"}
               </button>
@@ -181,7 +197,7 @@ export default function DashboardPage() {
           </section>
         </div>
       </main>
-      <Tour steps={TOUR} />
+      <Tour steps={TOUR} onStart={() => setTourDemo(true)} onEnd={() => setTourDemo(false)} />
     </div>
   );
 }

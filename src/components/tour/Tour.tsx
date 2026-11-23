@@ -40,7 +40,19 @@ function holePath(vw: number, vh: number, b: Box) {
   );
 }
 
-export function Tour({ steps }: { steps: TourStep[] }) {
+export function Tour({
+  steps,
+  autoStart = false,
+  onStart,
+  onEnd,
+}: {
+  steps: TourStep[];
+  /** Abre o tour sozinho, uma vez, quando a tela já carregou. */
+  autoStart?: boolean;
+  /** Roda antes de procurar os elementos: a tela pode mostrar dados de exemplo aqui. */
+  onStart?: () => void;
+  onEnd?: () => void;
+}) {
   const [active, setActive] = useState<TourStep[] | null>(null);
   const [index, setIndex] = useState(0);
 
@@ -55,27 +67,53 @@ export function Tour({ steps }: { steps: TourStep[] }) {
 
   const stepsRef = useRef(steps);
   stepsRef.current = steps;
+  const onStartRef = useRef(onStart);
+  onStartRef.current = onStart;
+  const onEndRef = useRef(onEnd);
+  onEndRef.current = onEnd;
+  const autoDone = useRef(false);
 
   const close = useCallback(() => {
     setActive(null);
     cur.current = null;
     opener.current?.focus?.({ preventScroll: true });
+    onEndRef.current?.();
   }, []);
 
-  // Abre pelo evento. Passos cujo elemento não está na tela (lista vazia, por exemplo) são pulados.
+  // Abre pelo evento (botão Como funciona) ou sozinho. Passos cujo elemento não está na tela são pulados.
+  const open = useCallback(() => {
+    opener.current = document.activeElement as HTMLElement | null;
+    reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    onStartRef.current?.();
+    // Dois quadros: dá tempo de a tela desenhar os dados de exemplo antes de procurar os elementos.
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        const usable = stepsRef.current.filter((s) => !s.target || isVisible(document.querySelector(s.target)));
+        if (usable.length === 0) {
+          onEndRef.current?.();
+          return;
+        }
+        cur.current = null;
+        setIndex(0);
+        setActive(usable);
+      })
+    );
+  }, []);
+
   useEffect(() => {
-    const open = () => {
-      opener.current = document.activeElement as HTMLElement | null;
-      reduced.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const usable = stepsRef.current.filter((s) => !s.target || isVisible(document.querySelector(s.target)));
-      if (usable.length === 0) return;
-      cur.current = null;
-      setIndex(0);
-      setActive(usable);
-    };
     window.addEventListener(TOUR_EVENT, open);
     return () => window.removeEventListener(TOUR_EVENT, open);
-  }, []);
+  }, [open]);
+
+  useEffect(() => {
+    if (!autoStart) return;
+    const t = setTimeout(() => {
+      if (autoDone.current) return;
+      autoDone.current = true;
+      open();
+    }, 900);
+    return () => clearTimeout(t);
+  }, [autoStart, open]);
 
   const step = active ? active[index] : null;
   const last = active ? index === active.length - 1 : false;
