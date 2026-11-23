@@ -1225,3 +1225,18 @@
 .ap-head .lp-btn-ghost {
   box-shadow: inset 0 0 0 1px var(--lp-line);
 }
+
+/* dados de exemplo do tour: nada ali responde a cliques */
+.ap-list[inert] {
+  pointer-events: none;
+  user-select: none;
+}
+
+.ap-notice--demo {
+  margin-top: 20px;
+}
+
+.ap-notice--demo {
+  background: var(--lp-tint);
+  color: var(--lp-teal);
+}
