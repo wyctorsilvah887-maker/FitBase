@@ -88,7 +88,7 @@ export default function DashboardPage() {
 
   const { data: members } = useCollection(membersQuery);
   const { data: payments } = useCollection(paymentsQuery);
-  const { data: userDoc } = useDoc(userRef);
+  const { data: userDoc, isLoading: isUserDocLoading } = useDoc(userRef);
 
   useEffect(() => {
     if (userDoc?.monthlyFee !== undefined) {
@@ -197,7 +197,16 @@ export default function DashboardPage() {
           </section>
         </div>
       </main>
-      <Tour steps={TOUR} onStart={() => setTourDemo(true)} onEnd={() => setTourDemo(false)} />
+      <Tour
+        steps={TOUR}
+        autoStart={!!userDoc && !isUserDocLoading && !userDoc.dashboardTourSeen}
+        onStart={() => {
+          setTourDemo(true);
+          // Marca como visto já no início: o tour automático do painel aparece uma única vez.
+          if (userRef && !userDoc?.dashboardTourSeen) setDocumentNonBlocking(userRef, { dashboardTourSeen: true }, { merge: true });
+        }}
+        onEnd={() => setTourDemo(false)}
+      />
     </div>
   );
 }
