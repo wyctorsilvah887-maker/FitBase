@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
 import { useAuth, useUser } from "@/firebase";
 import { LpThemeToggle } from "@/components/landing/LpThemeToggle";
+import { startTour } from "@/components/tour/Tour";
 import { useDismiss } from "./useDismiss";
 import "@/components/landing/landing.css";
 import "./app.css";
@@ -45,7 +46,7 @@ export function AppHeader({ active }: { active: "members" | "dashboard" }) {
           <span className="lp-logo ap-logo" role="img" aria-label="FitBase" />
         </Link>
 
-        <nav className="ap-nav" aria-label="Principal">
+        <nav className="ap-nav" aria-label="Principal" data-tour="nav">
           {NAV.map((n) => (
             <Link key={n.key} href={n.href} aria-current={active === n.key ? "page" : undefined}>
               {n.label}
@@ -53,7 +54,14 @@ export function AppHeader({ active }: { active: "members" | "dashboard" }) {
           ))}
         </nav>
 
-        <div className="ap-header-right">
+        <div className="ap-header-right" data-tour="account">
+          <button type="button" className="ap-tour-btn" onClick={startTour} aria-label="Como funciona: tour desta tela">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9.6 9.4a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1.1.9-1.1 1.7M12 16.6v.1" />
+            </svg>
+            <span>Como funciona</span>
+          </button>
           <LpThemeToggle />
           <div className="ap-menu-wrap" ref={wrap}>
             <button
