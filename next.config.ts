@@ -2,10 +2,6 @@
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-  experimental: {
-    // Fotos de lista de alunos (já reduzidas no navegador) seguem para a leitura por IA.
-    serverActions: { bodySizeLimit: '6mb' },
-  },
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -1530,3 +1530,8 @@
     font-size: 0.9rem;
   }
 }
+
+.ap-imp-opt--solo {
+  width: 100%;
+  padding: 24px 10px;
+}

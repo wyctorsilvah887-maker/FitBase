@@ -5,7 +5,6 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useUser, useFirestore } from "@/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { readStudentsFromPhoto } from "@/ai/flows/read-students-from-photo";
 import { readXlsx } from "@/lib/xlsx-lite";
 import {
   MAX_IMPORT_ROWS,
@@ -34,26 +33,8 @@ interface Props {
   existing: { name?: string; phone?: string }[];
 }
 
-/** Reduz a foto no navegador: leitura mais rápida e envio bem menor. */
-async function photoToDataUri(file: File, max = 1600): Promise<string> {
-  const bmp = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
-  const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bmp.width * scale);
-  canvas.height = Math.round(bmp.height * scale);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("canvas");
-  ctx.fillStyle = "#fff";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  bmp.close?.();
-  return canvas.toDataURL("image/jpeg", 0.82);
-}
-
-const isImage = (f: File) => f.type.startsWith("image/") || /\.(jpe?g|png|webp|heic|heif)$/i.test(f.name);
-
 /**
- * Importa a lista de alunos de uma planilha (.xlsx, .csv) ou de uma foto do caderno.
+ * Importa a lista de alunos de uma planilha (.xlsx, .csv). Passa a limpo, mostra a lista para o dono conferir e só então salva.
  * Nada é gravado antes de o dono conferir a lista.
  */
 export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
@@ -61,7 +42,6 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
   const db = useFirestore();
   const { toast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
-  const photoInput = useRef<HTMLInputElement>(null);
 
   const [step, setStep] = useState<Step>("pick");
   const [error, setError] = useState("");
@@ -91,7 +71,7 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
 
   const finishReading = (students: RawStudent[]) => {
     if (students.length === 0) {
-      setError("Não encontrei alunos nessa lista. Confira se o arquivo tem os nomes ou tire a foto mais perto.");
+      setError("Não encontrei alunos nesse arquivo. Confira se ele tem uma coluna com os nomes.");
       setStep("pick");
       return;
     }
@@ -104,50 +84,21 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
   };
 
   const readFiles = async (files: File[]) => {
-    if (files.length === 0) return;
+    const file = files[0];
+    if (!file) return;
     setError("");
-    const images = files.filter(isImage);
-    const sheets = files.filter((f) => !isImage(f));
-    if (images.length > 0 && sheets.length > 0) {
-      setError("Envie só fotos ou só um arquivo por vez.");
-      return;
-    }
     setStep("reading");
+    setStatus("Lendo o arquivo");
     try {
-      if (images.length > 0) {
-        if (images.length > 6) throw new Error("Envie até 6 fotos por vez.");
-        const token = await user?.getIdToken();
-        const all: RawStudent[] = [];
-        let firstError = "";
-        for (let i = 0; i < images.length; i++) {
-          setStatus(images.length > 1 ? `Lendo a foto ${i + 1} de ${images.length}` : "Lendo a foto");
-          let uri: string;
-          try {
-            uri = await photoToDataUri(images[i]);
-          } catch {
-            firstError ||= "Não consegui abrir essa foto. Tente outra em JPG ou PNG.";
-            continue;
-          }
-          const res = await readStudentsFromPhoto({ idToken: token ?? "", photoDataUri: uri });
-          if (res.ok) all.push(...res.students);
-          else firstError ||= res.error;
-        }
-        if (all.length === 0 && firstError) throw new Error(firstError);
-        finishReading(all);
-        return;
-      }
-
-      const file = sheets[0];
-      setStatus("Lendo o arquivo");
       const name = file.name.toLowerCase();
       let table: string[][];
       if (name.endsWith(".xlsx")) table = await readXlsx(await file.arrayBuffer());
       else if (/\.(csv|txt|tsv)$/.test(name)) table = parseCsv(await file.text());
       else if (/\.(xls|ods)$/.test(name)) throw new Error("Esse formato é antigo. Abra a planilha e salve como .xlsx ou .csv.");
-      else throw new Error("Esse tipo de arquivo não funciona. Envie .xlsx, .csv ou uma foto da lista.");
+      else throw new Error("Esse tipo de arquivo não funciona. Envie uma planilha .xlsx ou um arquivo .csv.");
       finishReading(tableToStudents(table));
     } catch (e: any) {
-      const known = typeof e?.message === "string" && /[a-zà-ú]/i.test(e.message) && e.message.length > 12 ? e.message : "";
+      const known = typeof e?.message === "string" && /^(Esse )/.test(e.message) ? e.message : "";
       setError(known || "Não consegui ler o arquivo. Salve a planilha como CSV e tente de novo.");
       setStep("pick");
     }
@@ -240,7 +191,7 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
               <Dialog.Description id="imp-desc" className="ap-modal-sub">
                 {step === "review" || step === "saving"
                   ? "Confira a lista. Nada é salvo antes de você confirmar."
-                  : "Traga a lista que você já tem. Você confere tudo antes de salvar."}
+                  : "Traga a planilha que você já tem. Você confere tudo antes de salvar."}
               </Dialog.Description>
             </div>
             <Dialog.Close className="ap-modal-x" aria-label="Fechar" disabled={busy}>
@@ -272,29 +223,18 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
                 </div>
               ) : (
                 <>
-                  <div className="ap-imp-opts">
-                    <button type="button" className="ap-imp-opt" onClick={() => fileInput.current?.click()}>
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
-                        <path d="M14 3v5h5M9 13h6M9 17h6" />
-                      </svg>
-                      <strong>Enviar arquivo</strong>
-                      <small>Excel ou CSV</small>
-                    </button>
-                    <button type="button" className="ap-imp-opt" onClick={() => photoInput.current?.click()}>
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M4 8h3l2-2.5h6L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
-                        <circle cx="12" cy="13" r="3.5" />
-                      </svg>
-                      <strong>Foto da lista</strong>
-                      <small>Caderno ou planilha impressa</small>
-                    </button>
-                  </div>
-                  <p className="ap-imp-hint">Ou arraste o arquivo ou a foto para cá.</p>
+                  <button type="button" className="ap-imp-opt ap-imp-opt--solo" onClick={() => fileInput.current?.click()}>
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+                      <path d="M14 3v5h5M9 13h6M9 17h6" />
+                    </svg>
+                    <strong>Escolher planilha</strong>
+                    <small>Excel (.xlsx) ou CSV</small>
+                  </button>
+                  <p className="ap-imp-hint">Ou arraste o arquivo para cá.</p>
                 </>
               )}
               <input ref={fileInput} type="file" hidden accept=".xlsx,.csv,.txt,.tsv,.xls,.ods" onChange={onPick} />
-              <input ref={photoInput} type="file" hidden accept="image/*" multiple onChange={onPick} />
             </div>
           )}
 
@@ -306,8 +246,8 @@ export function ImportMembersModal({ isOpen, onClose, existing }: Props) {
                 </p>
               )}
               <ul className="ap-imp-tips">
-                <li>Serve qualquer lista com nome e telefone. Vencimento e plano são opcionais.</li>
-                <li>Na foto, pegue uma página por vez, bem de frente e com boa luz.</li>
+                <li>Serve qualquer planilha com nome e telefone. Vencimento e plano são opcionais.</li>
+                <li>Só tem o caderno? Digite os nomes numa planilha ou use o modelo abaixo.</li>
               </ul>
               <button type="button" className="lp-link-btn" onClick={downloadTemplate}>
                 Baixar modelo de planilha

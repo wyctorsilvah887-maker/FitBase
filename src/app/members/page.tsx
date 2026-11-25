@@ -39,7 +39,7 @@ const TOUR: TourStep[] = [
   {
     target: '[data-tour="import"]',
     title: "Traga sua lista de alunos",
-    body: "Já tem os alunos num caderno ou numa planilha? Envie o arquivo ou tire uma foto da lista. Você confere tudo antes de salvar.",
+    body: "Já tem os alunos numa planilha? Envie o arquivo e eles entram de uma vez. Você confere tudo antes de salvar.",
   },
   {
     target: '[data-tour="filters"]',
@@ -165,7 +165,7 @@ export default function MembersPage() {
           </div>
           <div className="ap-head-actions">
             <button type="button" className="lp-btn lp-btn-ghost" data-tour="import" onClick={() => setIsImportOpen(true)}>
-              Importar lista
+              Importar planilha
             </button>
             <button type="button" className="lp-btn lp-btn-primary" data-tour="new-member" onClick={() => setIsNewMemberModalOpen(true)}>
               Novo aluno
@@ -190,13 +190,13 @@ export default function MembersPage() {
           <div className="ap-empty">
             <div className="ap-empty-art" aria-hidden="true" />
             <h2>Sua lista ainda está vazia</h2>
-            <p>Cadastre o primeiro aluno ou traga a lista que você já tem, de uma planilha ou da foto do caderno.</p>
+            <p>Cadastre o primeiro aluno ou traga a planilha que você já tem.</p>
             <div className="ap-empty-actions">
               <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
                 Cadastrar aluno
               </button>
               <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setIsImportOpen(true)}>
-                Importar lista ou foto
+                Importar planilha
               </button>
             </div>
           </div>

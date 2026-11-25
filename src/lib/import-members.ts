@@ -5,7 +5,7 @@ import { normalizeText } from "@/lib/format";
 
 export const MAX_IMPORT_ROWS = 500;
 
-/** O que foi lido da planilha ou da foto, antes de qualquer correção. */
+/** O que foi lido da planilha, antes de qualquer correção. */
 export type RawStudent = { name?: string; phone?: string; plan?: string; expiry?: string };
 
 export type ImportRow = {
