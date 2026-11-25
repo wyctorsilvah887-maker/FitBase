@@ -1240,3 +1240,293 @@
   background: var(--lp-tint);
   color: var(--lp-teal);
 }
+
+/* ---------- Importar alunos ---------- */
+
+.ap-modal--wide {
+  width: min(720px, calc(100vw - 32px));
+}
+
+.ap-imp-drop {
+  margin-top: 18px;
+  padding: 16px;
+  border: 1.5px dashed var(--lp-line);
+  border-radius: 18px;
+  background: var(--lp-bg);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.ap-imp-drop.is-drag {
+  border-color: var(--lp-teal);
+  background: var(--lp-tint);
+}
+
+.ap-imp-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ap-imp-opt {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 18px 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 14px;
+  background: var(--lp-surface);
+  color: var(--lp-ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.ap-imp-opt svg {
+  color: var(--lp-teal);
+  margin-bottom: 4px;
+}
+
+.ap-imp-opt small {
+  color: var(--lp-ink-2);
+  font-size: 0.82rem;
+}
+
+.ap-imp-opt:hover {
+  border-color: var(--lp-teal);
+  box-shadow: 0 6px 18px -10px var(--lp-teal);
+}
+
+.lp .ap-imp-opt:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--lp-teal) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.ap-imp-hint {
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--lp-ink-2);
+  font-size: 0.88rem;
+}
+
+.ap-imp-reading {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 26px 0;
+}
+
+.ap-imp-reading small {
+  color: var(--lp-ink-2);
+}
+
+.ap-imp-spin {
+  width: 34px;
+  height: 34px;
+  border: 3px solid var(--lp-line);
+  border-top-color: var(--lp-teal);
+  border-radius: 50%;
+  animation: ap-spin 0.8s linear infinite;
+}
+
+@keyframes ap-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.ap-imp-tips {
+  margin: 14px 0 10px;
+  padding-left: 18px;
+  color: var(--lp-ink-2);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.ap-imp-error {
+  margin: 12px 0 0;
+}
+
+.ap-imp-summary {
+  margin: 16px 0 0;
+  font-weight: 700;
+}
+
+.ap-imp-note {
+  margin: 6px 0 0;
+  color: var(--lp-ink-2);
+  font-size: 0.88rem;
+}
+
+.ap-imp-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 14px 0 8px;
+}
+
+.ap-imp-ddd {
+  display: grid;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.ap-imp-ddd .ap-input {
+  width: 84px;
+  height: 42px;
+  text-align: center;
+}
+
+.ap-imp-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 0.92rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.ap-imp input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--lp-teal);
+  cursor: pointer;
+}
+
+.ap-imp-list {
+  display: grid;
+  gap: 8px;
+  max-height: min(46vh, 420px);
+  margin: 0;
+  padding: 2px 2px 2px 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.ap-imp-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--lp-line);
+  border-radius: 14px;
+  background: var(--lp-bg);
+}
+
+.ap-imp-row.is-off {
+  opacity: 0.55;
+}
+
+.ap-imp-pick {
+  display: grid;
+  place-items: center;
+  padding: 0 2px;
+}
+
+.ap-imp-fields {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ap-imp-fields .ap-input {
+  height: 42px;
+  font-size: 0.94rem;
+}
+
+.ap-imp-sub {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 8px;
+}
+
+.ap-imp-issues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ap-imp-mode {
+  margin: 14px 0 0;
+}
+
+.ap-imp-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .ap-imp-opts,
+  .ap-imp-modes {
+    grid-template-columns: 1fr;
+  }
+  .ap-imp-sub {
+    grid-template-columns: 1fr 1fr;
+  }
+  .ap-imp-sub input[type="tel"],
+  .ap-imp-sub input[inputmode="tel"] {
+    grid-column: 1 / -1;
+  }
+  .ap-imp-list {
+    max-height: 40vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ap-imp-spin {
+    animation-duration: 2.4s;
+  }
+}
+
+.ap-head-actions,
+.ap-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ap-empty-actions {
+  justify-content: center;
+}
+
+.ap-head-actions .lp-btn,
+.ap-empty-actions .lp-btn {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.ap-head-actions .lp-btn-ghost,
+.ap-empty-actions .lp-btn-ghost {
+  box-shadow: inset 0 0 0 1px var(--lp-line);
+}
+
+@media (max-width: 560px) {
+  .ap-head {
+    flex-wrap: wrap;
+  }
+  .ap-head-actions {
+    width: 100%;
+  }
+  .ap-head-actions .lp-btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 560px) {
+  .ap-imp-row {
+    gap: 6px;
+    padding: 8px;
+  }
+  .ap-imp-sub select.ap-input,
+  .ap-imp-sub input[type="date"].ap-input {
+    padding: 0 6px 0 10px;
+    font-size: 0.9rem;
+  }
+}
