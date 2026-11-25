@@ -10,6 +10,7 @@ import { LoadingScreen } from "@/components/app/LoadingScreen";
 import { MembersSkeleton } from "@/components/app/MembersSkeleton";
 import { MemberCard } from "@/components/app/MemberCard";
 import { Tour, type TourStep } from "@/components/tour/Tour";
+import { ImportMembersModal } from "@/components/ImportMembersModal";
 import { NewMemberModal } from "@/components/NewMemberModal";
 import { TermsAcceptanceModal } from "@/components/TermsAcceptanceModal";
 import { demoMembers } from "@/lib/tour-demo";
@@ -34,6 +35,11 @@ const TOUR: TourStep[] = [
     target: '[data-tour="new-member"]',
     title: "Cadastre um aluno",
     body: "Nome, telefone e plano bastam. Se o aluno já pagou, registre o pagamento na hora.",
+  },
+  {
+    target: '[data-tour="import"]',
+    title: "Traga sua lista de alunos",
+    body: "Já tem os alunos numa planilha? Envie o arquivo e eles entram de uma vez. Você confere tudo antes de salvar.",
   },
   {
     target: '[data-tour="filters"]',
@@ -75,6 +81,7 @@ export default function MembersPage() {
   const [statusFilter, setStatusFilter] = useState<Filter>("todos");
   const [isNewMemberModalOpen, setIsNewMemberModalOpen] = useState(false);
   const [tourDemo, setTourDemo] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading && !user) router.replace("/login");
@@ -156,9 +163,14 @@ export default function MembersPage() {
             <h1 className="ap-title">Alunos</h1>
             <p className="ap-sub">{gymName}</p>
           </div>
-          <button type="button" className="lp-btn lp-btn-primary" data-tour="new-member" onClick={() => setIsNewMemberModalOpen(true)}>
-            Novo aluno
-          </button>
+          <div className="ap-head-actions">
+            <button type="button" className="lp-btn lp-btn-ghost" data-tour="import" onClick={() => setIsImportOpen(true)}>
+              Importar planilha
+            </button>
+            <button type="button" className="lp-btn lp-btn-primary" data-tour="new-member" onClick={() => setIsNewMemberModalOpen(true)}>
+              Novo aluno
+            </button>
+          </div>
         </div>
 
         {monthlyFee <= 0 && !showDemo && (
@@ -178,10 +190,15 @@ export default function MembersPage() {
           <div className="ap-empty">
             <div className="ap-empty-art" aria-hidden="true" />
             <h2>Sua lista ainda está vazia</h2>
-            <p>Cadastre o primeiro aluno. Nome, telefone e plano bastam para começar.</p>
-            <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
-              Cadastrar aluno
-            </button>
+            <p>Cadastre o primeiro aluno ou traga a planilha que você já tem.</p>
+            <div className="ap-empty-actions">
+              <button type="button" className="lp-btn lp-btn-primary" onClick={() => setIsNewMemberModalOpen(true)}>
+                Cadastrar aluno
+              </button>
+              <button type="button" className="lp-btn lp-btn-ghost" onClick={() => setIsImportOpen(true)}>
+                Importar planilha
+              </button>
+            </div>
           </div>
         ) : (
           <>
@@ -255,6 +272,7 @@ export default function MembersPage() {
         }}
         onEnd={() => setTourDemo(false)}
       />
+      <ImportMembersModal isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} existing={members} />
       <NewMemberModal isOpen={isNewMemberModalOpen} onClose={() => setIsNewMemberModalOpen(false)} monthlyFee={monthlyFee} />
       <TermsAcceptanceModal isOpen={showTermsModal} />
     </div>
